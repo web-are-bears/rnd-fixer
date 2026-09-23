@@ -1,3 +1,3 @@
 # RnD-Fixer
 
-The RnD-Fixer monorepo.
+The RnD-Fixer monolithic approach.
