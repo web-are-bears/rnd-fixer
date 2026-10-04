@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+/* disclosure:
+ * colours were picked with AI assistance
+ */
+
+@theme static {
+  --color-paper: #fff8d6;
+  --color-butter: #ffe88a;
+  --color-ink: #2b2a27;
+  --color-ink-soft: #5c5a52;
+}
