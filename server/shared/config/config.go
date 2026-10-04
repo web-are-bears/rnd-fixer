@@ -22,15 +22,21 @@ type Validatable interface {
 }
 
 // map config is default Config implementation
-type defaultConfig struct {
-	tree map[string]interface{}
+type DefaultConfig struct {
+	tree map[string]*Value
 }
 
-func newDefaultConfig(tree map[string]interface{}) *defaultConfig { 
+func newDefaultConfig(tree map[string]interface{}) *DefaultConfig {
 	if tree == nil {
-		return &defaultConfig{tree: map[string]interface{}{}}
+		return &DefaultConfig{tree: map[string]*Value{}}
 	}
-	return &defaultConfig{tree: tree} 
+
+	var treeWithPointers = make(map[string]*Value)
+	for k, v := range tree {
+		treeWithPointers[k] = NewValue(v)
+	}
+
+	return &DefaultConfig{tree: treeWithPointers}
 }
 
 // constructor of config
@@ -38,7 +44,7 @@ func NewConfig(tree map[string]interface{}) Config {
 	return newDefaultConfig(tree)
 }
 
-func (dc *defaultConfig) Get(key string) (Value, bool) {
+func (dc *DefaultConfig) Get(key string) (Value, bool) {
 	raw, exist := dc.tree[key]
 	if !exist {
 		return Value{}, false
@@ -47,22 +53,34 @@ func (dc *defaultConfig) Get(key string) (Value, bool) {
 	return *NewValue(raw), true
 }
 
-func (dc *defaultConfig) Has(key string) (bool) {
+func (dc *DefaultConfig) Has(key string) (bool) {
 	_, exist := dc.tree[key]
 	return exist
 }
 
-func (dc *defaultConfig) Keys() []string {
+func (dc *DefaultConfig) Keys() []string {
 	keys := slices.Collect(maps.Keys(dc.tree))
 	return keys
 }
 
-func (dc *defaultConfig) Sub(key string) (Config, error) {
-	return nil, nil
+func (dc *DefaultConfig) Sub(key string) (Config, error) {
+	v, exists := dc.Get(key)
+	if !exists {
+		return nil, fmt.Errorf("config: key %q not found", key)
+	}
+	if v.GetKind() != KindMap {
+		return nil, fmt.Errorf("config: key %q is not a map", key)
+	}
+
+	subTree, ok := v.GetMap()
+	if !ok {
+		return nil, fmt.Errorf("config: key %q is not a map", key)
+	}
+
+	return newDefaultConfig(subTree), nil
 }
 
 // utility functions to load config file
-
 func LoadFile(path string) (Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -79,8 +97,8 @@ func LoadBytes(data []byte) (Config, error) {
 	return newDefaultConfig(tree), nil
 }
 
-func (dc *defaultConfig) Unmarshal(key string, out interface{}) error {
-	var raw interface{} = dc.tree
+func (dc *DefaultConfig) Unmarshal(key string, out interface{}) error {
+	var raw interface{}
 	
 	if key != "" {
 		v, ok := dc.Get(key)
@@ -88,7 +106,9 @@ func (dc *defaultConfig) Unmarshal(key string, out interface{}) error {
 			return fmt.Errorf("config: key %q not found", key)
 		}
 
-		raw = v.raw
+		raw = v.GetRaw()
+	} else {
+		return fmt.Errorf("config: key is empty")
 	}
 	
 	data, err := yaml.Marshal(raw)

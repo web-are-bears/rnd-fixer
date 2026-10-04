@@ -12,11 +12,11 @@ func (lc *LoggerConfig) Validate() error {
 	if lc.Level == "" {
 		lc.Level = "info"
 	}
-	
+
 	switch lc.Level {
 	case "debug", "info", "warn", "error":
 	default:
-		fmt.Errorf("logger: invalid level %q (want debug|info|warn|error)", lc.Level)
+		return fmt.Errorf("logger: invalid level %q (want debug|info|warn|error)", lc.Level)
 	}
 
 	if lc.Path == "" {
