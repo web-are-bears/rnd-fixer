@@ -11,10 +11,10 @@ import (
 
 type Config interface {
 	Get(key string) (Value, bool)
-	Has(key string) (bool)
+	Has(key string) bool
 	Keys() []string
 	Sub(key string) (Config, error)
-	Unmarshal(key string, out interface{}) (error)
+	Unmarshal(key string, out interface{}) error
 }
 
 type Validatable interface {
@@ -31,8 +31,12 @@ func newDefaultConfig(tree map[string]interface{}) *DefaultConfig {
 		return &DefaultConfig{tree: map[string]*Value{}}
 	}
 
-	var treeWithPointers = make(map[string]*Value)
+	var treeWithPointers = make(map[string]*Value, len(tree))
 	for k, v := range tree {
+		if value, ok := v.(*Value); ok {
+			treeWithPointers[k] = value
+			continue
+		}
 		treeWithPointers[k] = NewValue(v)
 	}
 
@@ -46,14 +50,14 @@ func NewConfig(tree map[string]interface{}) Config {
 
 func (dc *DefaultConfig) Get(key string) (Value, bool) {
 	raw, exist := dc.tree[key]
-	if !exist {
+	if !exist || raw == nil {
 		return Value{}, false
 	}
 
-	return *NewValue(raw), true
+	return *raw, true
 }
 
-func (dc *DefaultConfig) Has(key string) (bool) {
+func (dc *DefaultConfig) Has(key string) bool {
 	_, exist := dc.tree[key]
 	return exist
 }
@@ -98,19 +102,16 @@ func LoadBytes(data []byte) (Config, error) {
 }
 
 func (dc *DefaultConfig) Unmarshal(key string, out interface{}) error {
-	var raw interface{}
-	
-	if key != "" {
-		v, ok := dc.Get(key)
-		if !ok {
-			return fmt.Errorf("config: key %q not found", key)
-		}
-
-		raw = v.GetRaw()
-	} else {
+	if key == "" {
 		return fmt.Errorf("config: key is empty")
 	}
-	
+
+	v, ok := dc.Get(key)
+	if !ok {
+		return fmt.Errorf("config: key %q not found", key)
+	}
+
+	raw := v.GetRaw()
 	data, err := yaml.Marshal(raw)
 	if err != nil {
 		return fmt.Errorf("config: marshal failed: %w", err)
@@ -125,7 +126,6 @@ func LoadInto(c Config, key string, out Validatable) error {
 	if err := c.Unmarshal(key, out); err != nil {
 		return err
 	}
-	
+
 	return out.Validate()
 }
-

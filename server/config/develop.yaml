@@ -1,0 +1,6 @@
+server:
+  port: 8080
+logger:
+  level: debug
+  json: false
+  file: /home/ashu3103/Desktop/rnd-fixer/server/log/temp.log
