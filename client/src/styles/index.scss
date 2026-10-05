@@ -1,17 +1,164 @@
-:root {
-  font-size: 16px;
+$paper: #fff8d6;
+$butter: #ffe88a;
+$ink: #2b2a27;
+$ink-soft: #5c5a52;
+
+
+@layer base {
+  body {
+    margin: 0;
+    background-color: $paper;
+    background-image: radial-gradient(rgba($ink, 0.12) 1px, transparent 1px);
+    background-size: 18px 18px;
+    color: $ink;
+    -webkit-font-smoothing: antialiased;
+  }
+ 
+  button {
+    cursor: pointer;
+  }
 }
 
-html,
-body {
-  padding: 0;
-  margin: 0;
-  border: 0;
+// AI disclosure: this mixin was written by AI
+@mixin hard-shadow($n: 6px) {
+  box-shadow: $n $n 0 $ink;
 }
 
-#root {
-  margin: auto;
-  padding: 8px;
+@layer components {
+  .heading {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+  }
 
-  background: #efddff;
+  .label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $ink-soft;
+  }
+
+  .card {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 1rem;
+    border: 2px solid $ink;
+    background: $butter;
+    @include hard-shadow(6px);
+    transition:
+      transform 0.12s ease,
+      box-shadow 0.12s ease;
+
+    &:hover {
+      transform: rotate(1deg) translate(-2px, -2px);
+      @include hard-shadow(10px);
+    }
+
+    &:active {
+      transform: translate(4px, 4px);
+      @include hard-shadow(2px);
+    }
+  }
+
+  .tile {
+    padding: 0.75rem;
+    border: 2px solid $ink;
+    background: $paper;
+    @include hard-shadow(3px);
+  }
+ 
+  .panel {
+    padding: 1.5rem;
+    border: 2px solid $ink;
+    background: $paper;
+    @include hard-shadow(8px);
+  }
+
+  .btn {
+    padding: 0.25rem 0.75rem;
+    border: 2px solid $ink;
+    background: $ink;
+    color: $paper;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    @include hard-shadow(3px);
+    transition:
+      transform 0.1s ease,
+      box-shadow 0.1s ease;
+
+    &:hover {
+      transform: translate(-1px, -1px);
+      @include hard-shadow(5px);
+    }
+
+    &:active {
+      transform: translate(3px, 3px);
+      @include hard-shadow(0);
+    }
+
+    &--light {
+      border-color: $butter;
+      background: $butter;
+      color: $ink;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid $ink;
+    background: $paper;
+    outline: none;
+   
+    &:focus {
+      background: #fff;
+      @include hard-shadow(4px);
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: $ink;
+    color: $paper;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transform: skewX(-12deg);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: $ink;
+    color: $paper;
+    border-bottom: 4px solid $butter;
+    
+    a {
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+     
+      &:hover {
+        color: $butter;
+      }
+    }
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($ink, 0.5);
+  }
 }
