@@ -23,6 +23,7 @@ func forwardIdentity(
 	return invoker(ctx, method, req, reply, cc, opts...)
 }
 
+// TODO (ashu3103): can add streaming interceptor here if needed
 func dial(addr string) (*grpc.ClientConn, error) {
 	return grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithChainUnaryInterceptor(forwardIdentity))
 }
