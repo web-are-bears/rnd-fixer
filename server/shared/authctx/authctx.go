@@ -29,19 +29,17 @@ func FromContext(ctx context.Context) *User {
 
 // copies identity into gRPC metadata to downstream
 func ToDownstream(ctx context.Context, requestID string) context.Context {
-	md := metadata.New(nil)
-
 	// pass user data to metadata
 	if user := FromContext(ctx); user != nil {
-		md.Append("x-user-id", user.ID)
-		md.Append("x-user-role", user.Role)
+		ctx = metadata.AppendToOutgoingContext(ctx, "x-user-id", user.ID)
+		ctx = metadata.AppendToOutgoingContext(ctx, "x-user-role", user.Role)
 	}
 	
 	if requestID != "" {
-		md.Append("x-request-id", requestID)
+		ctx = metadata.AppendToOutgoingContext(ctx, "x-request-id", requestID)
 	}
 
-	return metadata.NewOutgoingContext(ctx, md)
+	return ctx
 }
 
 // extracts identity from gRPC metadata
