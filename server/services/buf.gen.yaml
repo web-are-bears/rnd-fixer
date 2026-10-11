@@ -1,0 +1,22 @@
+# buf.gen.yaml
+version: v2
+managed:
+  enabled: true
+  disable:
+    - module: buf.build/googleapis/googleapis
+  override:
+    - file_option: go_package_prefix
+      value: github.com/wbb/rnd-fixer/services
+plugins:
+  - local: [go, tool, protoc-gen-go]
+    out: .
+    opt: paths=source_relative
+  - local: [go, tool, protoc-gen-go-grpc]
+    out: .
+    opt: paths=source_relative
+  - local: [go, tool, protoc-gen-grpc-gateway]
+    out: .
+    opt: paths=source_relative
+  - local: [go, tool, protoc-gen-openapiv2]
+    out: ../api/openapi
+    opt: allow_merge=true,merge_file_name=rnd-fixer

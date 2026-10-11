@@ -1,0 +1,10 @@
+# buf.yaml
+version: v2
+modules:
+  - path: .
+deps:
+  - buf.build/googleapis/googleapis
+lint:
+  use: [BASIC]
+breaking:
+  use: [FILE]
