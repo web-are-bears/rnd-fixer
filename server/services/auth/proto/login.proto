@@ -1,19 +1,33 @@
 syntax = "proto3";
-package auth;
+package com.github.wbb.auth;
 
-option go_package = "github.com/wbb/rnd-fixer/proto/gen/auth";
+import "google/api/annotations.proto";
 
 service AuthService {
-    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Register(RegisterRequest) returns (RegisterResponse) {
+        option (google.api.http) = { post: "/v1/auth/register" body: "*" };
+    }
+    rpc Login(LoginRequest) returns (LoginResponse) {
+        option (google.api.http) = { post: "/v1/auth/login" body: "*" };
+    }
 }
 
 message RegisterRequest {
     string username = 1;
     string password = 2;
     string name     = 3;
-    int32  role     = 4;
+    string role     = 4;
 }
 
 message RegisterResponse {
     string user_id = 1;
+}
+
+message LoginRequest {
+    string username = 1;
+    string passwrod = 2;
+}
+
+message LoginResponse {
+    string access_token = 1;
 }
