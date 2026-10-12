@@ -51,8 +51,9 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 	}
 
 	// load the public key and verify the authentication key
-	pub, err := jwtauth.LoadPublicKey("/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/private.pem") // TODO: change this
+	pub, err := jwtauth.LoadPublicKey("/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/public.pem") // TODO: change this
 	if err != nil {
+		logger.Error("failed to fetch public key", "error", err)
 		return nil, err
 	}
 

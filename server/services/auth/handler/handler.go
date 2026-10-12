@@ -61,7 +61,7 @@ func (handle *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	}
 
 	// verify the password
-	if err := bcrypt.CompareHashAndPassword([]byte(document.Password), []byte(req.Passwrod)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(document.Password), []byte(req.Password)); err != nil {
 		return nil, fmt.Errorf("incorrect credentials")
 	}
 

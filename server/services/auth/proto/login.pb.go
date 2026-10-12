@@ -137,7 +137,7 @@ func (x *RegisterResponse) GetUserId() string {
 type LoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Passwrod      string                 `protobuf:"bytes,2,opt,name=passwrod,proto3" json:"passwrod,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -179,9 +179,9 @@ func (x *LoginRequest) GetUsername() string {
 	return ""
 }
 
-func (x *LoginRequest) GetPasswrod() string {
+func (x *LoginRequest) GetPassword() string {
 	if x != nil {
-		return x.Passwrod
+		return x.Password
 	}
 	return ""
 }
@@ -244,7 +244,7 @@ const file_auth_proto_login_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpasswrod\x18\x02 \x01(\tR\bpasswrod\"2\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"2\n" +
 	"\rLoginResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken2\xef\x01\n" +
 	"\vAuthService\x12u\n" +

@@ -39,10 +39,10 @@ func main() {
 
 	handler, err := router.NewRouter(ctx, cl, logger)
 	if err != nil  {
-		logger.Error("unable to instantiate router")
+		logger.Error("unable to instantiate router", "error", err)
 		os.Exit(1)
 	}
-	
+
 	// define server attributes
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),
