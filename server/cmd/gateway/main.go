@@ -37,10 +37,16 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	handler, err := router.NewRouter(ctx, cl, logger)
+	if err != nil  {
+		logger.Error("unable to instantiate router")
+		os.Exit(1)
+	}
+	
 	// define server attributes
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),
-		Handler: gateway.NewRouter(*cfg, cl, logger),
+		Handler: handler,
 		ReadHeaderTimeout: 5*time.Second,
 		ReadTimeout:       15*time.Second,
 		WriteTimeout:      30*time.Second,

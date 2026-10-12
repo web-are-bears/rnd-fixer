@@ -1,33 +1,69 @@
-package gateway
+package router
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 
-	"github.com/wbb/rnd-fixer/shared/config"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/wbb/rnd-fixer/services/gateway/clients"
 	"github.com/wbb/rnd-fixer/services/gateway/middleware"
+	"github.com/wbb/rnd-fixer/shared/jwtauth"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func NewRouter(cfg config.GatewayConfig, cl *clients.Clients, logger *slog.Logger) http.Handler {
-	// TODO (ashu3103): add handlers here
+func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger) (http.Handler, error) {
+	gw := runtime.NewServeMux(
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+			MarshalOptions: protojson.MarshalOptions{
+				UseProtoNames: true,
+				EmitUnpopulated: true,
+			},
+		}),
 
-	// TODO (ashu3103): add authentication and roles middleware here
+		// block clients from injecting arbitrary metadata via "Grpc-Metadata-*" headers
+		runtime.WithIncomingHeaderMatcher(func(string) (string, bool) { return "", false }),
 
-	mux := http.NewServeMux()
-
-	// health (unauthenticated, no rate limit needed)
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-
-	// TODO (ashu3103): add more routes here
-
-	// global middleware, outermost first
-	return middleware.Chain(mux,
-		middleware.RequestIDMiddleware(),
-		middleware.RecoverMiddleware(logger),
-		middleware.LoggerMiddleware(logger),
-		// TODO (ashu3103): add rate limiting middleware here
+		runtime.WithErrorHandler(func(ctx context.Context, mux *runtime.ServeMux, m runtime.Marshaler,
+			w http.ResponseWriter, r *http.Request, err error) {
+			if c := status.Code(err); c == codes.Internal || c == codes.Unknown {
+				logger.Error("downstream error", "request_id", middleware.RequestIDFrom(r.Context()), "err", err)
+				err = status.Error(c, "internal error")
+			}
+			runtime.DefaultHTTPErrorHandler(ctx, mux, m, w, r, err)
+		}),
 	)
+
+	if err := conns.RegisterHandler(ctx, gw); err != nil {
+		return nil, err
+	}
+
+	root := http.NewServeMux()
+	root.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) })
+	root.Handle("/", gw) // everything else goes to the generated handlers
+
+	public := map[string]bool{
+		"GET /health": true,
+		"POST /v1/auth/register": true,
+		"POST /v1/auth/login": true,
+	}
+
+	// load the public key and verify the authentication key
+	pub, err := jwtauth.LoadPublicKey("/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/private.pem") // TODO: change this
+	if err != nil {
+		return nil, err
+	}
+
+	verifier := jwtauth.NewVerifier(jwtauth.Config{
+		Issuer:   "rnd-fixer-auth", // must match the signer in auth-service
+		Audience: "rnd-fixer",
+	}, pub)
+
+	// add middlewares
+	return middleware.Chain(root,
+		middleware.AuthMiddleware(verifier, public),
+		middleware.RequestIDMiddleware(),
+	), nil
 }
