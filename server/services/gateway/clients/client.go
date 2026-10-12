@@ -3,16 +3,22 @@ package clients
 import (
 	"context"
 
-	"github.com/wbb/rnd-fixer/shared/config"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/wbb/rnd-fixer/services/gateway/middleware"
 	"github.com/wbb/rnd-fixer/shared/authctx"
+	"github.com/wbb/rnd-fixer/shared/config"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+type Client interface {
+	Close() error
+	RegisterHandler(context.Context, *runtime.ServeMux) error
+}
+
 type Clients struct {
-	conns []*grpc.ClientConn
+	conns []Client
 }
 
 func forwardIdentity(
@@ -32,16 +38,15 @@ func NewClients(cfg config.GatewayConfig) (*Clients, error) {
 	clients := &Clients{}
 	for _, d := range []struct{
 		addr string
-		set  func(*grpc.ClientConn)
+		constructor  func(*grpc.ClientConn) Client
 	}{
-		// TODO (ashu3103): add services here
+		{"localhost:9001", NewAuthClient},
 	} {
 		conn, err := dial(d.addr)
 		if err != nil {
 			return nil, err
 		}
-		clients.conns = append(clients.conns, conn)
-		d.set(conn)
+		clients.conns = append(clients.conns, d.constructor(conn))
 	}
 	return clients, nil
 }
@@ -50,4 +55,13 @@ func (c *Clients) Close() {
 	for _, conn := range c.conns {
 		_ = conn.Close()
 	}
+}
+
+func (c *Clients) RegisterHandler(ctx context.Context, mux *runtime.ServeMux) error {
+	for _, conn := range c.conns {
+		if err := conn.RegisterHandler(ctx, mux); err != nil {
+			return err;
+		}
+	}
+	return nil
 }
