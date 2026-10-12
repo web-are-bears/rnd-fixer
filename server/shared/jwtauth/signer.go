@@ -20,7 +20,7 @@ func NewSigner(key ed25519.PrivateKey, cfg Config) *Signer {
 }
 
 // Issue returns the signed token and its lifetime in seconds.
-func (s *Signer) Issue(userID, role string) (string, int32, error) {
+func (s *Signer) Issue(userID string, role string) (string, int32, error) {
 	now := time.Now()
 	claims := Claims{
 		Role: role,
