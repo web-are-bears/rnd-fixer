@@ -5,8 +5,69 @@
  */
 
 @theme static {
-  --color-paper: #fff8d6;
-  --color-butter: #ffe88a;
+  --color-paper: #f3f3f3;
+  --color-butter: #ededed;
   --color-ink: #2b2a27;
   --color-ink-soft: #5c5a52;
+
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply m-0 bg-paper text-ink antialiased bg-[length:18px_18px];
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  .heading {
+    @apply font-black uppercase font-serif;
+  }
+
+  .label {
+    @apply text-xs font-bold uppercase text-ink-soft;
+  }
+
+  .card {
+    @apply block rounded-md w-full p-4 text-left border-2 border-ink bg-butter;
+  }
+
+  .tile {
+    @apply p-3 border-2 border-ink bg-paper;
+  }
+
+  .panel {
+    @apply p-6 rounded-sm border-2 border-ink bg-paper;
+  }
+
+  .btn {
+    @apply px-3 py-1 border-2 border-ink rounded-md bg-ink text-paper
+           text-[0.9rem] font-bold uppercase ease-[ease] font-mono;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border-2 border-ink bg-paper outline-none focus:bg-white;
+  }
+
+  .badge {
+    @apply inline-block px-2 py-0.5 bg-ink text-paper text-xs font-bold uppercase;
+  }
+
+  .nav {
+    @apply flex items-center gap-4 px-6 py-3 bg-ink text-paper border-b-4 border-butter;
+  }
+
+  .nav a {
+    @apply font-black uppercase hover:text-butter;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 z-[5000] p-4 flex items-center justify-center bg-ink/50;
+  }
 }
