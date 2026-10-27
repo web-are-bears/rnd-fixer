@@ -24,14 +24,14 @@ export default function Login() {
         <h2 className="heading text-3xl">Login</h2>
         <input
           className="input"
-          placeholder="Username"
+          placeholder="(username)"
           value={uname}
           onChange={(e) => setUname(e.target.value)}
         />
         <input
           className="input"
           type="password"
-          placeholder="Password"
+          placeholder="(password)"
           value={pwd}
           onChange={(e) => setPwd(e.target.value)}
         />
