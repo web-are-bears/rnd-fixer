@@ -1,0 +1,53 @@
+name: rnd-fixer
+
+x-go-common: &go-common
+  restart: unless-stopped
+  volumes:
+    - ./shared/jwtauth/keys:/src/jwt_keys:ro
+    - ./shared/mongo/keys:/src/mongo_keys:ro
+    - go-mod:/go/pkg/mod
+    - go-build:/root/.cache/go-build
+
+x-keys-env: &keys-env
+  JWT_PRIVATE_KEY: /src/jwt_keys/private.pem
+  JWT_PUBLIC_KEY: /src/jwt_keys/public.pem
+
+x-mongo-env: &mongo-env
+  MONGO_CREDENTIALS: /src/mongo_keys/credentials.txt
+
+services:
+  auth:
+    <<: *go-common
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        SERVICE: auth
+    restart: unless-stopped
+    environment:
+      <<: [*keys-env, *mongo-env]
+      AUTH_LISTEN_ADDR: ":9001"
+      MONGO_DB: "rnd_match_fixer"
+      MONGO_COLLECTION: "auth"
+    expose:
+      - "9001"
+  gateway:
+    <<: *go-common
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        SERVICE: gateway
+    restart: unless-stopped
+    environment:
+      <<: *keys-env
+      GATEWAY_LISTEN_ADDR: ":8000"
+      AUTH_ADDR: auth:9001
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth
+
+volumes:
+  go-mod:
+  go-build:
