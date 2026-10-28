@@ -1,35 +1,9 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  Link,
-  useNavigate,
-} from "react-router-dom";
-import { isLoggedIn, logout } from "./api";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import { isLoggedIn } from "./api";
+import Layout from "./Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-
-function Layout({ children }) {
-  const nav = useNavigate();
-  return (
-    <div className="min-h-screen">
-      <nav className="nav">
-        <Link to="/">Dashboard</Link>
-        <button
-          className="btn btn--light ml-auto"
-          onClick={async () => {
-            await logout();
-            nav("/login");
-          }}
-        >
-          Logout
-        </button>
-      </nav>
-      <main className="mx-auto max-w-3xl p-6">{children}</main>
-    </div>
-  );
-}
 
 function Protected({ children }) {
   return isLoggedIn() ? (
@@ -44,6 +18,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+
         <Route
           path="/"
           element={
@@ -52,7 +27,8 @@ export default function App() {
             </Protected>
           }
         />
-        <Route path="*" element={<Navigate to="/" />} />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
