@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../api";
-
+import Button from "./Button";
 
 export default function Navbar() {
   const nav = useNavigate();
@@ -13,10 +13,9 @@ export default function Navbar() {
   return (
     <nav className="nav">
       <Link to="/">Dashboard</Link>
-
-      <button className="btn btn--light ml-auto" onClick={handleLogout}>
+      <Button onClick={handleLogout} className="ml-auto">
         Logout
-      </button>
+      </Button>
     </nav>
   );
 }
