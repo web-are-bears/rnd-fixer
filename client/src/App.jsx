@@ -6,7 +6,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-import { isLoggedIn, logout } from "./api";
+import { isLoggedIn, logout } from "./test/api";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 
