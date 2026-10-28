@@ -103,12 +103,13 @@ curl -X POST http://localhost:8000/v1/auth/login \
 
 - Docker with Docker Compose v2 (`docker compose version`). Live reload (`docker compose watch`) needs Compose 2.23 or later.
 - The JWT key pair and MongoDB credentials. Request them from [@ashu3103](https://github.com/ashu3103).
+- Make sure your device is not connected to institute's network or a network behind a firewall that blocks mongodb atlas ports.
 
 ### Add the secrets
 
 Make sure you have retrieved all three files listed below:
 
-- `pubblic.pem`
+- `public.pem`
 - `private.pem`
 - `mongo_credentials.txt`
 
