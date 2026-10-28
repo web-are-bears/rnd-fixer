@@ -51,6 +51,22 @@
            text-[0.9rem] font-bold uppercase ease-[ease] font-mono;
   }
 
+  .btn--primary {
+    @apply bg-ink text-paper hover:bg-ink-soft;
+  }
+
+  .btn--secondary {
+    @apply bg-paper text-ink hover:bg-butter;
+  }
+
+  .btn--danger {
+    @apply bg-red-700 text-white border-red-900 hover:bg-red-800;
+  }
+
+  .btn:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ink;
+  }
+
   .input {
     @apply w-full px-3 py-2 border-2 border-ink bg-paper outline-none focus:bg-white;
   }

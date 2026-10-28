@@ -1,31 +1,13 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  Link,
-  useNavigate,
-} from "react-router-dom";
-import { isLoggedIn, logout } from "./api";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { isLoggedIn } from "./test/api";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Navbar from "./components/Navbar";
 
 function Layout({ children }) {
-  const nav = useNavigate();
   return (
     <div className="min-h-screen">
-      <nav className="nav">
-        <Link to="/">Dashboard</Link>
-        <button
-          className="btn btn--light ml-auto"
-          onClick={async () => {
-            await logout();
-            nav("/login");
-          }}
-        >
-          Logout
-        </button>
-      </nav>
+      <Navbar />
       <main className="mx-auto max-w-3xl p-6">{children}</main>
     </div>
   );
