@@ -3,6 +3,8 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"log/slog"
 	"net/url"
 	"time"
@@ -20,18 +22,39 @@ type Store[T any] struct {
 }
 
 func getMongoURI(cfg *config.MongoConfig) (string, error) {
-	if cfg.Username == "" || cfg.Password == "" {
+	if cfg.Credentials == "" {
 		return "", fmt.Errorf("invalid MongoDB configuration: missing username or password")
+	}
+
+	var username string
+	var password string
+	content, err := os.ReadFile(cfg.Credentials)
+	if err != nil {
+		return "", err
+	}
+
+	// Split the content into lines
+	lines := strings.Split(string(content), "\n")
+	if len(lines) == 0 || lines[0] == "" {
+		return "", fmt.Errorf("file is empty")
+	}
+
+	firstLine := lines[0]
+	parts := strings.Split(firstLine, ":")
+
+	// Ensure there are at least two elements
+	if len(parts) >= 2 {
+		// escape username/password because they may contain characters such as
+		// @, :, /, etc.
+		username = url.QueryEscape(parts[0])
+		password = url.QueryEscape(parts[1])
+	} else {
+		return "", fmt.Errorf("The first line does not have enough elements.")
 	}
 
 	if cfg.Hostname == "" {
 		return "", fmt.Errorf("invalid MongoDB configuration: missing hostname")
 	}
-
-	// escape username/password because they may contain characters such as
-	// @, :, /, etc.
-	username := url.QueryEscape(cfg.Username)
-	password := url.QueryEscape(cfg.Password)
 
 	uri := fmt.Sprintf(
 		"mongodb+srv://%s:%s@%s/%s",
