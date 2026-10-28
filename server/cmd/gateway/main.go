@@ -45,7 +45,7 @@ func main() {
 
 	// define server attributes
 	srv := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),
+		Addr:    config.Env("GATEWAY_LISTEN_ADDR", fmt.Sprintf("%s:%d", cfg.Address, cfg.Port)),
 		Handler: handler,
 		ReadHeaderTimeout: 5*time.Second,
 		ReadTimeout:       15*time.Second,
