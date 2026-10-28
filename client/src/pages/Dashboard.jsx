@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getToken, profList, profInfo, stList, stInfo } from "../test/api";
 import Modal from "../components/Popup";
+import Card from "../components/Card";
 
 /* TODO(s-mv): make components for the error message and loading panel */
 
@@ -48,9 +49,11 @@ function ProfDetail({ uname }) {
 
       <ul className="space-y-3">
         {info.projectList.map((project) => (
-          <li key={project._id} className="tile">
-            <div className="font-bold">{project.pname}</div>
-            <div className="text-sm text-ink-soft">{project.desc}</div>
+          <li key={project._id}>
+            <Card>
+              <div className="font-bold">{project.pname}</div>
+              <div className="text-sm text-ink-soft">{project.desc}</div>
+            </Card>
           </li>
         ))}
 
@@ -92,10 +95,10 @@ function StudentDashboard() {
 
       <div className="grid gap-5">
         {profs.map((prof) => (
-          <button key={prof._id} className="card" onClick={() => setSel(prof)}>
+          <Card key={prof.uname} onClick={() => setSel(prof)} className="cursor-pointer hover:bg-paper">
             <div className="font-bold">{prof.name}</div>
             <div className="text-sm text-ink-soft">{prof.email}</div>
-          </button>
+          </Card>
         ))}
       </div>
 
@@ -142,9 +145,11 @@ function ProjectDetail({ project }) {
       ) : (
         <ul className="space-y-3">
           {students.map((student) => (
-            <li key={student._id} className="tile">
-              <div className="font-bold">{student.name}</div>
-              <div className="text-sm text-ink-soft">{student.email}</div>
+            <li key={student._id}>
+              <Card>
+                <div className="font-bold">{student.name}</div>
+                <div className="text-sm text-ink-soft">{student.email}</div>
+              </Card>
             </li>
           ))}
         </ul>
@@ -183,14 +188,10 @@ function ProfDashboard({ uname }) {
 
       <div className="grid gap-5">
         {info.projectList.map((project) => (
-          <button
-            key={project._id}
-            className="card"
-            onClick={() => setSel(project)}
-          >
+          <Card key={project._id} onClick={() => setSel(project)}>
             <div className="font-bold">{project.pname}</div>
             <span className="badge mt-2">{project.assignees} assigned</span>
-          </button>
+          </Card>
         ))}
 
         {info.projectList.length === 0 && (

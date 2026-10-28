@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../api";
+import { logout } from "../test/api";
 import Button from "./Button";
 
 export default function Navbar() {

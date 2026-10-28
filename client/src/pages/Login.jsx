@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../test/api";
+import Input from "../components/Input";
+import Button from "../components/Button";
 
 export default function Login() {
   const nav = useNavigate();
@@ -22,20 +24,24 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <form onSubmit={submit} className="panel w-full max-w-sm space-y-4">
         <h2 className="heading text-3xl">Login</h2>
-        <input
-          className="input"
+        <Input
           placeholder="(username)"
           value={uname}
-          onChange={(e) => setUname(e.target.value)}
+          onChange={(e) => {
+            setUname(e.target.value);
+          }}
         />
-        <input
-          className="input"
+        <Input
           type="password"
           placeholder="(password)"
           value={pwd}
-          onChange={(e) => setPwd(e.target.value)}
+          onChange={(e) => {
+            setPwd(e.target.value);
+          }}
         />
-        <button className="btn w-full py-2">Sign in</button>
+        <Button className="w-full py-2" type="submit">
+          Sign in
+        </Button>
         {err && <p className="text-sm font-bold text-red-700">{err}</p>}
       </form>
     </div>

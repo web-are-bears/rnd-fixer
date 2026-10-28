@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import Button from "./Button";
 
 export default function Popup({ title, onClose, children }) {
   useEffect(() => {
@@ -15,9 +16,9 @@ export default function Popup({ title, onClose, children }) {
       >
         <div className="mb-4 flex items-start justify-between gap-4">
           <h3 className="heading text-xl">{title}</h3>
-          <button className="btn" onClick={onClose}>
-            ✕
-          </button>
+          <Button variant="danger" onClick={onClose}>
+            close
+          </Button>
         </div>
         {children}
       </div>
