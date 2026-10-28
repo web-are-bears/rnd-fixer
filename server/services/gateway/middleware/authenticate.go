@@ -4,14 +4,18 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/wbb/rnd-fixer/services/gateway/apierror"
 	"github.com/wbb/rnd-fixer/shared/authctx"
-	"github.com/wbb/rnd-fixer/shared/httpx"
 	"github.com/wbb/rnd-fixer/shared/jwtauth"
 )
 
-func unauthorized(w http.ResponseWriter, msg string) {
+func unauthorized(w http.ResponseWriter, r *http.Request, msg string) {
 	w.Header().Set("WWW-Authenticate", `Bearer realm="api"`)
-	httpx.WriteError(w, http.StatusUnauthorized, msg)
+	apierror.Write(w, http.StatusUnauthorized, apierror.Error{
+		Code:      "UNAUTHENTICATED",
+		Message:   msg,
+		RequestID: RequestIDFrom(r.Context()),
+	})
 }
 
 func AuthMiddleware(v *jwtauth.Verifier, public map[string]bool) Middleware {
@@ -25,14 +29,14 @@ func AuthMiddleware(v *jwtauth.Verifier, public map[string]bool) Middleware {
 			raw, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
 			// authentication token not found - redirect to login page
 			if !ok || raw == "" {
-				unauthorized(w, "missing or malformed authorization token")
+				unauthorized(w, r, "missing or malformed authorization token")
 				return
 			}
 
 			// failed to verify claims - redirect to login page
 			claims, err := v.Verify(raw)
 			if err != nil {
-				unauthorized(w, "invalid or expired token")
+				unauthorized(w, r, "invalid or expired token")
 				return
 			}
 

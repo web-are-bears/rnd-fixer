@@ -6,11 +6,11 @@ import (
 	"net/http"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/wbb/rnd-fixer/services/gateway/apierror"
 	"github.com/wbb/rnd-fixer/services/gateway/clients"
 	"github.com/wbb/rnd-fixer/services/gateway/middleware"
+	"github.com/wbb/rnd-fixer/shared/config"
 	"github.com/wbb/rnd-fixer/shared/jwtauth"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -25,15 +25,14 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 
 		// block clients from injecting arbitrary metadata via "Grpc-Metadata-*" headers
 		runtime.WithIncomingHeaderMatcher(func(string) (string, bool) { return "", false }),
+		runtime.WithOutgoingHeaderMatcher(func(string) (string, bool) { return "", false }),
 
 		runtime.WithErrorHandler(func(ctx context.Context, mux *runtime.ServeMux, m runtime.Marshaler,
 			w http.ResponseWriter, r *http.Request, err error) {
-			if c := status.Code(err); c == codes.Internal || c == codes.Unknown {
-				logger.Error("downstream error", "request_id", middleware.RequestIDFrom(r.Context()), "err", err)
-				err = status.Error(c, "internal error")
-			}
-			runtime.DefaultHTTPErrorHandler(ctx, mux, m, w, r, err)
-		}),
+				httpStatus, e := apierror.FromError(err)
+				e.RequestID = middleware.RequestIDFrom(r.Context())
+				apierror.Write(w, httpStatus, e)
+			}),
 	)
 
 	if err := conns.RegisterHandler(ctx, gw); err != nil {
@@ -51,7 +50,7 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 	}
 
 	// load the public key and verify the authentication key
-	pub, err := jwtauth.LoadPublicKey("/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/public.pem") // TODO: change this
+	pub, err := jwtauth.LoadPublicKey(config.Env("JWT_PUBLIC_KEY", "/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/public.pem"))
 	if err != nil {
 		logger.Error("failed to fetch public key", "error", err)
 		return nil, err
@@ -66,5 +65,6 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 	return middleware.Chain(root,
 		middleware.AuthMiddleware(verifier, public),
 		middleware.RequestIDMiddleware(),
+		middleware.RecoverMiddleware(logger),
 	), nil
 }

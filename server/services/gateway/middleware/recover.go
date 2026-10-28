@@ -3,6 +3,8 @@ package middleware
 import (
 	"log/slog"
 	"net/http"
+
+	"github.com/wbb/rnd-fixer/services/gateway/apierror"
 )
 
 func RecoverMiddleware(logger *slog.Logger) Middleware {
@@ -11,7 +13,12 @@ func RecoverMiddleware(logger *slog.Logger) Middleware {
 			defer func() {
 				if err := recover(); err != nil {
 					logger.Error("panic recovered", "error", err)
-					http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+					reqID := RequestIDFrom(r.Context())
+					apierror.Write(w, http.StatusInternalServerError, apierror.Error{
+						Code:      "INTERNAL",
+						Message:   "internal error",
+						RequestID: reqID,
+					})
 				}
 			}()
 			next.ServeHTTP(w, r)

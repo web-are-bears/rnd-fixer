@@ -2,14 +2,16 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	mdl "github.com/wbb/rnd-fixer/services/auth/model"
 	pb "github.com/wbb/rnd-fixer/services/auth/proto"
+	"github.com/wbb/rnd-fixer/shared/config"
 	"github.com/wbb/rnd-fixer/shared/jwtauth"
 	"github.com/wbb/rnd-fixer/shared/mongo"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Handler struct {
@@ -19,7 +21,7 @@ type Handler struct {
 }
 
 func NewHandler(s *mongo.Store[mdl.UserDoc]) *Handler {
-	priv, err := jwtauth.LoadPrivateKey("/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/private.pem") // TODO: change this
+	priv, err := jwtauth.LoadPrivateKey(config.Env("JWT_PRIVATE_KEY", "/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/private.pem"))
 	if err != nil {
 		return nil
 	}
@@ -62,13 +64,13 @@ func (handle *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 
 	// verify the password
 	if err := bcrypt.CompareHashAndPassword([]byte(document.Password), []byte(req.Password)); err != nil {
-		return nil, fmt.Errorf("incorrect credentials")
+		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
 	// generate jwt token
 	tok, _, err := handle.signer.Issue(document.Username, document.Role)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "token issue error")
 	}
 
 	return &pb.LoginResponse{AccessToken: tok}, nil
