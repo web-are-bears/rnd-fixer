@@ -3,20 +3,10 @@ import { getToken, profList, profInfo, stList, stInfo } from "../test/api";
 import Modal from "../components/Popup";
 import Card from "../components/Card";
 
-/* TODO(s-mv): make components for the error message and loading panel */
-
 const Loading = () => <p className="label">Loading…</p>;
 
 function ErrorMessage({ message }) {
   return <p className="text-sm text-red-700">{message}</p>;
-}
-
-function isRoleMismatch(error) {
-  return (
-    error?.status === 403 ||
-    error?.code === "ROLE_MISMATCH" ||
-    error?.message === "Forbidden: insufficient role"
-  );
 }
 
 function ProfDetail({ uname }) {

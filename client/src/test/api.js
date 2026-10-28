@@ -1,4 +1,4 @@
-import { USERS, ADMINS, PROFS, PROJECTS, STUDENTS } from "./data";
+import { USERS, PROFS, PROJECTS, STUDENTS } from "./data";
 
 const COOKIE_NAME = "pikachu";
 const TOKEN_PREFIX = "charizard-";
