@@ -13,12 +13,14 @@ export default function Button({
     light: "btn btn--light",
   };
 
-  return <button
-    type={type}
-    disabled={disabled}
-    onClick={onClick}
-    className={`${variants[variant] ?? variants.primary} ${className}`}
-  >
-    {children}
-  </button>;
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      onClick={onClick}
+      className={`${variants[variant] ?? variants.primary} ${className}`}
+    >
+      {children}
+    </button>
+  );
 }

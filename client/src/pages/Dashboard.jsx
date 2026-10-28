@@ -95,7 +95,11 @@ function StudentDashboard() {
 
       <div className="grid gap-5">
         {profs.map((prof) => (
-          <Card key={prof.uname} onClick={() => setSel(prof)} className="cursor-pointer hover:bg-paper">
+          <Card
+            key={prof.uname}
+            onClick={() => setSel(prof)}
+            className="cursor-pointer hover:bg-paper"
+          >
             <div className="font-bold">{prof.name}</div>
             <div className="text-sm text-ink-soft">{prof.email}</div>
           </Card>
