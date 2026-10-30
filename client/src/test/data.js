@@ -9,6 +9,8 @@
  *           <token_dist(student_id:num_tokens)>)
  *   Student(_id, uname, email, name, about, [links], final_proj_id,
  *           <token_dist(proj_id:num_tokens))
+ *
+ *   PHASE -> temp added by s-mv
  */
 
 export const USERS = {
@@ -89,7 +91,7 @@ export const STUDENTS = {
     name: "Jay Patel",
     about: "",
     links: [],
-    final_proj_id: "proj_pokemon_assembly",
+    final_proj_id: null,
     token_dist: {},
   },
   od: {
@@ -99,7 +101,47 @@ export const STUDENTS = {
     name: "Om Dwivedi",
     about: "",
     links: [],
-    final_proj_id: "proj_data_dependence_graphs",
+    final_proj_id: null,
     token_dist: {},
   },
+  ksh: {
+    _id: "ksh",
+    uname: "ksh",
+    email: "ksh@student.com",
+    name: "Kshitij",
+    about: "",
+    links: [],
+    final_proj_id: null,
+    token_dist: {},
+  },
+  ar: {
+    _id: "ar",
+    uname: "ar",
+    email: "ar@student.com",
+    name: "Aryan",
+    about: "",
+    links: [],
+    final_proj_id: [],
+    token_dist: {},
+  },
+  bn: {
+    _id: "bn",
+    uname: "bn",
+    email: "bn@student.com",
+    name: "Banipratap Tejpratap Pratap Singh",
+    about: "",
+    links: [],
+    final_proj_id: [],
+    token_dist: {},
+  }
 };
+
+/*
+ * PHASE:
+ * 0 - phase 0, project filling
+ * 1 - phase 1, student token distribution
+ * 2 - phase 2, professor token distribution
+ * 3 - phase 3, match fixing
+ * 4 - phase 4 (if any), admin wrecks havoc
+ */
+let PHASE = 0;
