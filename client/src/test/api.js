@@ -4,30 +4,27 @@ const COOKIE_NAME = "pikachu";
 const TOKEN_PREFIX = "charizard-";
 const COOKIE_MAX_AGE = 14 * 24 * 60 * 60; // 14 days
 
-/* TODO(s-mv): dummy error handling */
+/*** auth ***/
 
-export const isLoggedIn = () =>
-  document.cookie
-    .split("; ")
-    .some((cookie) => cookie.startsWith(`${COOKIE_NAME}=`));
+export const isLoggedIn = () => !!getToken();
 
 export function getToken() {
-  const escapedName = COOKIE_NAME.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = document.cookie.match(
-    new RegExp(`(?:^|; )${escapedName}=([^;]*)`),
-  );
+  const cookie = document.cookie
+    .split("; ")
+    .find((c) => c.startsWith(`${COOKIE_NAME}=`));
 
-  if (!match) return null;
+  if (!cookie) return null;
 
   try {
-    const value = decodeURIComponent(match[1]);
+    const value = decodeURIComponent(cookie.slice(COOKIE_NAME.length + 1));
 
     if (!value.startsWith(TOKEN_PREFIX)) return null;
 
     const uname = decodeURIComponent(value.slice(TOKEN_PREFIX.length));
-    const account = Object.values(USERS).find((u) => u.uname === uname);
 
-    if (!account) return null;
+    if (!Object.values(USERS).some((u) => u.uname === uname)) {
+      return null;
+    }
 
     return { uname };
   } catch {
@@ -36,12 +33,15 @@ export function getToken() {
 }
 
 export async function login(uname, pwd) {
-  if (!uname || !pwd) throw new Error("Username and password required");
+  if (!uname || !pwd) {
+    throw new Error("Username and password required");
+  }
 
   const account = Object.values(USERS).find((u) => u.uname === uname);
 
-  if (!account || account.pass !== pwd)
+  if (!account || account.pass !== pwd) {
     throw new Error("Invalid username or password");
+  }
 
   const token = `${TOKEN_PREFIX}${encodeURIComponent(uname)}`;
 
@@ -56,52 +56,79 @@ export async function logout() {
   document.cookie = `${COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
 }
 
-export async function profList() {
-  return Object.values(PROFS).map(({ _id, uname, name, email }) => ({
-    _id,
-    uname,
-    name,
-    email,
-  }));
+/*** crud factory ***/
+
+// TODO(s-mv): add permission clauses
+
+function createCRUD(collection, prefix) {
+  return {
+    async getAll() {
+      return Object.values(collection);
+    },
+
+    async get(uname) {
+      const record = collection[uname];
+
+      if (!record) throw new Error(`Record not found: ${uname}`);
+
+      return record;
+    },
+
+    async add(data) {
+      const id = data._id || `${prefix}_${crypto.randomUUID()}`;
+
+      if (collection[id]) {
+        throw new Error(`Record already exists: ${id}`);
+      }
+
+      const record = { ...data, _id: id };
+      collection[id] = record;
+
+      return record;
+    },
+
+    async update(id, changes) {
+      const existing = collection[id];
+
+      if (!existing) throw new Error(`Record not found: ${id}`);
+
+      const updated = { ...existing, ...changes, _id: id };
+      collection[id] = updated;
+
+      return updated;
+    },
+
+    async remove(id) {
+      const record = collection[id];
+
+      if (!record) throw new Error(`Record not found: ${id}`);
+
+      delete collection[id];
+      return record;
+    },
+  };
 }
 
-export async function profInfo(uname) {
-  const prof = Object.values(PROFS).find(
-    (p) => p.uname === uname || p._id === uname,
-  );
+/*** instantiation ***/
 
-  if (!prof) throw new Error(`Professor not found (${uname})`);
+export const students = {
+  ...createCRUD(STUDENTS, "student"),
+  async getByProject(projectId) {
+    return Object.values(STUDENTS).filter(
+      (student) => student.final_proj_id == projectId,
+    );
+  },
+};
 
-  const projectList = Object.values(PROJECTS)
-    .filter((project) => project.prof_id === prof._id)
-    .map((project) => ({
-      ...project,
-      assignees: Object.values(STUDENTS).filter(
-        (student) => student.final_proj_id === project._id,
-      ).length,
-    }));
+export const profs = createCRUD(PROFS, "prof");
 
-  return { ...prof, projectList };
-}
+export const projects = {
+  ...createCRUD(PROJECTS, "project"),
+  async getByProf(profId) {
+    return Object.values(PROJECTS).filter(
+      (project) => project.prof_id == profId,
+    );
+  },
+};
 
-export async function stList(pname) {
-  const project = Object.values(PROJECTS).find(
-    (p) => p.pname === pname || p._id === pname,
-  );
-
-  if (!project) throw new Error(`Project not found (${pname})`);
-
-  return Object.values(STUDENTS)
-    .filter((student) => student.final_proj_id === project._id)
-    .map(({ _id, uname, name, email }) => ({ _id, uname, name, email }));
-}
-
-export async function stInfo(uname) {
-  const student = Object.values(STUDENTS).find(
-    (s) => s.uname === uname || s._id === uname,
-  );
-
-  if (!student) throw new Error(`Student not found (${uname})`);
-
-  return { ...student };
-}
+export const users = createCRUD(USERS, "user");
