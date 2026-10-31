@@ -133,7 +133,7 @@ export const STUDENTS = {
     links: [],
     final_proj_id: [],
     token_dist: {},
-  }
+  },
 };
 
 /*

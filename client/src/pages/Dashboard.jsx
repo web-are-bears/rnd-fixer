@@ -1,28 +1,39 @@
 import { useEffect, useState } from "react";
-import { getToken, profList, profInfo, stList, stInfo } from "../test/api";
-import Modal from "../components/Popup";
+import { getToken, profs, projects, students, users } from "../test/api";
 import Card from "../components/Card";
+import Modal from "../components/Popup";
 
-const Loading = () => <p className="label">Loading…</p>;
+function Loading() {
+  return <p className="text-sm text-ink-soft">Loading...</p>;
+}
 
 function ErrorMessage({ message }) {
-  return <p className="text-sm text-red-700">{message}</p>;
+  return (
+    <p className="text-sm font-bold text-red-700" role="alert">
+      {message}
+    </p>
+  );
 }
 
 function ProfDetail({ uname }) {
   const [info, setInfo] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
-    profInfo(uname)
-      .then((result) => {
-        if (active) setInfo(result);
-      })
-      .catch((err) => {
+    async function load() {
+      try {
+        const prof = await profs.get(uname);
+        const projectList = await projects.getByProf(prof._id);
+
+        if (active) setInfo({ ...prof, projectList });
+      } catch (err) {
         if (active) setError(err.message || "Failed to load professor.");
-      });
+      }
+    }
+
+    load();
 
     return () => {
       active = false;
@@ -33,172 +44,284 @@ function ProfDetail({ uname }) {
   if (!info) return <Loading />;
 
   return (
-    <>
-      <p className="mb-4 text-sm text-ink-soft">{info.email}</p>
-      <h4 className="label mb-2">Projects</h4>
-
-      <ul className="space-y-3">
-        {info.projectList.map((project) => (
-          <li key={project._id}>
-            <Card>
-              <div className="font-bold">{project.pname}</div>
-              <div className="text-sm text-ink-soft">{project.desc}</div>
-            </Card>
-          </li>
-        ))}
-
-        {info.projectList.length === 0 && (
-          <li className="italic text-ink-soft">No projects.</li>
-        )}
-      </ul>
-    </>
-  );
-}
-
-function StudentDashboard() {
-  const [profs, setProfs] = useState(null);
-  const [sel, setSel] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let active = true;
-
-    profList()
-      .then((result) => {
-        if (active) setProfs(result);
-      })
-      .catch((err) => {
-        if (active) setError(err.message || "Failed to load professors.");
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  if (error) return <ErrorMessage message={error} />;
-  if (!profs) return <Loading />;
-
-  return (
-    <>
-      <h2 className="heading mb-6 text-3xl">Professors</h2>
-
-      <div className="grid gap-5">
-        {profs.map((prof) => (
-          <Card
-            key={prof.uname}
-            onClick={() => setSel(prof)}
-            className="cursor-pointer hover:bg-paper"
-          >
-            <div className="font-bold">{prof.name}</div>
-            <div className="text-sm text-ink-soft">{prof.email}</div>
-          </Card>
-        ))}
+    <div className="space-y-6">
+      <div>
+        <h2 className="heading text-3xl">{info.name}</h2>
+        <p className="text-sm text-ink-soft">{info.email}</p>
+        {info.about && <p className="mt-3">{info.about}</p>}
       </div>
 
-      {sel && (
-        <Modal title={sel.name} onClose={() => setSel(null)}>
-          <ProfDetail uname={sel.uname} />
-        </Modal>
-      )}
-    </>
+      <section className="space-y-3">
+        <h3 className="heading text-xl">Projects</h3>
+
+        {info.projectList.length === 0 ? (
+          <p className="text-sm text-ink-soft">No projects available.</p>
+        ) : (
+          info.projectList.map((project) => (
+            <Card key={project._id}>
+              <h4 className="font-bold">{project.pname}</h4>
+              <p className="mt-1 text-sm">{project.desc}</p>
+              <p className="mt-2 text-xs text-ink-soft">
+                Maximum students: {project.max_students}
+              </p>
+            </Card>
+          ))
+        )}
+      </section>
+    </div>
   );
 }
 
-function ProjectDetail({ project }) {
-  const [students, setStudents] = useState(null);
-  const [error, setError] = useState(null);
+function StudentDashboard({ uname }) {
+  const [info, setInfo] = useState(null);
+  const [profList, setProfList] = useState(null);
+  const [selectedProf, setSelectedProf] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
-    stList(project._id)
-      .then((result) => {
-        if (active) setStudents(result);
-      })
-      .catch((err) => {
-        if (active) setError(err.message || "Failed to load students.");
-      });
+    async function load() {
+      try {
+        const [student, profList] = await Promise.all([
+          students.get(uname),
+          profs.getAll(),
+        ]);
+
+        if (active) {
+          setInfo(student);
+          setProfList(profList);
+        }
+      } catch (err) {
+        if (active) setError(err.message || "Failed to load student.");
+      }
+    }
+
+    load();
 
     return () => {
       active = false;
     };
-  }, [project._id]);
+  }, [uname]);
+
+  if (error) return <ErrorMessage message={error} />;
+  if (!info || !profList) return <Loading />;
 
   return (
-    <>
-      <p className="mb-4 text-sm text-ink-soft">{project.desc}</p>
-      <h4 className="label mb-2">Selected students</h4>
+    <div className="space-y-6">
+      <div>
+        <h2 className="heading text-3xl">{info.name}</h2>
+        <p className="text-sm text-ink-soft">{info.email}</p>
+        {info.about && <p className="mt-3">{info.about}</p>}
+      </div>
 
-      {error ? (
-        <ErrorMessage message={error} />
-      ) : !students ? (
-        <Loading />
-      ) : students.length === 0 ? (
-        <p className="italic text-ink-soft">None yet.</p>
-      ) : (
-        <ul className="space-y-3">
-          {students.map((student) => (
-            <li key={student._id}>
-              <Card>
-                <div className="font-bold">{student.name}</div>
-                <div className="text-sm text-ink-soft">{student.email}</div>
-              </Card>
-            </li>
-          ))}
-        </ul>
+      <section className="space-y-3">
+        <h3 className="heading text-xl">Project Assignment</h3>
+
+        {info.final_proj_id ? (
+          <p className="text-sm">
+            Assigned project ID: <strong>{info.final_proj_id}</strong>
+          </p>
+        ) : (
+          <p className="text-sm text-ink-soft">
+            You have not been assigned a project yet.
+          </p>
+        )}
+      </section>
+
+      <section className="space-y-3">
+        <h3 className="heading text-xl">Professors</h3>
+
+        {profList.length === 0 ? (
+          <p className="text-sm text-ink-soft">No professors available.</p>
+        ) : (
+          profList.map((prof) => (
+            <Card
+              key={prof._id}
+              onClick={() => setSelectedProf(prof)}
+              className="cursor-pointer hover:bg-butter"
+            >
+              <h4 className="font-bold">{prof.name}</h4>
+              <p className="text-sm text-ink-soft">{prof.email}</p>
+              {prof.about && <p className="mt-2 text-sm">{prof.about}</p>}
+            </Card>
+          ))
+        )}
+      </section>
+
+      {selectedProf && (
+        <Modal
+          title={selectedProf.name}
+          onClose={() => setSelectedProf(null)}
+        >
+          <ProfDetail uname={selectedProf.uname} />
+        </Modal>
       )}
-    </>
+    </div>
+  );
+}
+
+function ProjectDetail({ projectId }) {
+  const [info, setInfo] = useState(null);
+  const [studentList, setStudentList] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    async function load() {
+      try {
+        const [project, studentList] = await Promise.all([
+          projects.get(projectId),
+          students.getByProject(projectId),
+        ]);
+
+        if (active) {
+          setInfo(project);
+          setStudentList(studentList);
+        }
+      } catch (err) {
+        if (active) setError(err.message || "Failed to load project.");
+      }
+    }
+
+    load();
+
+    return () => {
+      active = false;
+    };
+  }, [projectId]);
+
+  if (error) return <ErrorMessage message={error} />;
+  if (!info || !studentList) return <Loading />;
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="heading text-3xl">{info.pname}</h2>
+        <p className="mt-2">{info.desc}</p>
+        <p className="mt-2 text-sm text-ink-soft">
+          Maximum students: {info.max_students}
+        </p>
+      </div>
+
+      <section className="space-y-3">
+        <h3 className="heading text-xl">Assigned Students</h3>
+
+        {studentList.length === 0 ? (
+          <p className="text-sm text-ink-soft">No students assigned.</p>
+        ) : (
+          studentList.map((student) => (
+            <Card key={student._id}>
+              <h4 className="font-bold">{student.name}</h4>
+              <p className="text-sm text-ink-soft">{student.uname}</p>
+              <p className="text-sm">{student.email}</p>
+            </Card>
+          ))
+        )}
+      </section>
+    </div>
   );
 }
 
 function ProfDashboard({ uname }) {
   const [info, setInfo] = useState(null);
-  const [sel, setSel] = useState(null);
-  const [error, setError] = useState(null);
+  const [projectList, setProjectList] = useState(null);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
 
-    profInfo(uname)
-      .then((result) => {
-        if (active) setInfo(result);
-      })
-      .catch((err) => {
-        if (active) setError(err.message || "Failed to load your projects.");
-      });
+    async function load() {
+      try {
+        const prof = await profs.get(uname);
+        if (active) setInfo(prof);
+      } catch (err) {
+        if (active) setError(err.message || "Failed to load professor.");
+      }
+    }
+
+    load();
 
     return () => {
       active = false;
     };
   }, [uname]);
 
+  useEffect(() => {
+    if (!info) return;
+
+    let active = true;
+
+    async function load() {
+      try {
+        const result = await projects.getByProf(info._id);
+
+        const withAssignees = await Promise.all(
+          result.map(async (project) => ({
+            ...project,
+            assignees: (await students.getByProject(project._id)).length,
+          })),
+        );
+
+        if (active) setProjectList(withAssignees);
+      } catch (err) {
+        if (active) setError(err.message || "Failed to load projects.");
+      }
+    }
+
+    load();
+
+    return () => {
+      active = false;
+    };
+  }, [info]);
+
   if (error) return <ErrorMessage message={error} />;
-  if (!info) return <Loading />;
+  if (!info || !projectList) return <Loading />;
 
   return (
-    <>
-      <h2 className="heading mb-6 text-3xl">Your projects</h2>
-
-      <div className="grid gap-5">
-        {info.projectList.map((project) => (
-          <Card key={project._id} onClick={() => setSel(project)}>
-            <div className="font-bold">{project.pname}</div>
-            <span className="badge mt-2">{project.assignees} assigned</span>
-          </Card>
-        ))}
-
-        {info.projectList.length === 0 && (
-          <p className="italic text-ink-soft">You have no projects yet.</p>
-        )}
+    <div className="space-y-6">
+      <div>
+        <h2 className="heading text-3xl">{info.name}</h2>
+        <p className="text-sm text-ink-soft">{info.email}</p>
+        {info.about && <p className="mt-3">{info.about}</p>}
       </div>
 
-      {sel && (
-        <Modal title={sel.pname} onClose={() => setSel(null)}>
-          <ProjectDetail project={sel} />
+      <section className="space-y-3">
+        <h3 className="heading text-xl">Your Projects</h3>
+
+        {projectList.length === 0 ? (
+          <p className="text-sm text-ink-soft">You have no projects yet.</p>
+        ) : (
+          projectList.map((project) => (
+            <Card
+              key={project._id}
+              onClick={() => setSelectedProject(project)}
+              className="cursor-pointer hover:bg-butter"
+            >
+              <h4 className="font-bold">{project.pname}</h4>
+              <p className="mt-1 text-sm">{project.desc}</p>
+              <p className="mt-2 text-xs text-ink-soft">
+                <span className="badge">
+                  {project.assignees} / {project.max_students} students
+                </span>
+              </p>
+            </Card>
+          ))
+        )}
+      </section>
+
+      {selectedProject && (
+        <Modal
+          title={selectedProject.pname}
+          onClose={() => setSelectedProject(null)}
+        >
+          <ProjectDetail projectId={selectedProject._id} />
         </Modal>
       )}
-    </>
+    </div>
   );
 }
 
@@ -216,7 +339,7 @@ function AdminDashboard() {
 export default function Dashboard() {
   const [account, setAccount] = useState(null);
   const [role, setRole] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -225,36 +348,34 @@ export default function Dashboard() {
       const token = getToken();
 
       if (!token) {
-        if (active) setError("You are not logged in. Please log in again.");
+        if (active) {
+          setError("You are not logged in. Please log in again.");
+        }
         return;
       }
 
       if (active) setAccount(token);
 
-      // Check whether the account exists in the professor collection.
       try {
-        await profInfo(token.uname);
+        await profs.get(token.uname);
         if (active) setRole("prof");
         return;
-      } catch (err) {
-        // Only continue if the professor record wasn't found.
-        if (!err.message?.startsWith("Professor not found")) {
-          if (active) setError(err.message || "Unable to identify account.");
-          return;
-        }
-      }
+      } catch { }
 
-      // Otherwise, check whether it exists in the student collection.
       try {
-        await stInfo(token.uname);
+        await students.get(token.uname);
         if (active) setRole("student");
         return;
-      } catch (err) {
-        if (!err.message?.startsWith("Student not found")) {
-          if (active) setError(err.message || "Unable to identify account.");
+      } catch { }
+
+      try {
+        const user = await users.get(token.uname);
+
+        if (active && user.role === "admin") {
+          setRole("admin");
           return;
         }
-      }
+      } catch { }
 
       if (active) {
         setError("Your account does not match a supported dashboard role.");
@@ -271,17 +392,14 @@ export default function Dashboard() {
   if (error) return <ErrorMessage message={error} />;
   if (!account || !role) return <Loading />;
 
-  if (role === "prof") {
-    return <ProfDashboard uname={account.uname} />;
+  switch (role) {
+    case "prof":
+      return <ProfDashboard uname={account.uname} />;
+    case "student":
+      return <StudentDashboard uname={account.uname} />;
+    case "admin":
+      return <AdminDashboard />;
+    default:
+      return <ErrorMessage message="Unsupported account role." />;
   }
-
-  if (role === "student") {
-    return <StudentDashboard />;
-  }
-
-  if (role === "admin") {
-    return <AdminDashboard />;
-  }
-
-  return <ErrorMessage message="Unsupported account role." />;
 }
