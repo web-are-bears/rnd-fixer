@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Navbar from "./components/Navbar";
 import Profs from "@/pages/Profs";
 import Projects from "@/pages/Projects";
+import Students from "@/pages/Students";
 
 function Layout({ children }) {
   return (
@@ -49,6 +50,14 @@ export default function App() {
           element={
             <Protected>
               <Projects />
+            </Protected>
+          }
+        />
+        <Route
+          path="/students"
+          element={
+            <Protected>
+              <Students />
             </Protected>
           }
         />
