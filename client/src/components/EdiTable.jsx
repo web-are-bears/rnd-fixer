@@ -15,7 +15,7 @@ export default function EdiTable({
   rowKey = "_id",
 }) {
   const [page, setPage] = useState(0);
-  const [editingID, setEditingId] = useState(null);
+  const [editingID, setEditingID] = useState(null);
   const [draft, setDraft] = useState(null);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
