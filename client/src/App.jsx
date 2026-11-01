@@ -3,6 +3,8 @@ import { isLoggedIn } from "./test/api";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Navbar from "./components/Navbar";
+import Profs from "@/pages/Profs";
+import Projects from "@/pages/Projects";
 
 function Layout({ children }) {
   return (
@@ -31,6 +33,22 @@ export default function App() {
           element={
             <Protected>
               <Dashboard />
+            </Protected>
+          }
+        />
+        <Route
+          path="/profs"
+          element={
+            <Protected>
+              <Profs />
+            </Protected>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <Protected>
+              <Projects />
             </Protected>
           }
         />

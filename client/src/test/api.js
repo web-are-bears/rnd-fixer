@@ -116,7 +116,7 @@ export const students = {
 
   getByProject(projectID) {
     return Object.values(STUDENTS).filter(
-      (student) => student.final_proj_id === projectID
+      (student) => student.final_proj_id === projectID,
     );
   },
 
@@ -142,7 +142,7 @@ export const students = {
 
     const total = Object.values(token_dist).reduce(
       (sum, tokens) => sum + Number(tokens),
-      0
+      0,
     );
 
     if (total > 100) {
