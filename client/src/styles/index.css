@@ -7,60 +7,116 @@
 @theme static {
   --color-paper: #f3f3f3;
   --color-butter: #ededed;
-  --color-ink: #2b2a27;
-  --color-ink-soft: #5c5a52;
+  --color-ink: #2b2a47;
+  --color-ink-soft: #5c5a82;
 
   --font-sans: "Inter", sans-serif;
-  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-serif: "Times New Roman", serif;
   --font-mono: "JetBrains Mono", monospace;
 }
 
 @layer base {
   body {
-    @apply m-0 bg-paper text-ink antialiased bg-[length:18px_18px];
+    @apply m-0 bg-paper text-ink antialiased;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   button {
     @apply cursor-pointer;
   }
+
+  a {
+    @apply text-ink underline underline-offset-2;
+  }
+
+  a:hover {
+    @apply text-ink-soft;
+  }
+
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  ::selection {
+    @apply bg-ink text-paper;
+  }
 }
 
 @layer components {
   .heading {
-    @apply font-black uppercase font-serif;
+    @apply font-serif font-bold tracking-tight text-ink;
   }
 
   .label {
-    @apply text-xs font-bold uppercase text-ink-soft;
+    @apply text-xs font-bold uppercase tracking-wide text-ink-soft;
+  }
+
+  .metadata {
+    @apply font-mono text-xs text-ink-soft;
+  }
+
+  .nav {
+    @apply flex items-center gap-5 px-5 py-3
+           bg-ink text-paper border-b-4 border-butter;
+  }
+
+  .nav a {
+    @apply no-underline font-semibold text-sm
+           text-paper;
+  }
+
+  .nav a:hover {
+    @apply underline text-butter;
   }
 
   .card {
-    @apply block rounded-md w-full p-4 text-left border-2 border-ink bg-butter;
+    @apply block w-full p-4
+           text-left bg-butter
+           border border-ink;
+  }
+
+  .card:hover {
+    @apply bg-paper;
   }
 
   .tile {
-    @apply p-3 border-2 border-ink bg-paper;
+    @apply p-3 bg-paper border border-ink;
   }
 
   .panel {
-    @apply p-6 rounded-sm border-2 border-ink bg-paper;
+    @apply p-5 bg-paper border border-ink;
   }
 
   .btn {
-    @apply px-3 py-1 border-2 border-ink rounded-sm bg-ink text-paper
-           text-[0.9rem] font-bold uppercase ease-[ease] font-mono;
+    @apply inline-block px-3 py-1.5
+           border border-ink
+           text-sm font-semibold
+           uppercase tracking-wide
+           font-mono;
   }
 
   .btn--primary {
-    @apply bg-ink text-paper hover:bg-ink-soft;
+    @apply bg-ink text-paper;
+  }
+
+  .btn--primary:hover {
+    @apply bg-ink-soft;
   }
 
   .btn--secondary {
-    @apply bg-paper text-ink hover:bg-butter;
+    @apply bg-paper text-ink;
+  }
+
+  .btn--secondary:hover {
+    @apply bg-butter;
   }
 
   .btn--danger {
-    @apply bg-red-700 text-white border-red-900 hover:bg-red-800;
+    @apply bg-ink text-paper;
   }
 
   .btn:focus-visible {
@@ -68,22 +124,70 @@
   }
 
   .input {
-    @apply w-full px-3 py-2 border-2 border-ink bg-paper outline-none focus:bg-white;
+    @apply w-full px-3 py-2
+           bg-white text-ink
+           border border-ink
+           outline-none;
+  }
+
+  .input:focus {
+    @apply outline-1 outline-ink outline-offset-1;
   }
 
   .badge {
-    @apply inline-block px-2 py-0.5 bg-ink text-paper text-xs font-bold uppercase;
-  }
-
-  .nav {
-    @apply flex items-center gap-4 px-6 py-3 bg-ink text-paper border-b-4 border-butter;
-  }
-
-  .nav a {
-    @apply font-black uppercase hover:text-butter;
+    @apply inline-block px-2 py-0.5
+           bg-butter text-ink
+           border border-ink
+           text-xs font-semibold uppercase;
   }
 
   .modal-backdrop {
-    @apply fixed inset-0 z-[5000] p-4 flex items-center justify-center bg-ink/50;
+    @apply fixed inset-0 z-[5000]
+           flex items-center justify-center p-4
+           bg-ink/50;
+  }
+
+  .modal {
+    @apply w-full max-w-lg p-5
+           bg-paper border-2 border-ink;
+  }
+
+  .page-container {
+    @apply mx-auto w-full max-w-7xl px-5 py-6;
+  }
+
+  .page-header {
+    @apply flex items-center justify-between
+           gap-4 pb-3 mb-5
+           border-b-2 border-ink;
+  }
+
+  .section {
+    @apply mb-6;
+  }
+
+  .divider {
+    @apply border-t border-ink;
+  }
+
+  .table {
+    @apply w-full text-sm text-left
+           border-collapse;
+  }
+
+  .table th {
+    @apply px-3 py-2
+           bg-butter text-ink
+           border border-ink
+           text-xs font-bold uppercase;
+  }
+
+  .table td {
+    @apply px-3 py-2
+           border border-ink;
+  }
+
+  .table tbody tr:nth-child(even) {
+    @apply bg-butter;
   }
 }
