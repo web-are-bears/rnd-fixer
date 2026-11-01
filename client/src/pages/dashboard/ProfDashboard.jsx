@@ -4,6 +4,21 @@ import Card from "@/components/Card";
 import Popup from "@/components/Popup";
 import { profs, projects, students } from "@/test/api";
 
+/*
+ * PHASE 0 - prof should be able to see student list, their own projects,
+ *    and also add/remove/modify projects. maybe we need a EdiTable component
+ *    (pun intended)
+ * PHASE 1 - prof should NOT be able to remove projects, only add them.
+ * PHASE 2 - prof should be able to see a list of students who have given
+ *    projects tokens. per project the prof would get 100 tokens so depending
+ *    on the sum of token_dist in that project, they can assign tokens to
+ *    students
+ * PHASE 3 - prof should be able to navigate but they cannot modify their
+ *    distribution in this phase
+ * PHASE 4 - prof should be able to see final assignments. we could add a
+ *    report/ticket system to admin later for this phase's "corrections" part
+ */
+
 function ProjectDetail({ projectId }) {
   const [info, setInfo] = useState(null);
   const [studentList, setStudentList] = useState(null);

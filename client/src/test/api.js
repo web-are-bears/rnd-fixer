@@ -1,4 +1,4 @@
-import { USERS, PROFS, PROJECTS, STUDENTS } from "./data";
+import { USERS, PROFS, PROJECTS, STUDENTS, PHASE } from "./data";
 
 const COOKIE_NAME = "pikachu";
 const TOKEN_PREFIX = "charizard-";
@@ -132,3 +132,9 @@ export const projects = {
 };
 
 export const users = createCRUD(USERS, "user");
+
+/*** terribly terrible PHASE APIs ***/
+
+export const getPhase = async () => { return PHASE; }
+
+export const setPhase = async (n) => { PHASE = n; }

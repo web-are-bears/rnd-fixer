@@ -4,6 +4,18 @@ import { profs, projects, students } from "@/test/api";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
 
+/*
+ * PHASE 0 - students should be able to see information on the professors
+ * PHASE 1 - students should be able to give tokens to different projects,
+ *    given that they have enough tokens in token_dist (100 total)
+ * PHASE 2 - students should only be able to see project/prof information, and
+ *    not modify their token distribution anymore
+ * PHASE 3 - students should be able to navigate and see the final allocation,
+ *    but they can't modify their distribution anymore
+ * PHASE 4 - students should be able to see final assignments, and maybe in the
+ *    future a ticket system could be added for any issues in allocation
+ */
+
 function ProfDetail({ uname }) {
   const [info, setInfo] = useState(null);
   const [error, setError] = useState("");

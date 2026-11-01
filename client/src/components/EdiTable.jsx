@@ -1,11 +1,13 @@
 import Button from "./Button";
 import Input from "./Input";
 import { Loading } from "./Extras";
+import { useMemo, useState } from "react";
 
 export default function EdiTable({
   columns,
   data,
   onSave,
+  onAdd,
   onDelete,
   loading = false,
   pageSize = 5,
@@ -15,6 +17,7 @@ export default function EdiTable({
   const [page, setPage] = useState(0);
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState(null);
+  const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -31,8 +34,23 @@ export default function EdiTable({
     setError("");
   }
 
+  function startAdd() {
+    const newRow = {};
+
+    columns.forEach((col) => {
+      newRow[col.key] = col.defaultValue ?? (col.type === "number" ? 0 : "");
+    });
+
+    setAdding(true);
+    setEditingId(null);
+    setDraft(newRow);
+    setError("");
+    setPage(0);
+  }
+
   function cancelEdit() {
     setEditingId(null);
+    setAdding(false);
     setDraft(null);
     setError("");
   }
@@ -52,6 +70,22 @@ export default function EdiTable({
       cancelEdit();
     } catch (err) {
       setError(err.message || "Failed to save changes.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function addRow() {
+    if (!onAdd) return;
+
+    setSaving(true);
+    setError("");
+
+    try {
+      await onAdd(draft);
+      cancelEdit();
+    } catch (err) {
+      setError(err.message || "Failed to add record.");
     } finally {
       setSaving(false);
     }
@@ -81,6 +115,8 @@ export default function EdiTable({
         </p>
       )}
 
+      {onAdd && !adding && <Button onClick={startAdd}>Add Row</Button>}
+
       <div className="overflow-x-auto border-2 border-ink">
         <table className="w-full border-collapse text-left text-sm">
           <thead className="bg-ink text-paper">
@@ -90,17 +126,62 @@ export default function EdiTable({
                   {col.label}
                 </th>
               ))}
-              {(onSave || onDelete) && (
+              {(onSave || onAdd || onDelete) && (
                 <th className="p-3 font-bold uppercase">Actions</th>
               )}
             </tr>
           </thead>
 
           <tbody>
-            {pageData.length === 0 ? (
+            {adding && (
+              <tr className="border-t-2 border-ink">
+                {columns.map((col) => (
+                  <td key={col.key} className="p-3">
+                    {col.editable !== false ? (
+                      <Input
+                        type={col.type || "text"}
+                        value={draft[col.key] ?? ""}
+                        onChange={(e) =>
+                          updateField(
+                            col.key,
+                            col.type === "number"
+                              ? e.target.value === ""
+                                ? ""
+                                : Number(e.target.value)
+                              : e.target.value,
+                          )
+                        }
+                        className="min-w-24"
+                      />
+                    ) : (
+                      draft[col.key]
+                    )}
+                  </td>
+                ))}
+
+                <td className="p-3">
+                  <div className="flex flex-wrap gap-2">
+                    <Button disabled={saving} onClick={addRow}>
+                      Save
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      disabled={saving}
+                      onClick={cancelEdit}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            )}
+
+            {pageData.length === 0 && !adding ? (
               <tr>
                 <td
-                  colSpan={columns.length + (onSave || onDelete ? 1 : 0)}
+                  colSpan={
+                    columns.length + (onSave || onAdd || onDelete ? 1 : 0)
+                  }
                   className="p-6 text-center text-ink-soft"
                 >
                   {emptyMessage}
@@ -114,7 +195,7 @@ export default function EdiTable({
                   <tr key={row[rowKey]} className="border-t-2 border-ink">
                     {columns.map((col) => (
                       <td key={col.key} className="p-3">
-                        {isEditing && col.editable ? (
+                        {isEditing && col.editable !== false ? (
                           <Input
                             type={col.type || "text"}
                             value={draft[col.key] ?? ""}
@@ -138,7 +219,7 @@ export default function EdiTable({
                       </td>
                     ))}
 
-                    {(onSave || onDelete) && (
+                    {(onSave || onAdd || onDelete) && (
                       <td className="p-3">
                         <div className="flex flex-wrap gap-2">
                           {isEditing ? (

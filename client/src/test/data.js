@@ -144,4 +144,5 @@ export const STUDENTS = {
  * 3 - phase 3, match fixing
  * 4 - phase 4 (if any), admin wrecks havoc
  */
-let PHASE = 0;
+
+export let PHASE = 0;
