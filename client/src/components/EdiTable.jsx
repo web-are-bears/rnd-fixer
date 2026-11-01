@@ -15,7 +15,7 @@ export default function EdiTable({
   rowKey = "_id",
 }) {
   const [page, setPage] = useState(0);
-  const [editingId, setEditingId] = useState(null);
+  const [editingID, setEditingId] = useState(null);
   const [draft, setDraft] = useState(null);
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -29,7 +29,7 @@ export default function EdiTable({
   );
 
   function startEdit(row) {
-    setEditingId(row[rowKey]);
+    setEditingID(row[rowKey]);
     setDraft({ ...row });
     setError("");
   }
@@ -42,14 +42,14 @@ export default function EdiTable({
     });
 
     setAdding(true);
-    setEditingId(null);
+    setEditingID(null);
     setDraft(newRow);
     setError("");
     setPage(0);
   }
 
   function cancelEdit() {
-    setEditingId(null);
+    setEditingID(null);
     setAdding(false);
     setDraft(null);
     setError("");
@@ -189,7 +189,7 @@ export default function EdiTable({
               </tr>
             ) : (
               pageData.map((row) => {
-                const isEditing = editingId === row[rowKey];
+                const isEditing = editingID === row[rowKey];
 
                 return (
                   <tr key={row[rowKey]} className="border-t-2 border-ink">

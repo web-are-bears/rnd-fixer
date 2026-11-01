@@ -113,10 +113,43 @@ function createCRUD(collection, prefix) {
 
 export const students = {
   ...createCRUD(STUDENTS, "student"),
-  async getByProject(projectId) {
+
+  getByProject(projectID) {
     return Object.values(STUDENTS).filter(
-      (student) => student.final_proj_id == projectId,
+      (student) => student.final_proj_id === projectID
     );
+  },
+
+  async allocateTokens(uname, projectID, amount) {
+    const student = STUDENTS[uname];
+
+    if (!student) {
+      throw new Error("Student not found.");
+    }
+
+    // simulating the backend, not sure if the real API would do this
+
+    amount = Number(amount);
+
+    if (!Number.isInteger(amount) || amount < 0) {
+      throw new Error("Tokens must be a non-negative integer.");
+    }
+
+    const token_dist = {
+      ...student.token_dist,
+      [projectID]: amount,
+    };
+
+    const total = Object.values(token_dist).reduce(
+      (sum, tokens) => sum + Number(tokens),
+      0
+    );
+
+    if (total > 100) {
+      throw new Error("You cannot allocate more than 100 tokens.");
+    }
+
+    return this.update(uname, { token_dist });
   },
 };
 
@@ -124,9 +157,9 @@ export const profs = createCRUD(PROFS, "prof");
 
 export const projects = {
   ...createCRUD(PROJECTS, "project"),
-  async getByProf(profId) {
+  async getByProf(profID) {
     return Object.values(PROJECTS).filter(
-      (project) => project.prof_id == profId,
+      (project) => project.prof_id == profID,
     );
   },
 };
@@ -135,6 +168,10 @@ export const users = createCRUD(USERS, "user");
 
 /*** terribly terrible PHASE APIs ***/
 
-export const getPhase = async () => { return PHASE; }
+export const getPhase = async () => {
+  return PHASE;
+};
 
-export const setPhase = async (n) => { PHASE = n; }
+export const setPhase = async (n) => {
+  PHASE = n;
+};

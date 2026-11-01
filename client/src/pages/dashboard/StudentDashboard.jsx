@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { ErrorMessage, Loading } from "@/components/Extras";
-import { profs, projects, students } from "@/test/api";
+import { profs, projects, students, getPhase } from "@/test/api";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
+import EdiTable from "@/components/EdiTable";
 
 /*
  * PHASE 0 - students should be able to see information on the professors
@@ -73,10 +74,32 @@ function ProfDetail({ uname }) {
   );
 }
 
+function ProjectDetail({ project }) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <h2 className="heading text-2xl">{project.pname}</h2>
+        <p className="mt-2">{project.desc}</p>
+      </div>
+
+      <div>
+        <p className="text-sm text-ink-soft">
+          Maximum students
+        </p>
+        <p className="font-bold">{project.max_students}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function StudentDashboard({ uname }) {
   const [info, setInfo] = useState(null);
+  const [phase, setPhase] = useState(null);
   const [profList, setProfList] = useState(null);
+  const [projectList, setProjectList] = useState(null);
   const [selectedProf, setSelectedProf] = useState(null);
+  const [showAssignment, setShowAssignment] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -84,14 +107,14 @@ export default function StudentDashboard({ uname }) {
 
     async function load() {
       try {
-        const [student, profList] = await Promise.all([
+        const [student, phase] = await Promise.all([
           students.get(uname),
-          profs.getAll(),
+          getPhase(),
         ]);
 
         if (active) {
           setInfo(student);
-          setProfList(profList);
+          setPhase(phase);
         }
       } catch (err) {
         if (active) setError(err.message || "Failed to load student.");
@@ -105,8 +128,56 @@ export default function StudentDashboard({ uname }) {
     };
   }, [uname]);
 
+  async function loadProfs() {
+    try {
+      setError("");
+      setProfList(await profs.getAll());
+    } catch (err) {
+      setError(err.message || "Failed to load professors.");
+    }
+  }
+
+  async function loadProjects() {
+    try {
+      setError("");
+
+      const list = await projects.getAll();
+
+      setProjectList(
+        list.map((project) => ({
+          ...project,
+          tokens: info.token_dist?.[project._id] ?? 0,
+        })),
+      );
+    } catch (err) {
+      setError(err.message || "Failed to load projects.");
+    }
+  }
+
+  async function saveTokens(updatedRow) {
+    try {
+      const updatedStudent = await students.allocateTokens(
+        uname,
+        updatedRow._id,
+        updatedRow.tokens,
+      );
+
+      setInfo(updatedStudent);
+
+      setProjectList((previous) =>
+        previous.map((project) =>
+          project._id === updatedRow._id
+            ? { ...project, tokens: updatedRow.tokens }
+            : project,
+        ),
+      );
+    } catch (err) {
+      throw new Error(err.message || "Failed to allocate tokens.");
+    }
+  }
+
   if (error) return <ErrorMessage message={error} />;
-  if (!info || !profList) return <Loading />;
+  if (!info) return <Loading />;
 
   return (
     <div className="space-y-6">
@@ -116,39 +187,102 @@ export default function StudentDashboard({ uname }) {
         {info.about && <p className="mt-3">{info.about}</p>}
       </div>
 
-      <section className="space-y-3">
-        <h3 className="heading text-xl">Project Assignment</h3>
+      {error && <ErrorMessage message={error} />}
 
-        {info.final_proj_id ? (
-          <p className="text-sm">
-            Assigned project ID: <strong>{info.final_proj_id}</strong>
-          </p>
-        ) : (
-          <p className="text-sm text-ink-soft">
-            You have not been assigned a project yet.
-          </p>
-        )}
-      </section>
+      {(phase == 0 || phase == 2) && (
+        <section className="space-y-3">
+          <h3 className="heading text-xl">Professors</h3>
 
-      <section className="space-y-3">
-        <h3 className="heading text-xl">Professors</h3>
+          {!profList ? (
+            <button className="btn btn-primary" onClick={loadProfs}>
+              View Professors
+            </button>
+          ) : profList.length === 0 ? (
+            <p className="text-sm text-ink-soft">No professors available.</p>
+          ) : (
+            profList.map((prof) => (
+              <Card
+                key={prof._id}
+                onClick={() => setSelectedProf(prof)}
+                className="cursor-pointer hover:bg-butter"
+              >
+                <h4 className="font-bold">{prof.name}</h4>
+                <p className="text-sm text-ink-soft">{prof.email}</p>
+                {prof.about && <p className="mt-2 text-sm">{prof.about}</p>}
+              </Card>
+            ))
+          )}
+        </section>
+      )}
 
-        {profList.length === 0 ? (
-          <p className="text-sm text-ink-soft">No professors available.</p>
-        ) : (
-          profList.map((prof) => (
-            <Card
-              key={prof._id}
-              onClick={() => setSelectedProf(prof)}
-              className="cursor-pointer hover:bg-butter"
+      {phase == 1 && (
+        <section className="space-y-3">
+          <h3 className="heading text-xl">Allocate Tokens</h3>
+
+          {!projectList ? (
+            <button className="btn btn-primary" onClick={loadProjects}>
+              View Projects
+            </button>
+          ) : (
+            <EdiTable
+              columns={[
+                {
+                  key: "pname",
+                  label: "Project",
+                  editable: false,
+                  render: (project) => (
+                    <button
+                      className="font-bold underline hover:text-ink-soft"
+                      onClick={() => setSelectedProject(project)}
+                    >
+                      {project.pname}
+                    </button>
+                  ),
+                },
+                {
+                  key: "tokens",
+                  label: "Tokens",
+                  type: "number",
+                },
+              ]}
+              data={projectList}
+              onSave={saveTokens}
+              pageSize={5}
+            />
+          )}
+          {selectedProject && (
+            <Popup
+              title={selectedProject.pname}
+              onClose={() => setSelectedProject(null)}
             >
-              <h4 className="font-bold">{prof.name}</h4>
-              <p className="text-sm text-ink-soft">{prof.email}</p>
-              {prof.about && <p className="mt-2 text-sm">{prof.about}</p>}
-            </Card>
-          ))
-        )}
-      </section>
+              <ProjectDetail project={selectedProject} />
+            </Popup>
+          )}
+        </section>
+      )}
+
+      {(phase == 3 || phase == 4) && (
+        <section className="space-y-3">
+          <h3 className="heading text-xl">Project Assignment</h3>
+
+          {!showAssignment ? (
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowAssignment(true)}
+            >
+              View Assignment
+            </button>
+          ) : info.final_proj_id ? (
+            <p className="text-sm">
+              Assigned project ID: <strong>{info.final_proj_id}</strong>
+            </p>
+          ) : (
+            <p className="text-sm text-ink-soft">
+              You have not been assigned a project yet.
+            </p>
+          )}
+        </section>
+      )}
 
       {selectedProf && (
         <Popup title={selectedProf.name} onClose={() => setSelectedProf(null)}>

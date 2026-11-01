@@ -47,7 +47,7 @@
   }
 
   .btn {
-    @apply px-3 py-1 border-2 border-ink rounded-md bg-ink text-paper
+    @apply px-3 py-1 border-2 border-ink rounded-sm bg-ink text-paper
            text-[0.9rem] font-bold uppercase ease-[ease] font-mono;
   }
 

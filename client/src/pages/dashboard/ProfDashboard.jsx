@@ -19,7 +19,7 @@ import { profs, projects, students } from "@/test/api";
  *    report/ticket system to admin later for this phase's "corrections" part
  */
 
-function ProjectDetail({ projectId }) {
+function ProjectDetail({ projectID }) {
   const [info, setInfo] = useState(null);
   const [studentList, setStudentList] = useState(null);
   const [error, setError] = useState("");
@@ -30,8 +30,8 @@ function ProjectDetail({ projectId }) {
     async function load() {
       try {
         const [project, studentList] = await Promise.all([
-          projects.get(projectId),
-          students.getByProject(projectId),
+          projects.get(projectID),
+          students.getByProject(projectID),
         ]);
 
         if (active) {
@@ -48,7 +48,7 @@ function ProjectDetail({ projectId }) {
     return () => {
       active = false;
     };
-  }, [projectId]);
+  }, [projectID]);
 
   if (error) return <ErrorMessage message={error} />;
   if (!info || !studentList) return <Loading />;
@@ -176,7 +176,7 @@ export default function ProfDashboard({ uname }) {
           title={selectedProject.pname}
           onClose={() => setSelectedProject(null)}
         >
-          <ProjectDetail projectId={selectedProject._id} />
+          <ProjectDetail projectID={selectedProject._id} />
         </Popup>
       )}
     </div>

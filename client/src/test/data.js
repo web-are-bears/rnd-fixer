@@ -145,4 +145,4 @@ export const STUDENTS = {
  * 4 - phase 4 (if any), admin wrecks havoc
  */
 
-export let PHASE = 0;
+export let PHASE = 1;
