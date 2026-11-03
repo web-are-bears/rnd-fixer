@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "auth/proto/login.proto",
+    "title": "core/proto/project.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "AuthService"
+      "name": "CoreService"
     }
   ],
   "consumes": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/v1/auth/login": {
+    "/v1/core/add_project": {
       "post": {
-        "operationId": "AuthService_Login",
+        "operationId": "CoreService_AddProject",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authLoginResponse"
+              "$ref": "#/definitions/coreProjectId"
             }
           },
           "default": {
@@ -39,23 +39,23 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/authLoginRequest"
+              "$ref": "#/definitions/coreProjectData"
             }
           }
         ],
         "tags": [
-          "AuthService"
+          "CoreService"
         ]
       }
     },
-    "/v1/auth/register": {
-      "post": {
-        "operationId": "AuthService_Register",
+    "/v1/core/fetch_prof_projects": {
+      "get": {
+        "operationId": "CoreService_FetchProjectByProfId",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/authRegisterResponse"
+              "$ref": "#/definitions/coreProjectList"
             }
           },
           "default": {
@@ -67,62 +67,116 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/authRegisterRequest"
-            }
+            "name": "profId",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
-          "AuthService"
+          "CoreService"
+        ]
+      }
+    },
+    "/v1/core/fetch_project/{projectId}": {
+      "get": {
+        "operationId": "CoreService_FetchProject",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreProjectData"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "CoreService"
+        ]
+      }
+    },
+    "/v1/core/fetch_projects": {
+      "get": {
+        "operationId": "CoreService_FetchAllProjects",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/coreProjectList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "CoreService"
         ]
       }
     }
   },
   "definitions": {
-    "authLoginRequest": {
+    "coreProjectData": {
       "type": "object",
       "properties": {
-        "username": {
+        "projectId": {
           "type": "string"
         },
-        "password": {
+        "projectName": {
+          "type": "string"
+        },
+        "profId": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "maxOccupancy": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "tokenDistribution": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "coreProjectId": {
+      "type": "object",
+      "properties": {
+        "projectId": {
           "type": "string"
         }
       }
     },
-    "authLoginResponse": {
+    "coreProjectList": {
       "type": "object",
       "properties": {
-        "accessToken": {
-          "type": "string"
-        }
-      }
-    },
-    "authRegisterRequest": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        }
-      }
-    },
-    "authRegisterResponse": {
-      "type": "object",
-      "properties": {
-        "userId": {
-          "type": "string"
+        "projects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/coreProjectData"
+          }
         }
       }
     },
