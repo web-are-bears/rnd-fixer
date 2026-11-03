@@ -29,13 +29,13 @@ export default function Dashboard() {
         await profs.get(token.uname);
         if (active) setRole("prof");
         return;
-      } catch { }
+      } catch {}
 
       try {
         await students.get(token.uname);
         if (active) setRole("student");
         return;
-      } catch { }
+      } catch {}
 
       try {
         const user = await users.get(token.uname);
@@ -44,7 +44,7 @@ export default function Dashboard() {
           setRole("admin");
           return;
         }
-      } catch { }
+      } catch {}
 
       if (active) {
         setError("Your account does not match a supported dashboard role.");

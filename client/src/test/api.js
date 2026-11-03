@@ -177,9 +177,7 @@ function createPersonCRUD(collection, prefix, role) {
         );
 
         if (hasProjects) {
-          throw new Error(
-            "Cannot delete a professor who still has projects.",
-          );
+          throw new Error("Cannot delete a professor who still has projects.");
         }
       }
 

@@ -112,9 +112,7 @@ export default function StudentDashboard({ uname }) {
   }
 
   function getProfessor(project) {
-    return professorList.find(
-      (professor) => professor._id === project.prof_id,
-    );
+    return professorList.find((professor) => professor._id === project.prof_id);
   }
 
   function updateTokens(projectID, amount) {
@@ -293,9 +291,7 @@ export default function StudentDashboard({ uname }) {
               )}
 
               <div className="flex items-center justify-between border-t-2 border-ink pt-3">
-                <p className="font-bold">
-                  Total: {totalTokens} / 100 tokens
-                </p>
+                <p className="font-bold">Total: {totalTokens} / 100 tokens</p>
 
                 {hasUnsavedChanges && (
                   <Button
@@ -374,8 +370,8 @@ export default function StudentDashboard({ uname }) {
             View Assignment
           </Button>
 
-          {showAllocation && (
-            !info.final_proj_id ? (
+          {showAllocation &&
+            (!info.final_proj_id ? (
               <p className="text-sm text-ink-soft">
                 You have not been assigned a project yet.
               </p>
@@ -390,8 +386,7 @@ export default function StudentDashboard({ uname }) {
               <p className="text-sm text-ink-soft">
                 Loading assignment details...
               </p>
-            )
-          )}
+            ))}
 
           <div className="flex flex-wrap gap-3">
             <Link className="btn" to="/profs">
@@ -405,10 +400,7 @@ export default function StudentDashboard({ uname }) {
       )}
 
       {showPicker && (
-        <Popup
-          title="Add a project"
-          onClose={() => setShowPicker(false)}
-        >
+        <Popup title="Add a project" onClose={() => setShowPicker(false)}>
           <div className="space-y-3">
             {projectList
               .filter((project) => !(project._id in draftTokenDist))
@@ -453,20 +445,16 @@ export default function StudentDashboard({ uname }) {
                       }
                     />
 
-                    <Button onClick={() => addProject(project._id)}>
-                      Add
-                    </Button>
+                    <Button onClick={() => addProject(project._id)}>Add</Button>
                   </div>
                 </div>
               ))}
 
-            {projectList.every(
-              (project) => project._id in draftTokenDist,
-            ) && (
-                <p className="text-sm text-ink-soft">
-                  You have added all available projects.
-                </p>
-              )}
+            {projectList.every((project) => project._id in draftTokenDist) && (
+              <p className="text-sm text-ink-soft">
+                You have added all available projects.
+              </p>
+            )}
           </div>
         </Popup>
       )}
