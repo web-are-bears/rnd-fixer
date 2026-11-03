@@ -6,10 +6,10 @@ import "google/api/annotations.proto"
 message Student
 {
 	string username			= 1;
-	string name			= 3;
-	string email			= 5;
-	string about			= 6;
-	string final_project_id		= 7;
-	repeated string link		= 8;
-	map<string,uint32> token_dist	= 9;
+	string name			= 2;
+	string email			= 3;
+	string about			= 4;
+	string final_project_id		= 5;
+	repeated string link		= 6;
+	map<string,uint32> token_dist	= 7;
 }
