@@ -83,9 +83,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
   return (
     <form onSubmit={submit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-bold">
-          Project title
-        </label>
+        <label className="mb-1 block text-sm font-bold">Project title</label>
         <input
           value={form.pname}
           onChange={(e) => update("pname", e.target.value)}
@@ -95,9 +93,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-bold">
-          Description
-        </label>
+        <label className="mb-1 block text-sm font-bold">Description</label>
         <textarea
           value={form.desc}
           onChange={(e) => update("desc", e.target.value)}
@@ -124,9 +120,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-bold">
-            Professor
-          </label>
+          <label className="mb-1 block text-sm font-bold">Professor</label>
           <select
             value={form.prof_id}
             onChange={(e) => update("prof_id", e.target.value)}
@@ -150,14 +144,10 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
       )}
 
       <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={onClose}
-        >
+        <Button type="button" variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit" disabled={saving || profList.length === 0}>
+        <Button type="submit" disabled={saving || profList.length == 0}>
           {saving ? "Saving..." : "Save"}
         </Button>
       </div>
@@ -193,7 +183,7 @@ export default function Projects() {
     setProjectList(list);
     setProfList(professors);
     setProf(professor);
-    setIsAdmin(user?.role?.toLowerCase() === "admin");
+    setIsAdmin(user?.role?.toLowerCase() == "admin");
     setError("");
   }
 
@@ -213,7 +203,7 @@ export default function Projects() {
           setProjectList(list);
           setProfList(professors);
           setProf(professor);
-          setIsAdmin(user?.role?.toLowerCase() === "admin");
+          setIsAdmin(user?.role?.toLowerCase() == "admin");
         }
       } catch (err) {
         if (active) {
@@ -282,9 +272,7 @@ export default function Projects() {
         </div>
 
         {isAdmin && (
-          <Button onClick={() => setEditingProject(null)}>
-            + Add project
-          </Button>
+          <Button onClick={() => setEditingProject(null)}>+ Add project</Button>
         )}
       </div>
 
@@ -293,26 +281,32 @@ export default function Projects() {
           <table className="w-full min-w-[850px] border-collapse text-left text-sm">
             <thead className="bg-ink text-paper">
               <tr>
-                {["Project", "Professor", "Maximum students", "Description", "Actions"].map(
-                  (heading) => (
-                    <th key={heading} className="p-3 font-bold uppercase">
-                      {heading}
-                    </th>
-                  ),
-                )}
+                {[
+                  "Project",
+                  "Professor",
+                  "Maximum students",
+                  "Description",
+                  "Actions",
+                ].map((heading) => (
+                  <th key={heading} className="p-3 font-bold uppercase">
+                    {heading}
+                  </th>
+                ))}
               </tr>
             </thead>
 
             <tbody>
               {projectList.map((project) => {
                 const supervisor = profList.find(
-                  (p) => p._id === project.prof_id,
+                  (p) => p._id == project.prof_id,
                 );
 
                 return (
                   <tr key={project._id} className="border-t-2 border-ink">
                     <td className="p-3 font-bold">{project.pname}</td>
-                    <td className="p-3">{supervisor?.name ?? project.prof_id}</td>
+                    <td className="p-3">
+                      {supervisor?.name ?? project.prof_id}
+                    </td>
                     <td className="p-3">{project.max_students}</td>
                     <td className="max-w-sm p-3">
                       <p className="line-clamp-2">{project.desc}</p>
@@ -337,7 +331,7 @@ export default function Projects() {
                 );
               })}
 
-              {projectList.length === 0 && (
+              {projectList.length == 0 && (
                 <tr>
                   <td colSpan={5} className="p-6 text-center text-ink-soft">
                     No projects available.
@@ -347,7 +341,7 @@ export default function Projects() {
             </tbody>
           </table>
         </div>
-      ) : projectList.length === 0 ? (
+      ) : projectList.length == 0 ? (
         <p className="text-sm text-ink-soft">No projects available.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
@@ -381,9 +375,7 @@ export default function Projects() {
       {editingProject !== undefined && (
         <Popup
           title={
-            editingProject
-              ? `Modify ${editingProject.pname}`
-              : "Add project"
+            editingProject ? `Modify ${editingProject.pname}` : "Add project"
           }
           onClose={() => setEditingProject(undefined)}
         >
