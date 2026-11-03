@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getToken, profs, students, users } from "@/api";
+import { getToken, users } from "@/api";
 import ProfDashboard from "@/pages/dashboard/ProfDashboard";
 import StudentDashboard from "@/pages/dashboard/StudentDashboard";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
@@ -14,40 +14,26 @@ export default function Dashboard() {
     let active = true;
 
     async function identifyAccount() {
-      const token = getToken();
-
-      if (!token) {
-        if (active) {
-          setError("You are not logged in. Please log in again.");
-        }
-        return;
-      }
-
-      if (active) setAccount(token);
-
       try {
-        await profs.get(token.uname);
-        if (active) setRole("prof");
-        return;
-      } catch {}
+        const token = getToken();
 
-      try {
-        await students.get(token.uname);
-        if (active) setRole("student");
-        return;
-      } catch {}
-
-      try {
-        const user = await users.get(token.uname);
-
-        if (active && user.role === "admin") {
-          setRole("admin");
+        if (!token) {
+          if (active) {
+            setError("You are not logged in! Please log in again.");
+          }
           return;
         }
-      } catch {}
 
-      if (active) {
-        setError("Your account does not match a supported dashboard role.");
+        const user = await users.get(token.uname);
+
+        if (active) {
+          setAccount(token);
+          setRole(user.role?.toLowerCase());
+        }
+      } catch (err) {
+        if (active) {
+          setError(err.message || "Failed to identify account.");
+        }
       }
     }
 

@@ -69,6 +69,20 @@ export default function Navbar() {
         </>
       )}
 
+      {role === "admin" && (
+        <>
+          <Link to="/profs" className="underline">
+            Professors
+          </Link>
+          <Link to="/projects" className="underline">
+            Projects
+          </Link>
+          <Link to="/students" className="underline">
+            Students
+          </Link>
+        </>
+      )}
+
       <Button onClick={handleLogout} className="ml-auto">
         Logout
       </Button>
