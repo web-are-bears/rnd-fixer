@@ -11,7 +11,7 @@ function Layout({ children }) {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="mx-auto max-w-3xl p-6">{children}</main>
+      <main className="mx-auto max-w-7xl p-6">{children}</main>
     </div>
   );
 }
