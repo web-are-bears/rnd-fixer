@@ -120,28 +120,31 @@ export const students = {
     );
   },
 
-  async allocateTokens(uname, projectID, amount) {
+  async allocateTokens(uname, token_dist) {
     const student = STUDENTS[uname];
 
     if (!student) {
       throw new Error("Student not found.");
     }
 
-    // simulating the backend, not sure if the real API would do this
+    const normalized = {};
 
-    amount = Number(amount);
+    for (const [projectID, amount] of Object.entries(token_dist)) {
+      const tokens = Number(amount);
 
-    if (!Number.isInteger(amount) || amount < 0) {
-      throw new Error("Tokens must be a non-negative integer.");
+      if (!PROJECTS[projectID]) {
+        throw new Error(`Unknown project: ${projectID}`);
+      }
+
+      if (!Number.isInteger(tokens) || tokens < 0) {
+        throw new Error("Tokens must be non-negative integers.");
+      }
+
+      if (tokens > 0) normalized[projectID] = tokens;
     }
 
-    const token_dist = {
-      ...student.token_dist,
-      [projectID]: amount,
-    };
-
-    const total = Object.values(token_dist).reduce(
-      (sum, tokens) => sum + Number(tokens),
+    const total = Object.values(normalized).reduce(
+      (sum, tokens) => sum + tokens,
       0,
     );
 
@@ -149,7 +152,7 @@ export const students = {
       throw new Error("You cannot allocate more than 100 tokens.");
     }
 
-    return this.update(uname, { token_dist });
+    return this.update(uname, { token_dist: normalized });
   },
 };
 
