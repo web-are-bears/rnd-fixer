@@ -68,4 +68,13 @@ func main() {
 			os.Exit(1)
 		}
 	}(server)
+
+	<-ctx.Done()
+	stop()
+
+	logger.Info("shutting down core service")
+	serverInstance := <-server
+	serverInstance.GracefulStop()
+
+	logger.Info("core service shut down gracefully")
 }

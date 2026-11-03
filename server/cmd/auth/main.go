@@ -31,7 +31,11 @@ func main() {
 	defer stop()
 
 	// get mongodb connection
-	mongoClient, err := mongo.MongoConnect(ctx)
+	mongo_cfg, err := config.LoadAuthMongoConfig()
+	if err != nil {
+		logger.Error("error loading the mongo config")
+	}
+	mongoClient, err := mongo.MongoConnect(ctx, mongo_cfg)
 	if err != nil {
 		logger.Error("failed  to connect to mongodb", "error", err)
 		os.Exit(1)
@@ -50,10 +54,6 @@ func main() {
 		}
 
 		// create a store
-		mongo_cfg, err := config.LoadMongoConfig()
-		if err != nil {
-			logger.Error("error loading the mongo config")
-		}
 		store := mongo.NewStore[mdl.UserDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection) // TODO (ashu3103): use database name and collection name
 		grpcServer := grpc.NewServer() // TODO (ashu3103): Unary Interceptors
 		ch <- grpcServer
