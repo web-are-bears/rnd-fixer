@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
-import { profs, projects, students } from "@/test/api";
+import { profs, projects, students } from "@/api";
 
 /*
  * PHASE 0 - prof should be able to see student list, their own projects,

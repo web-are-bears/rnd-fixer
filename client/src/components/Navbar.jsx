@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { logout, getToken, users } from "@/test/api";
+import { logout, getToken, users } from "@/api";
 import Button from "./Button";
 
 export default function Navbar() {

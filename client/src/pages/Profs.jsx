@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { profs } from "@/test/api";
+import { profs } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 

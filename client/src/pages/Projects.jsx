@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { profs, projects } from "@/test/api";
+import { profs, projects } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { students } from "@/test/api";
+import { students } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";

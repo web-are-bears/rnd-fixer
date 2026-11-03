@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ErrorMessage, Loading } from "@/components/Extras";
-import { projects, students, getPhase } from "@/test/api";
+import { projects, students, getPhase } from "@/api";
 import Popup from "@/components/Popup";
 import EdiTable from "@/components/EdiTable";
 

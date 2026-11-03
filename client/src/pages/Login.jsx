@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "@/test/api";
+import { login } from "@/api";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import iitbImage from "@/assets/iitb.jpg";
