@@ -109,10 +109,92 @@ function createCRUD(collection, prefix) {
   };
 }
 
+// sighs
+function createPersonCRUD(collection, prefix, role) {
+  const crud = createCRUD(collection, prefix);
+
+  return {
+    ...crud,
+
+    async add(data) {
+      const uname = data.uname?.trim();
+      const pass = data.pass;
+
+      if (!uname || !pass) {
+        throw new Error("Username and password are required.");
+      }
+
+      if (collection[uname] || USERS[uname]) {
+        throw new Error(`Username already exists: ${uname}`);
+      }
+
+      const { pass: _pass, ...profile } = data;
+
+      const account = {
+        _id: uname,
+        uname,
+        pass,
+        role,
+      };
+
+      USERS[uname] = account;
+
+      try {
+        return await crud.add({
+          ...profile,
+          _id: uname,
+          uname,
+        });
+      } catch (err) {
+        delete USERS[uname];
+        throw err;
+      }
+    },
+
+    async update(id, changes) {
+      if (changes.uname !== undefined && changes.uname !== id) {
+        throw new Error("Usernames cannot be changed.");
+      }
+
+      const { pass, ...profileChanges } = changes;
+      const updated = await crud.update(id, profileChanges);
+
+      if (pass) {
+        if (!USERS[id]) {
+          throw new Error(`Login account not found: ${id}`);
+        }
+
+        USERS[id] = { ...USERS[id], pass };
+      }
+
+      return updated;
+    },
+
+    async remove(id) {
+      if (role === "prof") {
+        const hasProjects = Object.values(PROJECTS).some(
+          (project) => project.prof_id === id,
+        );
+
+        if (hasProjects) {
+          throw new Error(
+            "Cannot delete a professor who still has projects.",
+          );
+        }
+      }
+
+      const removed = await crud.remove(id);
+      delete USERS[id];
+
+      return removed;
+    },
+  };
+}
+
 /*** instantiation ***/
 
 export const students = {
-  ...createCRUD(STUDENTS, "student"),
+  ...createPersonCRUD(STUDENTS, "student", "student"),
 
   getByProject(projectID) {
     return Object.values(STUDENTS).filter(
@@ -156,10 +238,9 @@ export const students = {
   },
 };
 
-export const profs = createCRUD(PROFS, "prof");
-
 export const projects = {
   ...createCRUD(PROJECTS, "project"),
+
   async getByProf(profID) {
     return Object.values(PROJECTS).filter(
       (project) => project.prof_id == profID,
@@ -167,7 +248,16 @@ export const projects = {
   },
 };
 
+export const profs = createPersonCRUD(PROFS, "prof", "prof");
+
 export const users = createCRUD(USERS, "user");
+
+export async function getCurrentUser() {
+  const token = getToken();
+  if (!token) return null;
+
+  return users.get(token.uname);
+}
 
 /*** terribly terrible PHASE APIs ***/
 
