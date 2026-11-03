@@ -12,6 +12,7 @@ export const {
   profs,
   projects,
   users,
+  getCurrentUser,
   getPhase,
   setPhase,
 } = api;
