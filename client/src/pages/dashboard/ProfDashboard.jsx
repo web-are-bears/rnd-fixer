@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
-import { profs, projects, students } from "@/api";
+import Button from "@/components/Button";
+import { profs, projects, students, getPhase } from "@/api";
 
 /*
  * PHASE 0 - prof should be able to see student list, their own projects,
@@ -19,61 +21,68 @@ import { profs, projects, students } from "@/api";
  *    report/ticket system to admin later for this phase's "corrections" part
  */
 
-function ProjectDetail({ projectID }) {
-  const [info, setInfo] = useState(null);
-  const [studentList, setStudentList] = useState(null);
-  const [error, setError] = useState("");
+function ProjectDetail({ project, studentList, phase }) {
+  const relevantStudents = studentList
+    .map((student) => ({
+      ...student,
+      tokens: Number(student.token_dist?.[project._id] || 0),
+    }))
+    .filter((student) => {
+      if (phase == 4) return student.final_proj_id == project._id;
+      if (phase >= 2) return student.tokens > 0;
+      return student.final_proj_id == project._id;
+    });
 
-  useEffect(() => {
-    let active = true;
-
-    async function load() {
-      try {
-        const [project, studentList] = await Promise.all([
-          projects.get(projectID),
-          students.getByProject(projectID),
-        ]);
-
-        if (active) {
-          setInfo(project);
-          setStudentList(studentList);
-        }
-      } catch (err) {
-        if (active) setError(err.message || "Failed to load project.");
-      }
-    }
-
-    load();
-
-    return () => {
-      active = false;
-    };
-  }, [projectID]);
-
-  if (error) return <ErrorMessage message={error} />;
-  if (!info || !studentList) return <Loading />;
+  const totalTokens = relevantStudents.reduce(
+    (sum, student) => sum + student.tokens,
+    0,
+  );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <h2 className="heading text-3xl">{info.pname}</h2>
-        <p className="mt-2">{info.desc}</p>
+        <h2 className="heading text-2xl">{project.pname}</h2>
+        <p className="mt-2">{project.desc}</p>
         <p className="mt-2 text-sm text-ink-soft">
-          Maximum students: {info.max_students}
+          Maximum students: {project.max_students}
         </p>
       </div>
 
       <section className="space-y-3">
-        <h3 className="heading text-xl">Assigned Students</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="heading text-xl">
+            {phase == 4
+              ? "Final Assignments"
+              : phase >= 2
+                ? "Student Preferences"
+                : "Assigned Students"}
+          </h3>
 
-        {studentList.length === 0 ? (
-          <p className="text-sm text-ink-soft">No students assigned.</p>
+          {phase >= 2 && phase < 4 && (
+            <p className="text-sm text-ink-soft">
+              {totalTokens} preference tokens
+            </p>
+          )}
+        </div>
+
+        {relevantStudents.length == 0 ? (
+          <p className="text-sm text-ink-soft">
+            No students found.
+          </p>
         ) : (
-          studentList.map((student) => (
+          relevantStudents.map((student) => (
             <Card key={student._id}>
-              <h4 className="font-bold">{student.name}</h4>
-              <p className="text-sm text-ink-soft">{student.uname}</p>
-              <p className="text-sm">{student.email}</p>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h4 className="font-bold">{student.name}</h4>
+                  <p className="text-sm text-ink-soft">{student.uname}</p>
+                  <p className="text-sm">{student.email}</p>
+                </div>
+
+                {phase >= 2 && phase < 4 && (
+                  <strong>{student.tokens} tokens</strong>
+                )}
+              </div>
             </Card>
           ))
         )}
@@ -84,7 +93,9 @@ function ProjectDetail({ projectID }) {
 
 export default function ProfDashboard({ uname }) {
   const [info, setInfo] = useState(null);
-  const [projectList, setProjectList] = useState(null);
+  const [phase, setPhase] = useState(null);
+  const [projectList, setProjectList] = useState([]);
+  const [studentList, setStudentList] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [error, setError] = useState("");
 
@@ -93,10 +104,24 @@ export default function ProfDashboard({ uname }) {
 
     async function load() {
       try {
-        const prof = await profs.get(uname);
-        if (active) setInfo(prof);
+        const [prof, currentPhase] = await Promise.all([
+          profs.get(uname),
+          getPhase(),
+        ]);
+
+        const [allProjects, allStudents] = await Promise.all([
+          projects.getByProf(prof._id),
+          students.getAll(),
+        ]);
+
+        if (active) {
+          setInfo(prof);
+          setPhase(currentPhase);
+          setProjectList(allProjects);
+          setStudentList(allStudents);
+        }
       } catch (err) {
-        if (active) setError(err.message || "Failed to load professor.");
+        if (active) setError(err.message || "Failed to load dashboard.");
       }
     }
 
@@ -107,37 +132,26 @@ export default function ProfDashboard({ uname }) {
     };
   }, [uname]);
 
-  useEffect(() => {
-    if (!info) return;
+  if (error && !info) return <ErrorMessage message={error} />;
+  if (!info || phase == null) return <Loading />;
 
-    let active = true;
-
-    async function load() {
-      try {
-        const result = await projects.getByProf(info._id);
-
-        const withAssignees = await Promise.all(
-          result.map(async (project) => ({
-            ...project,
-            assignees: (await students.getByProject(project._id)).length,
-          })),
-        );
-
-        if (active) setProjectList(withAssignees);
-      } catch (err) {
-        if (active) setError(err.message || "Failed to load projects.");
-      }
+  const getProjectStudents = (project) => {
+    if (phase == 4) {
+      return studentList.filter(
+        (student) => student.final_proj_id == project._id,
+      );
     }
 
-    load();
+    if (phase >= 2) {
+      return studentList.filter(
+        (student) => Number(student.token_dist?.[project._id] || 0) > 0,
+      );
+    }
 
-    return () => {
-      active = false;
-    };
-  }, [info]);
-
-  if (error) return <ErrorMessage message={error} />;
-  if (!info || !projectList) return <Loading />;
+    return studentList.filter(
+      (student) => student.final_proj_id == project._id,
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -147,27 +161,102 @@ export default function ProfDashboard({ uname }) {
         {info.about && <p className="mt-3">{info.about}</p>}
       </div>
 
-      <section className="space-y-3">
-        <h3 className="heading text-xl">Your Projects</h3>
+      <div className="border-y-2 border-ink py-3">
+        <h3 className="heading text-xl">
+          PHASE {phase}: PHASE {phase}
+        </h3>
+      </div>
 
-        {projectList.length === 0 ? (
-          <p className="text-sm text-ink-soft">You have no projects yet.</p>
+      {error && <ErrorMessage message={error} />}
+
+      {phase == 0 && (
+        <section className="space-y-3">
+          <p>
+            Student token distribution has not started yet. You can view your
+            projects and their currently assigned students.
+          </p>
+          <Link className="btn" to="/projects">
+            View Projects
+          </Link>
+        </section>
+      )}
+
+      {phase == 1 && (
+        <section className="space-y-3">
+          <p>
+            Students are now distributing tokens among projects. You can
+            continue managing your projects, but student preferences are not
+            available yet.
+          </p>
+          <Link className="btn" to="/projects">
+            View Projects
+          </Link>
+        </section>
+      )}
+
+      {phase == 2 && (
+        <section className="space-y-3">
+          <p>
+            Student token distribution is complete. Review the students who
+            selected your projects and the tokens they allocated.
+          </p>
+        </section>
+      )}
+
+      {phase == 3 && (
+        <section className="space-y-3">
+          <p>
+            Student preferences are now read-only. You can continue reviewing
+            the token distributions for your projects.
+          </p>
+        </section>
+      )}
+
+      {phase == 4 && (
+        <section className="space-y-3">
+          <p>
+            Final assignments are available. Review the students assigned to
+            each of your projects.
+          </p>
+        </section>
+      )}
+
+      <section className="space-y-3">
+        <h3 className="heading text-xl">
+          {phase == 4 ? "Final Assignments" : "Your Projects"}
+        </h3>
+
+        {projectList.length == 0 ? (
+          <p className="text-sm text-ink-soft">
+            You have no projects yet.
+          </p>
         ) : (
-          projectList.map((project) => (
-            <Card
-              key={project._id}
-              onClick={() => setSelectedProject(project)}
-              className="cursor-pointer hover:bg-butter"
-            >
-              <h4 className="font-bold">{project.pname}</h4>
-              <p className="mt-1 text-sm">{project.desc}</p>
-              <p className="mt-2 text-xs text-ink-soft">
-                <span className="badge">
-                  {project.assignees} / {project.max_students} students
-                </span>
-              </p>
-            </Card>
-          ))
+          projectList.map((project) => {
+            const count = getProjectStudents(project).length;
+
+            return (
+              <Card
+                key={project._id}
+                onClick={() => setSelectedProject(project)}
+                className="cursor-pointer hover:bg-butter"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h4 className="font-bold">{project.pname}</h4>
+                    <p className="mt-1 text-sm text-ink-soft">
+                      {phase == 4
+                        ? `${count} assigned students`
+                        : phase >= 2
+                          ? `${count} interested students`
+                          : `${count} assigned students`}
+                    </p>
+                  </div>
+
+                  <Button variant="secondary">View</Button>
+                </div>
+              </Card>
+            );
+          })
         )}
       </section>
 
@@ -176,7 +265,11 @@ export default function ProfDashboard({ uname }) {
           title={selectedProject.pname}
           onClose={() => setSelectedProject(null)}
         >
-          <ProjectDetail projectID={selectedProject._id} />
+          <ProjectDetail
+            project={selectedProject}
+            studentList={studentList}
+            phase={phase}
+          />
         </Popup>
       )}
     </div>
