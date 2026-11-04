@@ -6,7 +6,7 @@ import Card from "@/components/Card";
 import Popup from "@/components/Popup";
 import Button from "@/components/Button";
 
-function ProjectDetail({ project }) {
+function ProjectDetail({ project, onClose }) {
   return (
     <div className="space-y-4">
       <div>
@@ -20,7 +20,8 @@ function ProjectDetail({ project }) {
       </div>
 
       <Link
-        to={`/projects?prof=${encodeURIComponent(project.prof_id)}`}
+        to={`/projects?prof=${encodeURIComponent(project.prof_uname)}`}
+        onClick={onClose}
         className="inline-block text-sm font-bold underline hover:text-ink-soft"
       >
         View other projects by this professor
@@ -35,7 +36,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
     pname: project?.pname ?? "",
     desc: project?.desc ?? "",
     max_students: project?.max_students ?? 1,
-    prof_id: project?.prof_id ?? defaultProfId ?? profList[0]?._id ?? "",
+    prof_uname: project?.prof_uname ?? defaultProfId ?? profList[0]?.uname ?? "",
   });
 
   const [error, setError] = useState("");
@@ -55,7 +56,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
       return;
     }
 
-    if (!form.prof_id) {
+    if (!form.prof_uname) {
       setError("Please select a supervising professor.");
       return;
     }
@@ -122,14 +123,14 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
         <div>
           <label className="mb-1 block text-sm font-bold">Professor</label>
           <select
-            value={form.prof_id}
-            onChange={(e) => update("prof_id", e.target.value)}
+            value={form.prof_uname}
+            onChange={(e) => update("prof_uname", e.target.value)}
             required
             className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
           >
             <option value="">Select professor</option>
             {profList.map((prof) => (
-              <option key={prof._id} value={prof._id}>
+              <option key={prof.uname} value={prof.uname}>
                 {prof.name}
               </option>
             ))}
@@ -298,14 +299,14 @@ export default function Projects() {
             <tbody>
               {projectList.map((project) => {
                 const supervisor = profList.find(
-                  (p) => p._id == project.prof_id,
+                  (p) => p.uname == project.prof_uname,
                 );
 
                 return (
                   <tr key={project._id} className="border-t-2 border-ink">
                     <td className="p-3 font-bold">{project.pname}</td>
                     <td className="p-3">
-                      {supervisor?.name ?? project.prof_id}
+                      {supervisor?.name ?? project.prof_uname}
                     </td>
                     <td className="p-3">{project.max_students}</td>
                     <td className="max-w-sm p-3">
@@ -368,7 +369,10 @@ export default function Projects() {
           title={selectedProject.pname}
           onClose={() => setSelectedProject(null)}
         >
-          <ProjectDetail project={selectedProject} />
+          <ProjectDetail
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
         </Popup>
       )}
 
