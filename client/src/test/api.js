@@ -108,101 +108,10 @@ function createCRUD(collection, prefix, key = "uname") {
   };
 }
 
-// sighs
-// TODO(s-mv): update user creation model to simplify user <-> * relation
-function createPersonCRUD(collection, prefix, role) {
-  const crud = createCRUD(collection, prefix);
-
-  return {
-    ...crud,
-
-    async add(data) {
-      const uname = data.uname?.trim();
-      const pass = data.pass;
-
-      if (!uname || !pass) {
-        throw new Error("Username and password are required.");
-      }
-
-      if (
-        collection.some((p) => p.uname === uname) ||
-        USERS.some((u) => u.uname === uname)
-      ) {
-        throw new Error(`Username already exists: ${uname}`);
-      }
-
-      const { pass: _pass, ...profile } = data;
-
-      const account = {
-        _id: uname,
-        uname,
-        pass,
-        role,
-      };
-
-      USERS.push(account);
-
-      try {
-        return await crud.add({
-          ...profile,
-          _id: uname,
-          uname,
-        });
-      } catch (err) {
-        USERS.splice(
-          USERS.findIndex((u) => u.uname === uname),
-          1,
-        );
-        throw err;
-      }
-    },
-
-    async update(id, changes) {
-      if (changes.uname !== undefined && changes.uname !== id) {
-        throw new Error("Usernames cannot be changed.");
-      }
-
-      const { pass, ...profileChanges } = changes;
-      const updated = await crud.update(id, profileChanges);
-
-      if (pass) {
-        const index = USERS.findIndex((u) => u.uname === id);
-
-        if (index === -1) {
-          throw new Error(`Login account not found: ${id}`);
-        }
-
-        USERS[index] = { ...USERS[index], pass };
-      }
-
-      return updated;
-    },
-
-    async remove(id) {
-      if (role === "prof") {
-        const hasProjects = PROJECTS.some(
-          (project) => project.prof_uname === id,
-        );
-
-        if (hasProjects) {
-          throw new Error("Cannot delete a professor who still has projects.");
-        }
-      }
-
-      const removed = await crud.remove(id);
-
-      const userIndex = USERS.findIndex((u) => u.uname === id);
-      if (userIndex !== -1) USERS.splice(userIndex, 1);
-
-      return removed;
-    },
-  };
-}
-
 /*** instantiation ***/
 
 export const students = {
-  ...createPersonCRUD(STUDENTS, "student"),
+  ...createCRUD(STUDENTS, "student"),
 
   getByProject(projectID) {
     return STUDENTS.filter((student) => student.final_proj_id === projectID);
@@ -252,9 +161,9 @@ export const projects = {
   },
 };
 
-export const profs = createPersonCRUD(PROFS, "prof");
-
+export const profs = createCRUD(PROFS, "prof");
 export const users = createCRUD(USERS, "user");
+export const admins = createCRUD(USERS, "admin");
 
 export async function getCurrentUser() {
   const token = getToken();

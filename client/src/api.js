@@ -12,6 +12,7 @@ export const {
   profs,
   projects,
   users,
+  admins,
   getCurrentUser,
   getPhase,
   setPhase,
