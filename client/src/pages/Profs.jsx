@@ -244,7 +244,7 @@ export default function Profs() {
 
   async function saveProf(data, original) {
     if (original) {
-      await profs.update(original._id, data);
+      await profs.update(original.uname, data);
     } else {
       await profs.add(data);
     }
@@ -255,7 +255,7 @@ export default function Profs() {
   async function deleteProf(prof) {
     if (!window.confirm(`Delete professor ${prof.name}?`)) return;
 
-    await profs.remove(prof._id);
+    await profs.remove(prof.uname);
     await load();
   }
 
@@ -296,7 +296,7 @@ export default function Profs() {
 
             <tbody>
               {profList.map((prof) => (
-                <tr key={prof._id} className="border-t-2 border-ink">
+                <tr key={prof.uname} className="border-t-2 border-ink">
                   <td className="p-3">{prof.uname}</td>
                   <td className="p-3">{prof.name}</td>
                   <td className="p-3">{prof.email}</td>
@@ -335,7 +335,7 @@ export default function Profs() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {profList.map((prof) => (
-            <Card key={prof._id} className="space-y-3">
+            <Card key={prof.uname} className="space-y-3">
               <div>
                 <h3 className="heading text-xl">{prof.name}</h3>
                 <p className="text-sm text-ink-soft">{prof.email}</p>
@@ -360,7 +360,7 @@ export default function Profs() {
               )}
 
               <Link
-                to={`/projects?prof=${encodeURIComponent(prof._id)}`}
+                to={`/projects?prof=${encodeURIComponent(prof.uname)}`}
                 className="inline-block text-sm font-bold underline hover:text-ink-soft"
               >
                 View projects

@@ -22,7 +22,7 @@ export function getToken() {
 
     const uname = decodeURIComponent(value.slice(TOKEN_PREFIX.length));
 
-    if (!Object.values(USERS).some((u) => u.uname === uname)) {
+    if (!USERS.some((u) => u.uname === uname)) {
       return null;
     }
 
@@ -37,7 +37,7 @@ export async function login(uname, pwd) {
     throw new Error("Username and password required");
   }
 
-  const account = Object.values(USERS).find((u) => u.uname === uname);
+  const account = USERS.find((u) => u.uname === uname);
 
   if (!account || account.pass !== pwd) {
     throw new Error("Invalid username or password");
@@ -60,56 +60,56 @@ export async function logout() {
 
 // TODO(s-mv): add permission clauses
 
-function createCRUD(collection, prefix) {
+function createCRUD(collection, prefix, key = "uname") {
   return {
     async getAll() {
-      return Object.values(collection);
+      return collection;
     },
 
-    async get(uname) {
-      const record = collection[uname];
+    async get(id) {
+      const record = collection.find((item) => item[key] === id);
 
-      if (!record) throw new Error(`Record not found: ${uname}`);
+      if (!record) throw new Error(`Record not found: ${id}`);
 
       return record;
     },
 
     async add(data) {
-      const id = data._id || `${prefix}_${crypto.randomUUID()}`;
+      const id = data[key] || `${prefix}_${crypto.randomUUID()}`;
 
-      if (collection[id]) {
+      if (collection.some((item) => item[key] === id)) {
         throw new Error(`Record already exists: ${id}`);
       }
 
-      const record = { ...data, _id: id };
-      collection[id] = record;
+      const record = { ...data, [key]: id };
+      collection.push(record);
 
       return record;
     },
 
     async update(id, changes) {
-      const existing = collection[id];
+      const index = collection.findIndex((item) => item[key] === id);
 
-      if (!existing) throw new Error(`Record not found: ${id}`);
+      if (index === -1) throw new Error(`Record not found: ${id}`);
 
-      const updated = { ...existing, ...changes, _id: id };
-      collection[id] = updated;
+      const updated = { ...collection[index], ...changes, [key]: id };
+      collection[index] = updated;
 
       return updated;
     },
 
     async remove(id) {
-      const record = collection[id];
+      const index = collection.findIndex((item) => item[key] === id);
 
-      if (!record) throw new Error(`Record not found: ${id}`);
+      if (index === -1) throw new Error(`Record not found: ${id}`);
 
-      delete collection[id];
-      return record;
+      return collection.splice(index, 1)[0];
     },
   };
 }
 
 // sighs
+// TODO(s-mv): update user creation model to simplify user <-> * relation
 function createPersonCRUD(collection, prefix, role) {
   const crud = createCRUD(collection, prefix);
 
@@ -124,7 +124,10 @@ function createPersonCRUD(collection, prefix, role) {
         throw new Error("Username and password are required.");
       }
 
-      if (collection[uname] || USERS[uname]) {
+      if (
+        collection.some((p) => p.uname === uname) ||
+        USERS.some((u) => u.uname === uname)
+      ) {
         throw new Error(`Username already exists: ${uname}`);
       }
 
@@ -137,7 +140,7 @@ function createPersonCRUD(collection, prefix, role) {
         role,
       };
 
-      USERS[uname] = account;
+      USERS.push(account);
 
       try {
         return await crud.add({
@@ -146,7 +149,10 @@ function createPersonCRUD(collection, prefix, role) {
           uname,
         });
       } catch (err) {
-        delete USERS[uname];
+        USERS.splice(
+          USERS.findIndex((u) => u.uname === uname),
+          1,
+        );
         throw err;
       }
     },
@@ -160,11 +166,13 @@ function createPersonCRUD(collection, prefix, role) {
       const updated = await crud.update(id, profileChanges);
 
       if (pass) {
-        if (!USERS[id]) {
+        const index = USERS.findIndex((u) => u.uname === id);
+
+        if (index === -1) {
           throw new Error(`Login account not found: ${id}`);
         }
 
-        USERS[id] = { ...USERS[id], pass };
+        USERS[index] = { ...USERS[index], pass };
       }
 
       return updated;
@@ -172,8 +180,8 @@ function createPersonCRUD(collection, prefix, role) {
 
     async remove(id) {
       if (role === "prof") {
-        const hasProjects = Object.values(PROJECTS).some(
-          (project) => project.prof_id === id,
+        const hasProjects = PROJECTS.some(
+          (project) => project.prof_uname === id,
         );
 
         if (hasProjects) {
@@ -182,7 +190,9 @@ function createPersonCRUD(collection, prefix, role) {
       }
 
       const removed = await crud.remove(id);
-      delete USERS[id];
+
+      const userIndex = USERS.findIndex((u) => u.uname === id);
+      if (userIndex !== -1) USERS.splice(userIndex, 1);
 
       return removed;
     },
@@ -192,16 +202,14 @@ function createPersonCRUD(collection, prefix, role) {
 /*** instantiation ***/
 
 export const students = {
-  ...createPersonCRUD(STUDENTS, "student", "student"),
+  ...createPersonCRUD(STUDENTS, "student"),
 
   getByProject(projectID) {
-    return Object.values(STUDENTS).filter(
-      (student) => student.final_proj_id === projectID,
-    );
+    return STUDENTS.filter((student) => student.final_proj_id === projectID);
   },
 
   async allocateTokens(uname, token_dist) {
-    const student = STUDENTS[uname];
+    const student = STUDENTS.find((s) => s.uname === uname);
 
     if (!student) {
       throw new Error("Student not found.");
@@ -212,7 +220,7 @@ export const students = {
     for (const [projectID, amount] of Object.entries(token_dist)) {
       const tokens = Number(amount);
 
-      if (!PROJECTS[projectID]) {
+      if (!PROJECTS.some((p) => p._id === projectID)) {
         throw new Error(`Unknown project: ${projectID}`);
       }
 
@@ -237,16 +245,14 @@ export const students = {
 };
 
 export const projects = {
-  ...createCRUD(PROJECTS, "project"),
+  ...createCRUD(PROJECTS, "project", "_id"),
 
-  async getByProf(profID) {
-    return Object.values(PROJECTS).filter(
-      (project) => project.prof_id == profID,
-    );
+  async getByProf(prof_uname) {
+    return PROJECTS.filter((project) => project.prof_uname === prof_uname);
   },
 };
 
-export const profs = createPersonCRUD(PROFS, "prof", "prof");
+export const profs = createPersonCRUD(PROFS, "prof");
 
 export const users = createCRUD(USERS, "user");
 

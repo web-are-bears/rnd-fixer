@@ -5,29 +5,27 @@
  *   User(_id, uname, pass, role)
  *   Admin(_id, uname, pass)
  *   Prof(_id, uname, email, name, about, [links])
- *   Project(_id, pname, prof_id, desc, max_students,
- *           <token_dist(student_id:num_tokens)>)
- *   Student(_id, uname, email, name, about, [links], final_proj_id,
+ *   Project(_id, pname, prof_uname, desc, max_students,
+ *           <token_dist(student_uname:num_tokens)>)
+ *   Student(_id, uname, email, name, about, [links], final_pname,
  *           <token_dist(proj_id:num_tokens))
  *
  *   PHASE -> temp added by s-mv
  */
 
-export const USERS = {
-  ash: { _id: "ash", uname: "ash", pass: "demo", role: "prof" },
-  smv: { _id: "smv", uname: "smv", pass: "demo", role: "prof" },
-  swarn: { _id: "swarn", uname: "swarn", pass: "demo", role: "prof" },
-  jp: { _id: "jp", uname: "jp", pass: "demo", role: "student" },
-  od: { _id: "od", uname: "od", pass: "demo", role: "student" },
-  admin: { _id: "admin", uname: "admin", pass: "admin", role: "admin" },
-};
+export const USERS = [
+  { _id: "ash", uname: "ash", pass: "demo", role: "prof" },
+  { _id: "smv", uname: "smv", pass: "demo", role: "prof" },
+  { _id: "swarn", uname: "swarn", pass: "demo", role: "prof" },
+  { _id: "jp", uname: "jp", pass: "demo", role: "student" },
+  { _id: "od", uname: "od", pass: "demo", role: "student" },
+  { _id: "admin", uname: "admin", pass: "admin", role: "admin" },
+];
 
-export const ADMINS = {
-  admin: { _id: "admin", uname: "admin" },
-};
+export const ADMINS = [{ _id: "admin", uname: "admin" }];
 
-export const PROFS = {
-  ash: {
+export const PROFS = [
+  {
     _id: "ash",
     uname: "ash",
     email: "ashutosh@iitb.asc",
@@ -36,7 +34,7 @@ export const PROFS = {
     about: "",
     links: [],
   },
-  smv: {
+  {
     _id: "smv",
     uname: "smv",
     email: "shreerang@iitb.asc",
@@ -45,7 +43,7 @@ export const PROFS = {
     about: "",
     links: [],
   },
-  swarn: {
+  {
     _id: "swarn",
     uname: "swarn",
     email: "swarnim@iiitb.asc",
@@ -54,37 +52,37 @@ export const PROFS = {
     about: "",
     links: [],
   },
-};
+];
 
-export const PROJECTS = {
-  jit_appeaser: {
+export const PROJECTS = [
+  {
     _id: "jit_appeaser",
     pname: "JIT Appeaser",
-    prof_id: "ash",
+    prof_uname: "ash",
     desc: "Pleasure entropy estimation for the JIT.",
     max_students: 2,
     token_dist: {},
   },
-  data_dependence_graphs: {
+  {
     _id: "data_dependence_graphs",
     pname: "Data Dependence Graphs",
-    prof_id: "smv",
+    prof_uname: "smv",
     desc: "Implement formatting guidelines for the project.",
     max_students: 3,
     token_dist: {},
   },
-  pokemon_assembly: {
+  {
     _id: "pokemon_assembly",
     pname: "Pokemon Assembly",
-    prof_id: "swarn",
+    prof_uname: "swarn",
     desc: "Propagation of Pokemon through different media.",
     max_students: 2,
     token_dist: {},
   },
-};
+];
 
-export const STUDENTS = {
-  jp: {
+export const STUDENTS = [
+  {
     _id: "jp",
     uname: "jp",
     email: "jaypee@student.com",
@@ -94,9 +92,9 @@ export const STUDENTS = {
     final_proj_id: null,
     token_dist: {},
   },
-  od: {
+  {
     _id: "od",
-    uname: "jp",
+    uname: "od",
     email: "od@student.com",
     name: "Om Dwivedi",
     about: "",
@@ -104,7 +102,7 @@ export const STUDENTS = {
     final_proj_id: null,
     token_dist: {},
   },
-  ksh: {
+  {
     _id: "ksh",
     uname: "ksh",
     email: "ksh@student.com",
@@ -114,27 +112,27 @@ export const STUDENTS = {
     final_proj_id: null,
     token_dist: {},
   },
-  ar: {
+  {
     _id: "ar",
     uname: "ar",
     email: "ar@student.com",
     name: "Aryan",
     about: "",
     links: [],
-    final_proj_id: [],
+    final_proj_id: null,
     token_dist: {},
   },
-  bn: {
+  {
     _id: "bn",
     uname: "bn",
     email: "bn@student.com",
     name: "Banipratap Tejpratap Pratap Singh",
     about: "",
     links: [],
-    final_proj_id: [],
+    final_proj_id: null,
     token_dist: {},
   },
-};
+];
 
 /*
  * PHASE:
