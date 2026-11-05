@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { users, students, profs, admins } from "@/api";
+import { useCallback, useEffect, useState } from "react";
+import { users, students, profs, admins, getCurrentUser } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Button from "@/components/Button";
 import Popup from "@/components/Popup";
@@ -7,8 +7,10 @@ import Popup from "@/components/Popup";
 function UserEditor({ onSave, onClose }) {
   const [form, setForm] = useState({
     uname: "",
+    pass: "",
     role: "student",
   });
+
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -21,6 +23,7 @@ function UserEditor({ onSave, onClose }) {
 
       await onSave({
         uname: form.uname.trim(),
+        pass: form.pass,
         role: form.role,
       });
 
@@ -39,7 +42,10 @@ function UserEditor({ onSave, onClose }) {
         <input
           value={form.uname}
           onChange={(e) =>
-            setForm((current) => ({ ...current, uname: e.target.value }))
+            setForm((current) => ({
+              ...current,
+              uname: e.target.value,
+            }))
           }
           required
           className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
@@ -48,11 +54,32 @@ function UserEditor({ onSave, onClose }) {
       </div>
 
       <div>
+        <label className="mb-1 block text-sm font-bold">Initial password</label>
+        <input
+          type="password"
+          value={form.pass}
+          onChange={(e) =>
+            setForm((current) => ({
+              ...current,
+              pass: e.target.value,
+            }))
+          }
+          required
+          autoComplete="new-password"
+          className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
+          placeholder="Set an initial password"
+        />
+      </div>
+
+      <div>
         <label className="mb-1 block text-sm font-bold">Role</label>
         <select
           value={form.role}
           onChange={(e) =>
-            setForm((current) => ({ ...current, role: e.target.value }))
+            setForm((current) => ({
+              ...current,
+              role: e.target.value,
+            }))
           }
           className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
         >
@@ -72,6 +99,7 @@ function UserEditor({ onSave, onClose }) {
         <Button type="button" variant="secondary" onClick={onClose}>
           Cancel
         </Button>
+
         <Button type="submit" disabled={saving}>
           {saving ? "Creating..." : "Create account"}
         </Button>
@@ -85,8 +113,9 @@ export default function Users() {
   const [editingUser, setEditingUser] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState("");
+  const [access, setAccess] = useState("checking");
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const [list, studentList, profList, adminList] = await Promise.all([
         users.getAll(),
@@ -112,60 +141,42 @@ export default function Users() {
       );
 
       setError("");
+      return true;
     } catch (err) {
       setError(err.message || "Failed to load accounts.");
+      return false;
     }
-  }
-
-  useEffect(() => {
-    load();
   }, []);
 
   useEffect(() => {
     let active = true;
 
-    async function initialLoad() {
+    async function initialize() {
       try {
-        const [list, studentList, profList, adminList] = await Promise.all([
-          users.getAll(),
-          students.getAll(),
-          profs.getAll(),
-          admins.getAll(),
-        ]);
+        const currentUser = await getCurrentUser();
 
-        if (active) {
-          const profiles = {
-            student: studentList,
-            prof: profList,
-            admin: adminList,
-          };
+        if (!active) return;
 
-          setUserList(
-            list.map((user) => ({
-              ...user,
-              registered:
-                profiles[user.role?.toLowerCase()]?.some(
-                  (profile) => profile.uname === user.uname,
-                ) ?? false,
-            })),
-          );
+        if (currentUser?.role?.toLowerCase() !== "admin") {
+          setAccess("denied");
+          return;
         }
+
+        setAccess("allowed");
+        await load();
       } catch (err) {
         if (active) {
-          setError(err.message || "Failed to load accounts.");
+          setError(err.message || "Failed to verify access.");
         }
       }
     }
 
-    initialLoad();
+    initialize();
 
     return () => {
       active = false;
     };
-  }, []);
-
-  if (error) return <ErrorMessage message={error} />;
-  if (!userList) return <Loading />;
+  }, [load]);
 
   async function createUser(data) {
     await users.add(data);
@@ -192,9 +203,20 @@ export default function Users() {
       case "admin":
         return "Admin";
       default:
-        return role;
+        return role || "Unknown";
     }
   }
+
+  if (access === "checking") return <Loading />;
+
+  if (access === "denied") {
+    return (
+      <ErrorMessage message="You do not have permission to access this page." />
+    );
+  }
+
+  if (error) return <ErrorMessage message={error} />;
+  if (!userList) return <Loading />;
 
   return (
     <div className="space-y-6">
@@ -227,7 +249,9 @@ export default function Users() {
             {userList.map((user) => (
               <tr key={user.uname} className="border-t-2 border-ink">
                 <td className="p-3 font-bold">{user.uname}</td>
+
                 <td className="p-3">{getRoleLabel(user.role)}</td>
+
                 <td className="p-3">
                   {user.registered ? (
                     <span className="font-bold text-green-700">Complete</span>
@@ -235,6 +259,7 @@ export default function Users() {
                     <span className="font-bold text-amber-700">Incomplete</span>
                   )}
                 </td>
+
                 <td className="p-3">
                   {user.registered ? (
                     "—"
