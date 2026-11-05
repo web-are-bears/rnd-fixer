@@ -20,7 +20,7 @@ function StudentDetail({ student }) {
         </div>
       )}
 
-      {student.links && Object.keys(student.links).length > 0 && (
+      {Object.keys(student.links ?? {}).length > 0 && (
         <div>
           <p className="text-sm font-bold">Links</p>
           <div className="mt-1 flex flex-col gap-1">
@@ -44,15 +44,13 @@ function StudentDetail({ student }) {
 
 function StudentEditor({ student, onSave, onClose }) {
   const [form, setForm] = useState({
-    uname: student?.uname ?? "",
-    name: student?.name ?? "",
-    email: student?.email ?? "",
-    about: student?.about ?? "",
-    pass: "",
+    name: student.name ?? "",
+    email: student.email ?? "",
+    about: student.about ?? "",
   });
 
   const [links, setLinks] = useState(
-    Object.entries(student?.links ?? {}).map(([label, url]) => ({
+    Object.entries(student.links ?? {}).map(([label, url]) => ({
       label,
       url,
     })),
@@ -63,14 +61,6 @@ function StudentEditor({ student, onSave, onClose }) {
 
   function update(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
-  }
-
-  function updateLink(index, field, value) {
-    setLinks((current) =>
-      current.map((link, i) =>
-        i == index ? { ...link, [field]: value } : link,
-      ),
-    );
   }
 
   async function submit(e) {
@@ -97,23 +87,11 @@ function StudentEditor({ student, onSave, onClose }) {
       normalizedLinks[label] = url;
     }
 
-    if (!student && !form.pass) {
-      setError("A password is required for a new student.");
-      return;
-    }
-
     try {
       setSaving(true);
       setError("");
 
-      await onSave(
-        {
-          ...form,
-          links: normalizedLinks,
-        },
-        student,
-      );
-
+      await onSave({ ...form, links: normalizedLinks });
       onClose();
     } catch (err) {
       setError(err.message || "Failed to save student.");
@@ -128,10 +106,8 @@ function StudentEditor({ student, onSave, onClose }) {
         <div>
           <label className="mb-1 block text-sm font-bold">Username</label>
           <input
-            value={form.uname}
-            onChange={(e) => update("uname", e.target.value)}
-            disabled={!!student}
-            required
+            value={student.uname}
+            disabled
             className="w-full rounded border border-line bg-surface px-3 py-2 text-sm disabled:opacity-60"
           />
         </div>
@@ -167,19 +143,6 @@ function StudentEditor({ student, onSave, onClose }) {
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-bold">
-          {student ? "New password (leave blank to keep current)" : "Password"}
-        </label>
-        <input
-          type="password"
-          value={form.pass}
-          onChange={(e) => update("pass", e.target.value)}
-          required={!student}
-          className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
-        />
-      </div>
-
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="font-bold">Links</h3>
@@ -198,21 +161,35 @@ function StudentEditor({ student, onSave, onClose }) {
           <div key={index} className="flex items-center gap-2">
             <input
               value={link.label}
-              onChange={(e) => updateLink(index, "label", e.target.value)}
+              onChange={(e) =>
+                setLinks((current) =>
+                  current.map((item, i) =>
+                    i == index ? { ...item, label: e.target.value } : item,
+                  ),
+                )
+              }
               placeholder="Label"
               className="w-1/3 min-w-0 rounded border border-line bg-surface px-3 py-2 text-sm"
             />
+
             <input
               value={link.url}
-              onChange={(e) => updateLink(index, "url", e.target.value)}
+              onChange={(e) =>
+                setLinks((current) =>
+                  current.map((item, i) =>
+                    i == index ? { ...item, url: e.target.value } : item,
+                  ),
+                )
+              }
               placeholder="URL"
               className="min-w-0 flex-1 rounded border border-line bg-surface px-3 py-2 text-sm"
             />
+
             <Button
               type="button"
               variant="danger"
               onClick={() =>
-                setLinks((current) => current.filter((_, i) => i !== index))
+                setLinks((current) => current.filter((_, i) => i != index))
               }
             >
               Remove
@@ -243,58 +220,30 @@ export default function Students() {
   const [studentList, setStudentList] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [editingStudent, setEditingStudent] = useState(undefined);
+  const [editingStudent, setEditingStudent] = useState(null);
   const [error, setError] = useState("");
 
   async function load() {
-    const [list, user] = await Promise.all([
-      students.getAll(),
-      getCurrentUser(),
-    ]);
+    try {
+      const [list, user] = await Promise.all([
+        students.getAll(),
+        getCurrentUser(),
+      ]);
 
-    setStudentList(list);
-    setIsAdmin(user?.role?.toLowerCase() == "admin");
-    setError("");
+      setStudentList(list);
+      setIsAdmin(user?.role?.toLowerCase() == "admin");
+      setError("");
+    } catch (err) {
+      setError(err.message || "Failed to load students.");
+    }
   }
 
   useEffect(() => {
-    let active = true;
-
-    async function initialLoad() {
-      try {
-        const [list, user] = await Promise.all([
-          students.getAll(),
-          getCurrentUser(),
-        ]);
-
-        if (active) {
-          setStudentList(list);
-          setIsAdmin(user?.role?.toLowerCase() == "admin");
-        }
-      } catch (err) {
-        if (active) {
-          setError(err.message || "Failed to load students.");
-        }
-      }
-    }
-
-    initialLoad();
-
-    return () => {
-      active = false;
-    };
+    load();
   }, []);
 
-  if (error) return <ErrorMessage message={error} />;
-  if (!studentList) return <Loading />;
-
-  async function saveStudent(data, original) {
-    if (original) {
-      await students.update(original._id, data);
-    } else {
-      await students.add(data);
-    }
-
+  async function saveStudent(data) {
+    await students.update(editingStudent.uname, data);
     await load();
   }
 
@@ -302,26 +251,23 @@ export default function Students() {
     if (!window.confirm(`Delete student ${student.name}?`)) return;
 
     try {
-      await students.remove(student._id);
+      await students.remove(student.uname);
       await load();
     } catch (err) {
       setError(err.message || "Failed to delete student.");
     }
   }
 
+  if (error) return <ErrorMessage message={error} />;
+  if (!studentList) return <Loading />;
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="heading text-3xl">Students</h2>
-          <p className="mt-2 text-sm text-ink-soft">
-            Browse students registered on the platform.
-          </p>
-        </div>
-
-        {isAdmin && (
-          <Button onClick={() => setEditingStudent(null)}>+ Add student</Button>
-        )}
+      <div>
+        <h2 className="heading text-3xl">Students</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Browse students registered on the platform.
+        </p>
       </div>
 
       {isAdmin ? (
@@ -341,7 +287,7 @@ export default function Students() {
 
             <tbody>
               {studentList.map((student) => (
-                <tr key={student._id} className="border-t-2 border-ink">
+                <tr key={student.uname} className="border-t-2 border-ink">
                   <td className="p-3">{student.uname}</td>
                   <td className="p-3">{student.name}</td>
                   <td className="p-3">{student.email}</td>
@@ -377,13 +323,11 @@ export default function Students() {
             </tbody>
           </table>
         </div>
-      ) : studentList.length == 0 ? (
-        <p className="text-sm text-ink-soft">No students available.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {studentList.map((student) => (
             <Card
-              key={student._id}
+              key={student.uname}
               onClick={() => setSelectedStudent(student)}
               className="cursor-pointer space-y-3 hover:bg-butter"
             >
@@ -397,6 +341,10 @@ export default function Students() {
               )}
             </Card>
           ))}
+
+          {studentList.length == 0 && (
+            <p className="text-sm text-ink-soft">No students available.</p>
+          )}
         </div>
       )}
 
@@ -409,17 +357,15 @@ export default function Students() {
         </Popup>
       )}
 
-      {editingStudent !== undefined && (
+      {editingStudent && (
         <Popup
-          title={
-            editingStudent ? `Modify ${editingStudent.name}` : "Add student"
-          }
-          onClose={() => setEditingStudent(undefined)}
+          title={`Modify ${editingStudent.name}`}
+          onClose={() => setEditingStudent(null)}
         >
           <StudentEditor
             student={editingStudent}
             onSave={saveStudent}
-            onClose={() => setEditingStudent(undefined)}
+            onClose={() => setEditingStudent(null)}
           />
         </Popup>
       )}
