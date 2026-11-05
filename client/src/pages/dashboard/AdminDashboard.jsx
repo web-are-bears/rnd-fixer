@@ -3,6 +3,7 @@ import Card from "@/components/Card";
 import Button from "@/components/Button";
 
 const sections = [
+  { title: "User Accounts", path: "/users" },
   { title: "Professors", path: "/profs" },
   { title: "Projects", path: "/projects" },
   { title: "Students", path: "/students" },

@@ -1,4 +1,4 @@
-import { USERS, PROFS, PROJECTS, STUDENTS, PHASE } from "./data";
+import { USERS, PROFS, PROJECTS, STUDENTS, ADMINS, PHASE } from "./data";
 
 const COOKIE_NAME = "pikachu";
 const TOKEN_PREFIX = "charizard-";
@@ -39,7 +39,7 @@ export async function login(uname, pwd) {
 
   const account = USERS.find((u) => u.uname === uname);
 
-  if (!account || account.pass !== pwd) {
+  if (!account || !account.pass || account.pass !== pwd) {
     throw new Error("Invalid username or password");
   }
 
@@ -56,9 +56,7 @@ export async function logout() {
   document.cookie = `${COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
 }
 
-/*** crud factory ***/
-
-// TODO(s-mv): add permission clauses
+/*** generic CRUD ***/
 
 function createCRUD(collection, prefix, key = "uname") {
   return {
@@ -69,7 +67,9 @@ function createCRUD(collection, prefix, key = "uname") {
     async get(id) {
       const record = collection.find((item) => item[key] === id);
 
-      if (!record) throw new Error(`Record not found: ${id}`);
+      if (!record) {
+        throw new Error(`Record not found: ${id}`);
+      }
 
       return record;
     },
@@ -90,7 +90,9 @@ function createCRUD(collection, prefix, key = "uname") {
     async update(id, changes) {
       const index = collection.findIndex((item) => item[key] === id);
 
-      if (index === -1) throw new Error(`Record not found: ${id}`);
+      if (index === -1) {
+        throw new Error(`Record not found: ${id}`);
+      }
 
       const updated = { ...collection[index], ...changes, [key]: id };
       collection[index] = updated;
@@ -101,17 +103,163 @@ function createCRUD(collection, prefix, key = "uname") {
     async remove(id) {
       const index = collection.findIndex((item) => item[key] === id);
 
-      if (index === -1) throw new Error(`Record not found: ${id}`);
+      if (index === -1) {
+        throw new Error(`Record not found: ${id}`);
+      }
 
       return collection.splice(index, 1)[0];
     },
   };
 }
 
-/*** instantiation ***/
+/*** accounts ***/
+
+const userCRUD = createCRUD(USERS, "user");
+
+export const users = {
+  getAll: userCRUD.getAll,
+  get: userCRUD.get,
+
+  async add(data) {
+    const uname = data.uname?.trim();
+    const role = data.role?.toLowerCase();
+
+    if (!uname) {
+      throw new Error("Username is required.");
+    }
+
+    if (!["student", "prof", "admin"].includes(role)) {
+      throw new Error("Invalid user role.");
+    }
+
+    if (USERS.some((user) => user.uname === uname)) {
+      throw new Error(`Username already exists: ${uname}`);
+    }
+
+    const account = {
+      _id: uname,
+      uname,
+      role,
+      pass: null, // this is deliberate
+    };
+
+    USERS.push(account);
+
+    return account;
+  },
+
+  async update(uname, changes) {
+    if (
+      changes.uname !== undefined ||
+      changes._id !== undefined ||
+      changes.role !== undefined
+    ) {
+      throw new Error("Username and role cannot be changed.");
+    }
+
+    const account = await userCRUD.get(uname);
+
+    return userCRUD.update(uname, {
+      pass: changes.pass ?? account.pass,
+    });
+  },
+
+  async remove(uname) {
+    const account = await userCRUD.get(uname);
+    const role = account.role?.toLowerCase();
+
+    const profileCollections = {
+      student: STUDENTS,
+      prof: PROFS,
+      admin: ADMINS,
+    };
+
+    if (profileCollections[role]?.some((profile) => profile.uname === uname)) {
+      throw new Error(
+        "Cannot delete an account while its profile still exists.",
+      );
+    }
+
+    if (
+      role === "prof" &&
+      PROJECTS.some((project) => project.prof_uname === uname)
+    ) {
+      throw new Error(
+        "Cannot delete a professor account while they still have projects.",
+      );
+    }
+
+    return userCRUD.remove(uname);
+  },
+};
+
+/*** profiles ***/
+
+function createProfileCRUD(collection, prefix, role) {
+  const crud = createCRUD(collection, prefix);
+
+  return {
+    getAll: crud.getAll,
+    get: crud.get,
+
+    async add(data) {
+      const uname = data.uname?.trim();
+
+      if (!uname) {
+        throw new Error("Username is required.");
+      }
+
+      const account = USERS.find((user) => user.uname === uname);
+
+      if (!account) {
+        throw new Error(`No login account exists for: ${uname}`);
+      }
+
+      if (account.role?.toLowerCase() !== role) {
+        throw new Error(`Account ${uname} does not have the ${role} role.`);
+      }
+
+      if (collection.some((profile) => profile.uname === uname)) {
+        throw new Error(`Profile already exists: ${uname}`);
+      }
+
+      return crud.add({
+        ...data,
+        _id: uname,
+        uname,
+      });
+    },
+
+    async update(uname, changes) {
+      if (changes.uname !== undefined && changes.uname !== uname) {
+        throw new Error("Usernames cannot be changed.");
+      }
+
+      if (changes._id !== undefined && changes._id !== uname) {
+        throw new Error("Profile IDs cannot be changed.");
+      }
+
+      return crud.update(uname, changes);
+    },
+
+    async remove(uname) {
+      if (role === "prof") {
+        const hasProjects = PROJECTS.some(
+          (project) => project.prof_uname === uname,
+        );
+
+        if (hasProjects) {
+          throw new Error("Cannot delete a professor who still has projects.");
+        }
+      }
+
+      return crud.remove(uname);
+    },
+  };
+}
 
 export const students = {
-  ...createCRUD(STUDENTS, "student"),
+  ...createProfileCRUD(STUDENTS, "student", "student"),
 
   getByProject(projectID) {
     return STUDENTS.filter((student) => student.final_proj_id === projectID);
@@ -137,7 +285,9 @@ export const students = {
         throw new Error("Tokens must be non-negative integers.");
       }
 
-      if (tokens > 0) normalized[projectID] = tokens;
+      if (tokens > 0) {
+        normalized[projectID] = tokens;
+      }
     }
 
     const total = Object.values(normalized).reduce(
@@ -153,6 +303,12 @@ export const students = {
   },
 };
 
+export const profs = createProfileCRUD(PROFS, "prof", "prof");
+
+export const admins = createProfileCRUD(ADMINS, "admin", "admin");
+
+/*** projects ***/
+
 export const projects = {
   ...createCRUD(PROJECTS, "project", "_id"),
 
@@ -161,23 +317,30 @@ export const projects = {
   },
 };
 
-export const profs = createCRUD(PROFS, "prof");
-export const users = createCRUD(USERS, "user");
-export const admins = createCRUD(USERS, "admin");
+/*** current user ***/
 
 export async function getCurrentUser() {
   const token = getToken();
+
   if (!token) return null;
 
   return users.get(token.uname);
 }
 
-/*** terribly terrible PHASE APIs ***/
+/*** phase APIs ***/
 
-export const getPhase = async () => {
-  return PHASE;
-};
+// Keep the current phase locally in this module.
+// See note below about synchronizing this with data.js.
+
+let currentPhase = PHASE;
+
+export const getPhase = async () => currentPhase;
 
 export const setPhase = async (n) => {
-  PHASE = n;
+  if (!Number.isInteger(n) || n < 0 || n > 4) {
+    throw new Error("Invalid phase.");
+  }
+
+  currentPhase = n;
+  return currentPhase;
 };

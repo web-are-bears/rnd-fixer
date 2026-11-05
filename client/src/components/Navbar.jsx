@@ -10,8 +10,8 @@ export default function Navbar() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const token = await getToken();
-        const uname = typeof token === "string" ? token : token?.uname;
+        const token = getToken();
+        const uname = token?.uname;
 
         if (!uname) {
           console.error("No authenticated user found.");
@@ -79,6 +79,9 @@ export default function Navbar() {
           </Link>
           <Link to="/students" className="underline">
             Students
+          </Link>
+          <Link to="/users" className="underline">
+            User Accounts
           </Link>
         </>
       )}

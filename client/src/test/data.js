@@ -3,7 +3,7 @@
  *
  * Rough representation of the schema:
  *   User(_id, uname, pass, role)
- *   Admin(_id, uname, pass)
+ *   Admin(_id, uname)
  *   Prof(_id, uname, email, name, about, [links])
  *   Project(_id, pname, prof_uname, desc, max_students,
  *           <token_dist(student_uname:num_tokens)>)
