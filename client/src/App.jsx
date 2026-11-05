@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 import Profs from "@/pages/Profs";
 import Projects from "@/pages/Projects";
 import Students from "@/pages/Students";
+import Users from "./pages/Users";
+import Register from "./pages/Register";
 
 function Layout({ children }) {
   return (
@@ -61,6 +63,16 @@ export default function App() {
             </Protected>
           }
         />
+        <Route
+          path="/users"
+          element={
+            <Protected>
+              {" "}
+              <Users />{" "}
+            </Protected>
+          }
+        />
+        <Route path="/register/:uname" element={<Register />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

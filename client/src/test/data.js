@@ -20,6 +20,9 @@ export const USERS = [
   { _id: "jp", uname: "jp", pass: "demo", role: "student" },
   { _id: "od", uname: "od", pass: "demo", role: "student" },
   { _id: "admin", uname: "admin", pass: "admin", role: "admin" },
+  { _id: "ksh", uname: "ksh", pass: "demo", role: "student" },
+  { _id: "ar", uname: "ar", pass: "demo", role: "student" },
+  { _id: "bn", uname: "bn", pass: "demo", role: "student" },
 ];
 
 export const ADMINS = [{ _id: "admin", uname: "admin" }];

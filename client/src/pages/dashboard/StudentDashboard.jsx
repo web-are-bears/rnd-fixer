@@ -112,7 +112,9 @@ export default function StudentDashboard({ uname }) {
   }
 
   function getProfessor(project) {
-    return professorList.find((professor) => professor.uname === project.prof_uname);
+    return professorList.find(
+      (professor) => professor.uname === project.prof_uname,
+    );
   }
 
   function updateTokens(projectID, amount) {

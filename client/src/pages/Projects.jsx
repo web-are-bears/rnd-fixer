@@ -36,7 +36,8 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
     pname: project?.pname ?? "",
     desc: project?.desc ?? "",
     max_students: project?.max_students ?? 1,
-    prof_uname: project?.prof_uname ?? defaultProfId ?? profList[0]?.uname ?? "",
+    prof_uname:
+      project?.prof_uname ?? defaultProfId ?? profList[0]?.uname ?? "",
   });
 
   const [error, setError] = useState("");
