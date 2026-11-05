@@ -22,7 +22,7 @@ export function getToken() {
 
     const uname = decodeURIComponent(value.slice(TOKEN_PREFIX.length));
 
-    if (!USERS.some((u) => u.uname === uname)) {
+    if (!USERS.some((u) => u.uname == uname)) {
       return null;
     }
 
@@ -37,7 +37,7 @@ export async function login(uname, pwd) {
     throw new Error("Username and password required");
   }
 
-  const account = USERS.find((u) => u.uname === uname);
+  const account = USERS.find((u) => u.uname == uname);
 
   if (!account || !account.pass || account.pass !== pwd) {
     throw new Error("Invalid username or password");
@@ -56,151 +56,78 @@ export async function logout() {
   document.cookie = `${COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
 }
 
-/*** generic CRUD ***/
-
-function createCRUD(collection, prefix, key = "uname") {
-  return {
-    async getAll() {
-      return collection;
-    },
-
-    async get(id) {
-      const record = collection.find((item) => item[key] === id);
-
-      if (!record) {
-        throw new Error(`Record not found: ${id}`);
-      }
-
-      return record;
-    },
-
-    async add(data) {
-      const id = data[key] || `${prefix}_${crypto.randomUUID()}`;
-
-      if (collection.some((item) => item[key] === id)) {
-        throw new Error(`Record already exists: ${id}`);
-      }
-
-      const record = { ...data, [key]: id };
-      collection.push(record);
-
-      return record;
-    },
-
-    async update(id, changes) {
-      const index = collection.findIndex((item) => item[key] === id);
-
-      if (index === -1) {
-        throw new Error(`Record not found: ${id}`);
-      }
-
-      const updated = { ...collection[index], ...changes, [key]: id };
-      collection[index] = updated;
-
-      return updated;
-    },
-
-    async remove(id) {
-      const index = collection.findIndex((item) => item[key] === id);
-
-      if (index === -1) {
-        throw new Error(`Record not found: ${id}`);
-      }
-
-      return collection.splice(index, 1)[0];
-    },
-  };
-}
-
 /*** accounts ***/
 
-const userCRUD = createCRUD(USERS, "user");
-
 export const users = {
-  getAll: userCRUD.getAll,
-  get: userCRUD.get,
+  async getAll() {
+    return USERS;
+  },
+
+  async get(uname) {
+    const account = USERS.find((user) => user.uname == uname);
+
+    if (!account) {
+      throw new Error(`Record not found: ${uname}`);
+    }
+
+    return account;
+  },
 
   async add(data) {
-    const uname = data.uname?.trim();
-    const role = data.role?.toLowerCase();
+    const uname = data.uname || `user_${crypto.randomUUID()}`;
 
-    if (!uname) {
-      throw new Error("Username is required.");
+    if (USERS.some((user) => user.uname == uname)) {
+      throw new Error(`Record already exists: ${uname}`);
     }
 
-    if (!["student", "prof", "admin"].includes(role)) {
-      throw new Error("Invalid user role.");
-    }
-
-    if (USERS.some((user) => user.uname === uname)) {
-      throw new Error(`Username already exists: ${uname}`);
-    }
-
-    const account = {
-      _id: uname,
-      uname,
-      role,
-      pass: null, // this is deliberate
-    };
-
+    const account = { ...data, uname };
     USERS.push(account);
 
     return account;
   },
 
   async update(uname, changes) {
-    if (
-      changes.uname !== undefined ||
-      changes._id !== undefined ||
-      changes.role !== undefined
-    ) {
-      throw new Error("Username and role cannot be changed.");
+    const index = USERS.findIndex((user) => user.uname == uname);
+
+    if (index == -1) {
+      throw new Error(`Record not found: ${uname}`);
     }
 
-    const account = await userCRUD.get(uname);
+    const updated = { ...USERS[index], ...changes, uname };
+    USERS[index] = updated;
 
-    return userCRUD.update(uname, {
-      pass: changes.pass ?? account.pass,
-    });
+    return updated;
   },
 
   async remove(uname) {
-    const account = await userCRUD.get(uname);
-    const role = account.role?.toLowerCase();
+    const index = USERS.findIndex((user) => user.uname == uname);
 
-    const profileCollections = {
-      student: STUDENTS,
-      prof: PROFS,
-      admin: ADMINS,
-    };
-
-    if (profileCollections[role]?.some((profile) => profile.uname === uname)) {
-      throw new Error(
-        "Cannot delete an account while its profile still exists.",
-      );
+    if (index == -1) {
+      throw new Error(`Record not found: ${uname}`);
     }
 
-    if (
-      role === "prof" &&
-      PROJECTS.some((project) => project.prof_uname === uname)
-    ) {
-      throw new Error(
-        "Cannot delete a professor account while they still have projects.",
-      );
-    }
-
-    return userCRUD.remove(uname);
+    return USERS.splice(index, 1)[0];
   },
 };
 
 /*** profiles ***/
 
-function createProfileCRUD(collection, prefix, role) {
-  const crud = createCRUD(collection, prefix);
-
+// crud factory
+function createCRUD(collection, role) {
   return {
-    getAll: crud.getAll,
-    get: crud.get,
+    async getAll() {
+      return collection;
+    },
+
+    async get(uname) {
+      const profile = collection.find((item) => item.uname == uname);
+
+      if (!profile) {
+        throw new Error(`Record not found: ${uname}`);
+      }
+
+      return profile;
+    },
 
     async add(data) {
       const uname = data.uname?.trim();
@@ -209,7 +136,7 @@ function createProfileCRUD(collection, prefix, role) {
         throw new Error("Username is required.");
       }
 
-      const account = USERS.find((user) => user.uname === uname);
+      const account = USERS.find((user) => user.uname == uname);
 
       if (!account) {
         throw new Error(`No login account exists for: ${uname}`);
@@ -219,15 +146,19 @@ function createProfileCRUD(collection, prefix, role) {
         throw new Error(`Account ${uname} does not have the ${role} role.`);
       }
 
-      if (collection.some((profile) => profile.uname === uname)) {
+      if (collection.some((profile) => profile.uname == uname)) {
         throw new Error(`Profile already exists: ${uname}`);
       }
 
-      return crud.add({
+      const profile = {
         ...data,
         _id: uname,
         uname,
-      });
+      };
+
+      collection.push(profile);
+
+      return profile;
     },
 
     async update(uname, changes) {
@@ -239,34 +170,46 @@ function createProfileCRUD(collection, prefix, role) {
         throw new Error("Profile IDs cannot be changed.");
       }
 
-      return crud.update(uname, changes);
+      const index = collection.findIndex((profile) => profile.uname == uname);
+
+      if (index == -1) {
+        throw new Error(`Record not found: ${uname}`);
+      }
+
+      const updated = { ...collection[index], ...changes, uname, _id: uname };
+      collection[index] = updated;
+
+      return updated;
     },
 
     async remove(uname) {
-      if (role === "prof") {
-        const hasProjects = PROJECTS.some(
-          (project) => project.prof_uname === uname,
-        );
-
-        if (hasProjects) {
-          throw new Error("Cannot delete a professor who still has projects.");
-        }
+      if (!collection.some((profile) => profile.uname == uname)) {
+        throw new Error(`Record not found: ${uname}`);
       }
 
-      return crud.remove(uname);
+      if (
+        role == "prof" &&
+        PROJECTS.some((project) => project.prof_uname == uname)
+      ) {
+        throw new Error("Cannot delete a professor who still has projects.");
+      }
+
+      const index = collection.findIndex((profile) => profile.uname == uname);
+
+      return collection.splice(index, 1)[0];
     },
   };
 }
 
 export const students = {
-  ...createProfileCRUD(STUDENTS, "student", "student"),
+  ...createCRUD(STUDENTS, "student"),
 
   getByProject(projectID) {
-    return STUDENTS.filter((student) => student.final_proj_id === projectID);
+    return STUDENTS.filter((student) => student.final_proj_id == projectID);
   },
 
   async allocateTokens(uname, token_dist) {
-    const student = STUDENTS.find((s) => s.uname === uname);
+    const student = STUDENTS.find((s) => s.uname == uname);
 
     if (!student) {
       throw new Error("Student not found.");
@@ -277,7 +220,7 @@ export const students = {
     for (const [projectID, amount] of Object.entries(token_dist)) {
       const tokens = Number(amount);
 
-      if (!PROJECTS.some((p) => p._id === projectID)) {
+      if (!PROJECTS.some((p) => p._id == projectID)) {
         throw new Error(`Unknown project: ${projectID}`);
       }
 
@@ -303,17 +246,65 @@ export const students = {
   },
 };
 
-export const profs = createProfileCRUD(PROFS, "prof", "prof");
+export const profs = createCRUD(PROFS, "prof");
 
-export const admins = createProfileCRUD(ADMINS, "admin", "admin");
+export const admins = createCRUD(ADMINS, "admin");
 
 /*** projects ***/
 
 export const projects = {
-  ...createCRUD(PROJECTS, "project", "_id"),
+  async getAll() {
+    return PROJECTS;
+  },
+
+  async get(id) {
+    const project = PROJECTS.find((item) => item._id == id);
+
+    if (!project) {
+      throw new Error(`Record not found: ${id}`);
+    }
+
+    return project;
+  },
+
+  async add(data) {
+    const id = data._id || `project_${crypto.randomUUID()}`;
+
+    if (PROJECTS.some((project) => project._id == id)) {
+      throw new Error(`Record already exists: ${id}`);
+    }
+
+    const project = { ...data, _id: id };
+    PROJECTS.push(project);
+
+    return project;
+  },
+
+  async update(id, changes) {
+    const index = PROJECTS.findIndex((project) => project._id == id);
+
+    if (index == -1) {
+      throw new Error(`Record not found: ${id}`);
+    }
+
+    const updated = { ...PROJECTS[index], ...changes, _id: id };
+    PROJECTS[index] = updated;
+
+    return updated;
+  },
+
+  async remove(id) {
+    const index = PROJECTS.findIndex((project) => project._id == id);
+
+    if (index == -1) {
+      throw new Error(`Record not found: ${id}`);
+    }
+
+    return PROJECTS.splice(index, 1)[0];
+  },
 
   async getByProf(prof_uname) {
-    return PROJECTS.filter((project) => project.prof_uname === prof_uname);
+    return PROJECTS.filter((project) => project.prof_uname == prof_uname);
   },
 };
 
@@ -327,14 +318,13 @@ export async function getCurrentUser() {
   return users.get(token.uname);
 }
 
-/*** phase APIs ***/
-
-// Keep the current phase locally in this module.
-// See note below about synchronizing this with data.js.
+/*** terribly terrible PHASE APIs ***/
 
 let currentPhase = PHASE;
 
-export const getPhase = async () => currentPhase;
+export const getPhase = async () => {
+  return currentPhase;
+};
 
 export const setPhase = async (n) => {
   if (!Number.isInteger(n) || n < 0 || n > 4) {
