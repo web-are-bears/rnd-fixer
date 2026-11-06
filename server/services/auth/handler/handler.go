@@ -1,4 +1,4 @@
-package auth
+package handler
 
 import (
 	"context"
@@ -39,7 +39,7 @@ func NewHandler(s *mongo.Store[mdl.UserDoc]) *Handler {
 func (handle *Handler) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 10)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.Internal, "internal error")
 	}
 
 	document := mdl.UserDoc{

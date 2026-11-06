@@ -1,4 +1,4 @@
-package auth
+package model
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func (m *AuthStore) CreateUser(ctx context.Context, doc *UserDoc) (string, error
 	}
 
 	if err != nil {
-		return "", err
+		return "", status.Error(codes.Internal, "internal error")
 	}
 
 	return id, nil

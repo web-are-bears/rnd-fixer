@@ -1,4 +1,4 @@
-package auth
+package model
 
 type UserDoc struct {
 	Username string `json:"username" bson:"username"`
