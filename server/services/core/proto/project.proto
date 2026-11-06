@@ -1,0 +1,44 @@
+syntax = "proto3";
+package com.github.wbb.core;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service CoreService {
+    rpc AddProject(ProjectData) returns (ProjectId) {
+        option (google.api.http) = { post: "/v1/core/add_project" body: "*" };
+    }
+
+    rpc FetchProject(ProjectId) returns (ProjectData) {
+        option (google.api.http) = { get: "/v1/core/fetch_project/{project_id}" };
+    }
+
+    rpc FetchAllProjects(google.protobuf.Empty) returns (ProjectList) {
+        option (google.api.http) = { get: "/v1/core/fetch_projects" };
+    }
+
+    rpc FetchProjectByProfId(ProfId) returns (ProjectList) {
+        option (google.api.http) = { get: "/v1/core/fetch_prof_projects" };
+    }
+}
+
+message ProjectData {
+    string project_id = 1;
+    string project_name = 2;
+    string prof_id = 3;
+    string description = 4;
+    uint32 max_occupancy = 5;
+    map<string, uint32> token_distribution = 6;
+}
+
+message ProfId {
+    string prof_id = 1;
+}
+
+message ProjectList {
+    repeated ProjectData projects = 1;
+}
+
+message ProjectId {
+    string project_id = 1;
+}
