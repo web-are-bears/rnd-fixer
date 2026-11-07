@@ -66,3 +66,38 @@ func (m *CoreStore) FetchProject(ctx context.Context, id string) (*ProjectDoc, e
 
 	return project, nil
 }
+
+func (m *CoreStore) AddStudentTokenToProject(ctx context.Context, tok TokenDoc) (string, error) {
+	filter := bson.M{"_id": tok.ProjectId}
+	update := bson.M{"$set" : bson.M{
+		"token_distribution." + tok.StudentId: tok.Token,
+	}}
+	err := m.projects.UpdateOne(ctx, filter, update)
+	if errors.Is(err, mongo.ErrNotFound) {
+		return "", status.Error(codes.NotFound, "project not found")
+	}
+
+	if err != nil {
+		return "", status.Error(codes.Internal, "internal error")
+	}
+
+	return tok.ProjectId, nil
+}
+
+func (m *CoreStore) DeleteStudentTokenToProject(ctx context.Context, projectId, studentId string) (string, error) {
+	key := "token_distribution." + studentId
+	filter := bson.M{
+		"_id": projectId,
+		key: bson.M{"$exists": true},
+	}
+	update := bson.M{"$unset": bson.M{key: ""}}
+
+	err := m.projects.UpdateOne(ctx, filter, update)
+	if errors.Is(err, mongo.ErrNotFound) {
+		return "", status.Error(codes.NotFound, "project or student token not found")
+	}
+	if err != nil {
+		return "", status.Error(codes.Internal, "internal error")
+	}
+	return projectId, nil
+}
