@@ -23,6 +23,118 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type StudentId struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	StudentId     string                 `protobuf:"bytes,2,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StudentId) Reset() {
+	*x = StudentId{}
+	mi := &file_core_proto_project_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StudentId) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentId) ProtoMessage() {}
+
+func (x *StudentId) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_project_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentId.ProtoReflect.Descriptor instead.
+func (*StudentId) Descriptor() ([]byte, []int) {
+	return file_core_proto_project_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *StudentId) GetProjectId() string {
+	if x != nil {
+		return x.ProjectId
+	}
+	return ""
+}
+
+func (x *StudentId) GetStudentId() string {
+	if x != nil {
+		return x.StudentId
+	}
+	return ""
+}
+
+type TokenData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	StudentId     string                 `protobuf:"bytes,2,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"`
+	Token         uint32                 `protobuf:"varint,3,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TokenData) Reset() {
+	*x = TokenData{}
+	mi := &file_core_proto_project_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TokenData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TokenData) ProtoMessage() {}
+
+func (x *TokenData) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_project_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TokenData.ProtoReflect.Descriptor instead.
+func (*TokenData) Descriptor() ([]byte, []int) {
+	return file_core_proto_project_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *TokenData) GetProjectId() string {
+	if x != nil {
+		return x.ProjectId
+	}
+	return ""
+}
+
+func (x *TokenData) GetStudentId() string {
+	if x != nil {
+		return x.StudentId
+	}
+	return ""
+}
+
+func (x *TokenData) GetToken() uint32 {
+	if x != nil {
+		return x.Token
+	}
+	return 0
+}
+
 type ProjectData struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	ProjectId         string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
@@ -37,7 +149,7 @@ type ProjectData struct {
 
 func (x *ProjectData) Reset() {
 	*x = ProjectData{}
-	mi := &file_core_proto_project_proto_msgTypes[0]
+	mi := &file_core_proto_project_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -49,7 +161,7 @@ func (x *ProjectData) String() string {
 func (*ProjectData) ProtoMessage() {}
 
 func (x *ProjectData) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_project_proto_msgTypes[0]
+	mi := &file_core_proto_project_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -62,7 +174,7 @@ func (x *ProjectData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectData.ProtoReflect.Descriptor instead.
 func (*ProjectData) Descriptor() ([]byte, []int) {
-	return file_core_proto_project_proto_rawDescGZIP(), []int{0}
+	return file_core_proto_project_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ProjectData) GetProjectId() string {
@@ -116,7 +228,7 @@ type ProfId struct {
 
 func (x *ProfId) Reset() {
 	*x = ProfId{}
-	mi := &file_core_proto_project_proto_msgTypes[1]
+	mi := &file_core_proto_project_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -128,7 +240,7 @@ func (x *ProfId) String() string {
 func (*ProfId) ProtoMessage() {}
 
 func (x *ProfId) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_project_proto_msgTypes[1]
+	mi := &file_core_proto_project_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -141,7 +253,7 @@ func (x *ProfId) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfId.ProtoReflect.Descriptor instead.
 func (*ProfId) Descriptor() ([]byte, []int) {
-	return file_core_proto_project_proto_rawDescGZIP(), []int{1}
+	return file_core_proto_project_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProfId) GetProfId() string {
@@ -160,7 +272,7 @@ type ProjectList struct {
 
 func (x *ProjectList) Reset() {
 	*x = ProjectList{}
-	mi := &file_core_proto_project_proto_msgTypes[2]
+	mi := &file_core_proto_project_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -172,7 +284,7 @@ func (x *ProjectList) String() string {
 func (*ProjectList) ProtoMessage() {}
 
 func (x *ProjectList) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_project_proto_msgTypes[2]
+	mi := &file_core_proto_project_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -185,7 +297,7 @@ func (x *ProjectList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectList.ProtoReflect.Descriptor instead.
 func (*ProjectList) Descriptor() ([]byte, []int) {
-	return file_core_proto_project_proto_rawDescGZIP(), []int{2}
+	return file_core_proto_project_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ProjectList) GetProjects() []*ProjectData {
@@ -204,7 +316,7 @@ type ProjectId struct {
 
 func (x *ProjectId) Reset() {
 	*x = ProjectId{}
-	mi := &file_core_proto_project_proto_msgTypes[3]
+	mi := &file_core_proto_project_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -216,7 +328,7 @@ func (x *ProjectId) String() string {
 func (*ProjectId) ProtoMessage() {}
 
 func (x *ProjectId) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_project_proto_msgTypes[3]
+	mi := &file_core_proto_project_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -229,7 +341,7 @@ func (x *ProjectId) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectId.ProtoReflect.Descriptor instead.
 func (*ProjectId) Descriptor() ([]byte, []int) {
-	return file_core_proto_project_proto_rawDescGZIP(), []int{3}
+	return file_core_proto_project_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ProjectId) GetProjectId() string {
@@ -243,7 +355,18 @@ var File_core_proto_project_proto protoreflect.FileDescriptor
 
 const file_core_proto_project_proto_rawDesc = "" +
 	"\n" +
-	"\x18core/proto/project.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xdd\x02\n" +
+	"\x18core/proto/project.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"I\n" +
+	"\tStudentId\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x1d\n" +
+	"\n" +
+	"student_id\x18\x02 \x01(\tR\tstudentId\"_\n" +
+	"\tTokenData\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x1d\n" +
+	"\n" +
+	"student_id\x18\x02 \x01(\tR\tstudentId\x12\x14\n" +
+	"\x05token\x18\x03 \x01(\rR\x05token\"\xdd\x02\n" +
 	"\vProjectData\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12!\n" +
@@ -261,13 +384,15 @@ const file_core_proto_project_proto_rawDesc = "" +
 	"\bprojects\x18\x01 \x03(\v2 .com.github.wbb.core.ProjectDataR\bprojects\"*\n" +
 	"\tProjectId\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId2\xe9\x03\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId2\x87\x06\n" +
 	"\vCoreService\x12o\n" +
 	"\n" +
 	"AddProject\x12 .com.github.wbb.core.ProjectData\x1a\x1e.com.github.wbb.core.ProjectId\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/core/add_project\x12}\n" +
 	"\fFetchProject\x12\x1e.com.github.wbb.core.ProjectId\x1a .com.github.wbb.core.ProjectData\"+\x82\xd3\xe4\x93\x02%\x12#/v1/core/fetch_project/{project_id}\x12m\n" +
 	"\x10FetchAllProjects\x12\x16.google.protobuf.Empty\x1a .com.github.wbb.core.ProjectList\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/v1/core/fetch_projects\x12{\n" +
-	"\x14FetchProjectByProfId\x12\x1b.com.github.wbb.core.ProfId\x1a .com.github.wbb.core.ProjectList\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/v1/core/fetch_prof_projectsB\xc5\x01\n" +
+	"\x14FetchProjectByProfId\x12\x1b.com.github.wbb.core.ProfId\x1a .com.github.wbb.core.ProjectList\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/v1/core/fetch_prof_projects\x12\x8c\x01\n" +
+	"\x18AddStudentTokenToProject\x12\x1e.com.github.wbb.core.TokenData\x1a\x1e.com.github.wbb.core.ProjectId\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/core/projects/{project_id}/tokens\x12\x8c\x01\n" +
+	"\x1bDeleteStudentTokenToProject\x12\x1e.com.github.wbb.core.StudentId\x1a\x1e.com.github.wbb.core.ProjectId\"-\x82\xd3\xe4\x93\x02'*%/v1/core/projects/{project_id}/tokensB\xc5\x01\n" +
 	"\x17com.com.github.wbb.coreB\fProjectProtoP\x01Z,github.com/wbb/rnd-fixer/services/core/proto\xa2\x02\x04CGWC\xaa\x02\x13Com.Github.Wbb.Core\xca\x02\x13Com\\Github\\Wbb\\Core\xe2\x02\x1fCom\\Github\\Wbb\\Core\\GPBMetadata\xea\x02\x16Com::Github::Wbb::Coreb\x06proto3"
 
 var (
@@ -282,28 +407,34 @@ func file_core_proto_project_proto_rawDescGZIP() []byte {
 	return file_core_proto_project_proto_rawDescData
 }
 
-var file_core_proto_project_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_core_proto_project_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_core_proto_project_proto_goTypes = []any{
-	(*ProjectData)(nil),   // 0: com.github.wbb.core.ProjectData
-	(*ProfId)(nil),        // 1: com.github.wbb.core.ProfId
-	(*ProjectList)(nil),   // 2: com.github.wbb.core.ProjectList
-	(*ProjectId)(nil),     // 3: com.github.wbb.core.ProjectId
-	nil,                   // 4: com.github.wbb.core.ProjectData.TokenDistributionEntry
-	(*emptypb.Empty)(nil), // 5: google.protobuf.Empty
+	(*StudentId)(nil),     // 0: com.github.wbb.core.StudentId
+	(*TokenData)(nil),     // 1: com.github.wbb.core.TokenData
+	(*ProjectData)(nil),   // 2: com.github.wbb.core.ProjectData
+	(*ProfId)(nil),        // 3: com.github.wbb.core.ProfId
+	(*ProjectList)(nil),   // 4: com.github.wbb.core.ProjectList
+	(*ProjectId)(nil),     // 5: com.github.wbb.core.ProjectId
+	nil,                   // 6: com.github.wbb.core.ProjectData.TokenDistributionEntry
+	(*emptypb.Empty)(nil), // 7: google.protobuf.Empty
 }
 var file_core_proto_project_proto_depIdxs = []int32{
-	4, // 0: com.github.wbb.core.ProjectData.token_distribution:type_name -> com.github.wbb.core.ProjectData.TokenDistributionEntry
-	0, // 1: com.github.wbb.core.ProjectList.projects:type_name -> com.github.wbb.core.ProjectData
-	0, // 2: com.github.wbb.core.CoreService.AddProject:input_type -> com.github.wbb.core.ProjectData
-	3, // 3: com.github.wbb.core.CoreService.FetchProject:input_type -> com.github.wbb.core.ProjectId
-	5, // 4: com.github.wbb.core.CoreService.FetchAllProjects:input_type -> google.protobuf.Empty
-	1, // 5: com.github.wbb.core.CoreService.FetchProjectByProfId:input_type -> com.github.wbb.core.ProfId
-	3, // 6: com.github.wbb.core.CoreService.AddProject:output_type -> com.github.wbb.core.ProjectId
-	0, // 7: com.github.wbb.core.CoreService.FetchProject:output_type -> com.github.wbb.core.ProjectData
-	2, // 8: com.github.wbb.core.CoreService.FetchAllProjects:output_type -> com.github.wbb.core.ProjectList
-	2, // 9: com.github.wbb.core.CoreService.FetchProjectByProfId:output_type -> com.github.wbb.core.ProjectList
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
+	6, // 0: com.github.wbb.core.ProjectData.token_distribution:type_name -> com.github.wbb.core.ProjectData.TokenDistributionEntry
+	2, // 1: com.github.wbb.core.ProjectList.projects:type_name -> com.github.wbb.core.ProjectData
+	2, // 2: com.github.wbb.core.CoreService.AddProject:input_type -> com.github.wbb.core.ProjectData
+	5, // 3: com.github.wbb.core.CoreService.FetchProject:input_type -> com.github.wbb.core.ProjectId
+	7, // 4: com.github.wbb.core.CoreService.FetchAllProjects:input_type -> google.protobuf.Empty
+	3, // 5: com.github.wbb.core.CoreService.FetchProjectByProfId:input_type -> com.github.wbb.core.ProfId
+	1, // 6: com.github.wbb.core.CoreService.AddStudentTokenToProject:input_type -> com.github.wbb.core.TokenData
+	0, // 7: com.github.wbb.core.CoreService.DeleteStudentTokenToProject:input_type -> com.github.wbb.core.StudentId
+	5, // 8: com.github.wbb.core.CoreService.AddProject:output_type -> com.github.wbb.core.ProjectId
+	2, // 9: com.github.wbb.core.CoreService.FetchProject:output_type -> com.github.wbb.core.ProjectData
+	4, // 10: com.github.wbb.core.CoreService.FetchAllProjects:output_type -> com.github.wbb.core.ProjectList
+	4, // 11: com.github.wbb.core.CoreService.FetchProjectByProfId:output_type -> com.github.wbb.core.ProjectList
+	5, // 12: com.github.wbb.core.CoreService.AddStudentTokenToProject:output_type -> com.github.wbb.core.ProjectId
+	5, // 13: com.github.wbb.core.CoreService.DeleteStudentTokenToProject:output_type -> com.github.wbb.core.ProjectId
+	8, // [8:14] is the sub-list for method output_type
+	2, // [2:8] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -320,7 +451,7 @@ func file_core_proto_project_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_proto_project_proto_rawDesc), len(file_core_proto_project_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

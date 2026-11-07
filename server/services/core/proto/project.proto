@@ -20,6 +20,25 @@ service CoreService {
     rpc FetchProjectByProfId(ProfId) returns (ProjectList) {
         option (google.api.http) = { get: "/v1/core/fetch_prof_projects" };
     }
+
+    rpc AddStudentTokenToProject(TokenData) returns (ProjectId) {
+        option (google.api.http) = { post: "/v1/core/projects/{project_id}/tokens" body: "*" };
+    }
+
+    rpc DeleteStudentTokenToProject(StudentId) returns (ProjectId) {
+        option (google.api.http) = { delete: "/v1/core/projects/{project_id}/tokens" };
+    }
+}
+
+message StudentId {
+    string project_id = 1;
+    string student_id = 2;
+}
+
+message TokenData {
+    string project_id = 1;
+    string student_id = 2;
+    uint32 token      = 3;
 }
 
 message ProjectData {

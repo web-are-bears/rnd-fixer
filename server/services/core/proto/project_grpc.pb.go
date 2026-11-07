@@ -20,10 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CoreService_AddProject_FullMethodName           = "/com.github.wbb.core.CoreService/AddProject"
-	CoreService_FetchProject_FullMethodName         = "/com.github.wbb.core.CoreService/FetchProject"
-	CoreService_FetchAllProjects_FullMethodName     = "/com.github.wbb.core.CoreService/FetchAllProjects"
-	CoreService_FetchProjectByProfId_FullMethodName = "/com.github.wbb.core.CoreService/FetchProjectByProfId"
+	CoreService_AddProject_FullMethodName                  = "/com.github.wbb.core.CoreService/AddProject"
+	CoreService_FetchProject_FullMethodName                = "/com.github.wbb.core.CoreService/FetchProject"
+	CoreService_FetchAllProjects_FullMethodName            = "/com.github.wbb.core.CoreService/FetchAllProjects"
+	CoreService_FetchProjectByProfId_FullMethodName        = "/com.github.wbb.core.CoreService/FetchProjectByProfId"
+	CoreService_AddStudentTokenToProject_FullMethodName    = "/com.github.wbb.core.CoreService/AddStudentTokenToProject"
+	CoreService_DeleteStudentTokenToProject_FullMethodName = "/com.github.wbb.core.CoreService/DeleteStudentTokenToProject"
 )
 
 // CoreServiceClient is the client API for CoreService service.
@@ -34,6 +36,8 @@ type CoreServiceClient interface {
 	FetchProject(ctx context.Context, in *ProjectId, opts ...grpc.CallOption) (*ProjectData, error)
 	FetchAllProjects(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ProjectList, error)
 	FetchProjectByProfId(ctx context.Context, in *ProfId, opts ...grpc.CallOption) (*ProjectList, error)
+	AddStudentTokenToProject(ctx context.Context, in *TokenData, opts ...grpc.CallOption) (*ProjectId, error)
+	DeleteStudentTokenToProject(ctx context.Context, in *StudentId, opts ...grpc.CallOption) (*ProjectId, error)
 }
 
 type coreServiceClient struct {
@@ -84,6 +88,26 @@ func (c *coreServiceClient) FetchProjectByProfId(ctx context.Context, in *ProfId
 	return out, nil
 }
 
+func (c *coreServiceClient) AddStudentTokenToProject(ctx context.Context, in *TokenData, opts ...grpc.CallOption) (*ProjectId, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectId)
+	err := c.cc.Invoke(ctx, CoreService_AddStudentTokenToProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreServiceClient) DeleteStudentTokenToProject(ctx context.Context, in *StudentId, opts ...grpc.CallOption) (*ProjectId, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProjectId)
+	err := c.cc.Invoke(ctx, CoreService_DeleteStudentTokenToProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreServiceServer is the server API for CoreService service.
 // All implementations must embed UnimplementedCoreServiceServer
 // for forward compatibility.
@@ -92,6 +116,8 @@ type CoreServiceServer interface {
 	FetchProject(context.Context, *ProjectId) (*ProjectData, error)
 	FetchAllProjects(context.Context, *emptypb.Empty) (*ProjectList, error)
 	FetchProjectByProfId(context.Context, *ProfId) (*ProjectList, error)
+	AddStudentTokenToProject(context.Context, *TokenData) (*ProjectId, error)
+	DeleteStudentTokenToProject(context.Context, *StudentId) (*ProjectId, error)
 	mustEmbedUnimplementedCoreServiceServer()
 }
 
@@ -113,6 +139,12 @@ func (UnimplementedCoreServiceServer) FetchAllProjects(context.Context, *emptypb
 }
 func (UnimplementedCoreServiceServer) FetchProjectByProfId(context.Context, *ProfId) (*ProjectList, error) {
 	return nil, status.Error(codes.Unimplemented, "method FetchProjectByProfId not implemented")
+}
+func (UnimplementedCoreServiceServer) AddStudentTokenToProject(context.Context, *TokenData) (*ProjectId, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddStudentTokenToProject not implemented")
+}
+func (UnimplementedCoreServiceServer) DeleteStudentTokenToProject(context.Context, *StudentId) (*ProjectId, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteStudentTokenToProject not implemented")
 }
 func (UnimplementedCoreServiceServer) mustEmbedUnimplementedCoreServiceServer() {}
 func (UnimplementedCoreServiceServer) testEmbeddedByValue()                     {}
@@ -207,6 +239,42 @@ func _CoreService_FetchProjectByProfId_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoreService_AddStudentTokenToProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TokenData)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServiceServer).AddStudentTokenToProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreService_AddStudentTokenToProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServiceServer).AddStudentTokenToProject(ctx, req.(*TokenData))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreService_DeleteStudentTokenToProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreServiceServer).DeleteStudentTokenToProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreService_DeleteStudentTokenToProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreServiceServer).DeleteStudentTokenToProject(ctx, req.(*StudentId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CoreService_ServiceDesc is the grpc.ServiceDesc for CoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -229,6 +297,14 @@ var CoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FetchProjectByProfId",
 			Handler:    _CoreService_FetchProjectByProfId_Handler,
+		},
+		{
+			MethodName: "AddStudentTokenToProject",
+			Handler:    _CoreService_AddStudentTokenToProject_Handler,
+		},
+		{
+			MethodName: "DeleteStudentTokenToProject",
+			Handler:    _CoreService_DeleteStudentTokenToProject_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
