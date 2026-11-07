@@ -94,3 +94,26 @@ func (handle *Handler) FetchProjectByProfId(ctx context.Context, req *pb.ProfId)
 	}
 	return &pl, nil
 }
+
+func (handle *Handler) AddStudentTokenToProject(ctx context.Context, req *pb.TokenData) (*pb.ProjectId, error) {
+	id, err := handle.projectStore.AddStudentTokenToProject(ctx, mdl.TokenDoc{
+		ProjectId: req.ProjectId,
+		StudentId: req.StudentId,
+		Token: req.Token,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ProjectId{ProjectId: id}, nil
+}
+
+func (handle *Handler) DeleteStudentTokenToProject(ctx context.Context, req *pb.StudentId) (*pb.ProjectId, error) {
+	id, err := handle.projectStore.DeleteStudentTokenToProject(ctx, req.ProjectId, req.StudentId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ProjectId{ProjectId: id}, nil
+}
