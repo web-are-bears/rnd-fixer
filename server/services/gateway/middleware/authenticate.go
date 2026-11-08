@@ -18,10 +18,22 @@ func unauthorized(w http.ResponseWriter, r *http.Request, msg string) {
 	})
 }
 
+func checkLongestPrefixMatch(search string, table map[string]bool) bool {
+	var final bool
+	var length int = -1
+	for k, v := range table {
+		if (strings.HasPrefix(search, k) && len(k) > length) {
+			final = v
+			length = len(k)
+		}
+	}
+	return final
+}
+
 func AuthMiddleware(v *jwtauth.Verifier, public map[string]bool) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
-			if public[r.Method+" "+r.URL.Path] {
+			if checkLongestPrefixMatch(r.Method+" "+r.URL.Path, public) {
 				next.ServeHTTP(w, r)
 				return
 			}
