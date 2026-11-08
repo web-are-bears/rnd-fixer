@@ -4,54 +4,54 @@ package com.github.wbb.core;
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-service CoreService {
+service CoreProjectService {
     rpc AddProject(ProjectData) returns (ProjectId) {
-        option (google.api.http) = { post: "/v1/core/add_project" body: "*" };
+        option (google.api.http) = { post: "/v1/core/projects/{prof_username}" body: "*" };
     }
 
     rpc FetchProject(ProjectId) returns (ProjectData) {
-        option (google.api.http) = { get: "/v1/core/fetch_project/{project_id}" };
+        option (google.api.http) = { get: "/v1/core/projects/{proj_id}" };
+    }
+
+    rpc FetchProjectByProfId(ProfProjectUsername) returns (ProjectList) {
+        option (google.api.http) = { get: "/v1/core/projects/prof/{prof_username}" };
     }
 
     rpc FetchAllProjects(google.protobuf.Empty) returns (ProjectList) {
-        option (google.api.http) = { get: "/v1/core/fetch_projects" };
+        option (google.api.http) = { get: "/v1/core/projects" };
     }
 
-    rpc FetchProjectByProfId(ProfId) returns (ProjectList) {
-        option (google.api.http) = { get: "/v1/core/fetch_prof_projects" };
+    rpc AddStudentTokenToProject(TokenProjectData) returns (ProjectId) {
+        option (google.api.http) = { post: "/v1/core/projects/tokens/{proj_id}" body: "*" };
     }
 
-    rpc AddStudentTokenToProject(TokenData) returns (ProjectId) {
-        option (google.api.http) = { post: "/v1/core/projects/{project_id}/tokens" body: "*" };
-    }
-
-    rpc DeleteStudentTokenToProject(StudentId) returns (ProjectId) {
-        option (google.api.http) = { delete: "/v1/core/projects/{project_id}/tokens" };
+    rpc DeleteStudentTokenToProject(StudentProjectUsername) returns (ProjectId) {
+        option (google.api.http) = { delete: "/v1/core/projects/tokens/{proj_id}" };
     }
 }
 
-message StudentId {
-    string project_id = 1;
-    string student_id = 2;
+message StudentProjectUsername {
+    string proj_id = 1;
+    string stud_username = 2;
 }
 
-message TokenData {
-    string project_id = 1;
-    string student_id = 2;
+message TokenProjectData {
+    string proj_id = 1;
+    string stud_username = 2;
     uint32 token      = 3;
 }
 
 message ProjectData {
-    string project_id = 1;
-    string project_name = 2;
-    string prof_id = 3;
+    string proj_id = 1;
+    string proj_name = 2;
+    string prof_username = 3;
     string description = 4;
     uint32 max_occupancy = 5;
     map<string, uint32> token_distribution = 6;
 }
 
-message ProfId {
-    string prof_id = 1;
+message ProfProjectUsername {
+    string prof_username = 1;
 }
 
 message ProjectList {
@@ -59,5 +59,5 @@ message ProjectList {
 }
 
 message ProjectId {
-    string project_id = 1;
+    string proj_id = 1;
 }

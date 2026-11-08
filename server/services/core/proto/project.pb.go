@@ -23,28 +23,28 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type StudentId struct {
+type StudentProjectUsername struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	StudentId     string                 `protobuf:"bytes,2,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"`
+	ProjId        string                 `protobuf:"bytes,1,opt,name=proj_id,json=projId,proto3" json:"proj_id,omitempty"`
+	StudUsername  string                 `protobuf:"bytes,2,opt,name=stud_username,json=studUsername,proto3" json:"stud_username,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *StudentId) Reset() {
-	*x = StudentId{}
+func (x *StudentProjectUsername) Reset() {
+	*x = StudentProjectUsername{}
 	mi := &file_core_proto_project_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *StudentId) String() string {
+func (x *StudentProjectUsername) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StudentId) ProtoMessage() {}
+func (*StudentProjectUsername) ProtoMessage() {}
 
-func (x *StudentId) ProtoReflect() protoreflect.Message {
+func (x *StudentProjectUsername) ProtoReflect() protoreflect.Message {
 	mi := &file_core_proto_project_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -56,48 +56,48 @@ func (x *StudentId) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StudentId.ProtoReflect.Descriptor instead.
-func (*StudentId) Descriptor() ([]byte, []int) {
+// Deprecated: Use StudentProjectUsername.ProtoReflect.Descriptor instead.
+func (*StudentProjectUsername) Descriptor() ([]byte, []int) {
 	return file_core_proto_project_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *StudentId) GetProjectId() string {
+func (x *StudentProjectUsername) GetProjId() string {
 	if x != nil {
-		return x.ProjectId
+		return x.ProjId
 	}
 	return ""
 }
 
-func (x *StudentId) GetStudentId() string {
+func (x *StudentProjectUsername) GetStudUsername() string {
 	if x != nil {
-		return x.StudentId
+		return x.StudUsername
 	}
 	return ""
 }
 
-type TokenData struct {
+type TokenProjectData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	StudentId     string                 `protobuf:"bytes,2,opt,name=student_id,json=studentId,proto3" json:"student_id,omitempty"`
+	ProjId        string                 `protobuf:"bytes,1,opt,name=proj_id,json=projId,proto3" json:"proj_id,omitempty"`
+	StudUsername  string                 `protobuf:"bytes,2,opt,name=stud_username,json=studUsername,proto3" json:"stud_username,omitempty"`
 	Token         uint32                 `protobuf:"varint,3,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TokenData) Reset() {
-	*x = TokenData{}
+func (x *TokenProjectData) Reset() {
+	*x = TokenProjectData{}
 	mi := &file_core_proto_project_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TokenData) String() string {
+func (x *TokenProjectData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TokenData) ProtoMessage() {}
+func (*TokenProjectData) ProtoMessage() {}
 
-func (x *TokenData) ProtoReflect() protoreflect.Message {
+func (x *TokenProjectData) ProtoReflect() protoreflect.Message {
 	mi := &file_core_proto_project_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -109,26 +109,26 @@ func (x *TokenData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TokenData.ProtoReflect.Descriptor instead.
-func (*TokenData) Descriptor() ([]byte, []int) {
+// Deprecated: Use TokenProjectData.ProtoReflect.Descriptor instead.
+func (*TokenProjectData) Descriptor() ([]byte, []int) {
 	return file_core_proto_project_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *TokenData) GetProjectId() string {
+func (x *TokenProjectData) GetProjId() string {
 	if x != nil {
-		return x.ProjectId
+		return x.ProjId
 	}
 	return ""
 }
 
-func (x *TokenData) GetStudentId() string {
+func (x *TokenProjectData) GetStudUsername() string {
 	if x != nil {
-		return x.StudentId
+		return x.StudUsername
 	}
 	return ""
 }
 
-func (x *TokenData) GetToken() uint32 {
+func (x *TokenProjectData) GetToken() uint32 {
 	if x != nil {
 		return x.Token
 	}
@@ -137,9 +137,9 @@ func (x *TokenData) GetToken() uint32 {
 
 type ProjectData struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId         string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	ProjectName       string                 `protobuf:"bytes,2,opt,name=project_name,json=projectName,proto3" json:"project_name,omitempty"`
-	ProfId            string                 `protobuf:"bytes,3,opt,name=prof_id,json=profId,proto3" json:"prof_id,omitempty"`
+	ProjId            string                 `protobuf:"bytes,1,opt,name=proj_id,json=projId,proto3" json:"proj_id,omitempty"`
+	ProjName          string                 `protobuf:"bytes,2,opt,name=proj_name,json=projName,proto3" json:"proj_name,omitempty"`
+	ProfUsername      string                 `protobuf:"bytes,3,opt,name=prof_username,json=profUsername,proto3" json:"prof_username,omitempty"`
 	Description       string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	MaxOccupancy      uint32                 `protobuf:"varint,5,opt,name=max_occupancy,json=maxOccupancy,proto3" json:"max_occupancy,omitempty"`
 	TokenDistribution map[string]uint32      `protobuf:"bytes,6,rep,name=token_distribution,json=tokenDistribution,proto3" json:"token_distribution,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
@@ -177,23 +177,23 @@ func (*ProjectData) Descriptor() ([]byte, []int) {
 	return file_core_proto_project_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ProjectData) GetProjectId() string {
+func (x *ProjectData) GetProjId() string {
 	if x != nil {
-		return x.ProjectId
+		return x.ProjId
 	}
 	return ""
 }
 
-func (x *ProjectData) GetProjectName() string {
+func (x *ProjectData) GetProjName() string {
 	if x != nil {
-		return x.ProjectName
+		return x.ProjName
 	}
 	return ""
 }
 
-func (x *ProjectData) GetProfId() string {
+func (x *ProjectData) GetProfUsername() string {
 	if x != nil {
-		return x.ProfId
+		return x.ProfUsername
 	}
 	return ""
 }
@@ -219,27 +219,27 @@ func (x *ProjectData) GetTokenDistribution() map[string]uint32 {
 	return nil
 }
 
-type ProfId struct {
+type ProfProjectUsername struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProfId        string                 `protobuf:"bytes,1,opt,name=prof_id,json=profId,proto3" json:"prof_id,omitempty"`
+	ProfUsername  string                 `protobuf:"bytes,1,opt,name=prof_username,json=profUsername,proto3" json:"prof_username,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ProfId) Reset() {
-	*x = ProfId{}
+func (x *ProfProjectUsername) Reset() {
+	*x = ProfProjectUsername{}
 	mi := &file_core_proto_project_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ProfId) String() string {
+func (x *ProfProjectUsername) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProfId) ProtoMessage() {}
+func (*ProfProjectUsername) ProtoMessage() {}
 
-func (x *ProfId) ProtoReflect() protoreflect.Message {
+func (x *ProfProjectUsername) ProtoReflect() protoreflect.Message {
 	mi := &file_core_proto_project_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -251,14 +251,14 @@ func (x *ProfId) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ProfId.ProtoReflect.Descriptor instead.
-func (*ProfId) Descriptor() ([]byte, []int) {
+// Deprecated: Use ProfProjectUsername.ProtoReflect.Descriptor instead.
+func (*ProfProjectUsername) Descriptor() ([]byte, []int) {
 	return file_core_proto_project_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ProfId) GetProfId() string {
+func (x *ProfProjectUsername) GetProfUsername() string {
 	if x != nil {
-		return x.ProfId
+		return x.ProfUsername
 	}
 	return ""
 }
@@ -309,7 +309,7 @@ func (x *ProjectList) GetProjects() []*ProjectData {
 
 type ProjectId struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	ProjId        string                 `protobuf:"bytes,1,opt,name=proj_id,json=projId,proto3" json:"proj_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -344,9 +344,9 @@ func (*ProjectId) Descriptor() ([]byte, []int) {
 	return file_core_proto_project_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ProjectId) GetProjectId() string {
+func (x *ProjectId) GetProjId() string {
 	if x != nil {
-		return x.ProjectId
+		return x.ProjId
 	}
 	return ""
 }
@@ -355,44 +355,38 @@ var File_core_proto_project_proto protoreflect.FileDescriptor
 
 const file_core_proto_project_proto_rawDesc = "" +
 	"\n" +
-	"\x18core/proto/project.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"I\n" +
-	"\tStudentId\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x1d\n" +
-	"\n" +
-	"student_id\x18\x02 \x01(\tR\tstudentId\"_\n" +
-	"\tTokenData\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x1d\n" +
-	"\n" +
-	"student_id\x18\x02 \x01(\tR\tstudentId\x12\x14\n" +
+	"\x18core/proto/project.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"V\n" +
+	"\x16StudentProjectUsername\x12\x17\n" +
+	"\aproj_id\x18\x01 \x01(\tR\x06projId\x12#\n" +
+	"\rstud_username\x18\x02 \x01(\tR\fstudUsername\"f\n" +
+	"\x10TokenProjectData\x12\x17\n" +
+	"\aproj_id\x18\x01 \x01(\tR\x06projId\x12#\n" +
+	"\rstud_username\x18\x02 \x01(\tR\fstudUsername\x12\x14\n" +
 	"\x05token\x18\x03 \x01(\rR\x05token\"\xdd\x02\n" +
-	"\vProjectData\x12\x1d\n" +
-	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId\x12!\n" +
-	"\fproject_name\x18\x02 \x01(\tR\vprojectName\x12\x17\n" +
-	"\aprof_id\x18\x03 \x01(\tR\x06profId\x12 \n" +
+	"\vProjectData\x12\x17\n" +
+	"\aproj_id\x18\x01 \x01(\tR\x06projId\x12\x1b\n" +
+	"\tproj_name\x18\x02 \x01(\tR\bprojName\x12#\n" +
+	"\rprof_username\x18\x03 \x01(\tR\fprofUsername\x12 \n" +
 	"\vdescription\x18\x04 \x01(\tR\vdescription\x12#\n" +
 	"\rmax_occupancy\x18\x05 \x01(\rR\fmaxOccupancy\x12f\n" +
 	"\x12token_distribution\x18\x06 \x03(\v27.com.github.wbb.core.ProjectData.TokenDistributionEntryR\x11tokenDistribution\x1aD\n" +
 	"\x16TokenDistributionEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"!\n" +
-	"\x06ProfId\x12\x17\n" +
-	"\aprof_id\x18\x01 \x01(\tR\x06profId\"K\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\":\n" +
+	"\x13ProfProjectUsername\x12#\n" +
+	"\rprof_username\x18\x01 \x01(\tR\fprofUsername\"K\n" +
 	"\vProjectList\x12<\n" +
-	"\bprojects\x18\x01 \x03(\v2 .com.github.wbb.core.ProjectDataR\bprojects\"*\n" +
-	"\tProjectId\x12\x1d\n" +
+	"\bprojects\x18\x01 \x03(\v2 .com.github.wbb.core.ProjectDataR\bprojects\"$\n" +
+	"\tProjectId\x12\x17\n" +
+	"\aproj_id\x18\x01 \x01(\tR\x06projId2\xb3\x06\n" +
+	"\x12CoreProjectService\x12|\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId2\x87\x06\n" +
-	"\vCoreService\x12o\n" +
-	"\n" +
-	"AddProject\x12 .com.github.wbb.core.ProjectData\x1a\x1e.com.github.wbb.core.ProjectId\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/core/add_project\x12}\n" +
-	"\fFetchProject\x12\x1e.com.github.wbb.core.ProjectId\x1a .com.github.wbb.core.ProjectData\"+\x82\xd3\xe4\x93\x02%\x12#/v1/core/fetch_project/{project_id}\x12m\n" +
-	"\x10FetchAllProjects\x12\x16.google.protobuf.Empty\x1a .com.github.wbb.core.ProjectList\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/v1/core/fetch_projects\x12{\n" +
-	"\x14FetchProjectByProfId\x12\x1b.com.github.wbb.core.ProfId\x1a .com.github.wbb.core.ProjectList\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/v1/core/fetch_prof_projects\x12\x8c\x01\n" +
-	"\x18AddStudentTokenToProject\x12\x1e.com.github.wbb.core.TokenData\x1a\x1e.com.github.wbb.core.ProjectId\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/core/projects/{project_id}/tokens\x12\x8c\x01\n" +
-	"\x1bDeleteStudentTokenToProject\x12\x1e.com.github.wbb.core.StudentId\x1a\x1e.com.github.wbb.core.ProjectId\"-\x82\xd3\xe4\x93\x02'*%/v1/core/projects/{project_id}/tokensB\xc5\x01\n" +
+	"AddProject\x12 .com.github.wbb.core.ProjectData\x1a\x1e.com.github.wbb.core.ProjectId\",\x82\xd3\xe4\x93\x02&:\x01*\"!/v1/core/projects/{prof_username}\x12u\n" +
+	"\fFetchProject\x12\x1e.com.github.wbb.core.ProjectId\x1a .com.github.wbb.core.ProjectData\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/v1/core/projects/{proj_id}\x12\x92\x01\n" +
+	"\x14FetchProjectByProfId\x12(.com.github.wbb.core.ProfProjectUsername\x1a .com.github.wbb.core.ProjectList\".\x82\xd3\xe4\x93\x02(\x12&/v1/core/projects/prof/{prof_username}\x12g\n" +
+	"\x10FetchAllProjects\x12\x16.google.protobuf.Empty\x1a .com.github.wbb.core.ProjectList\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/core/projects\x12\x90\x01\n" +
+	"\x18AddStudentTokenToProject\x12%.com.github.wbb.core.TokenProjectData\x1a\x1e.com.github.wbb.core.ProjectId\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/v1/core/projects/tokens/{proj_id}\x12\x96\x01\n" +
+	"\x1bDeleteStudentTokenToProject\x12+.com.github.wbb.core.StudentProjectUsername\x1a\x1e.com.github.wbb.core.ProjectId\"*\x82\xd3\xe4\x93\x02$*\"/v1/core/projects/tokens/{proj_id}B\xc5\x01\n" +
 	"\x17com.com.github.wbb.coreB\fProjectProtoP\x01Z,github.com/wbb/rnd-fixer/services/core/proto\xa2\x02\x04CGWC\xaa\x02\x13Com.Github.Wbb.Core\xca\x02\x13Com\\Github\\Wbb\\Core\xe2\x02\x1fCom\\Github\\Wbb\\Core\\GPBMetadata\xea\x02\x16Com::Github::Wbb::Coreb\x06proto3"
 
 var (
@@ -409,30 +403,30 @@ func file_core_proto_project_proto_rawDescGZIP() []byte {
 
 var file_core_proto_project_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_core_proto_project_proto_goTypes = []any{
-	(*StudentId)(nil),     // 0: com.github.wbb.core.StudentId
-	(*TokenData)(nil),     // 1: com.github.wbb.core.TokenData
-	(*ProjectData)(nil),   // 2: com.github.wbb.core.ProjectData
-	(*ProfId)(nil),        // 3: com.github.wbb.core.ProfId
-	(*ProjectList)(nil),   // 4: com.github.wbb.core.ProjectList
-	(*ProjectId)(nil),     // 5: com.github.wbb.core.ProjectId
-	nil,                   // 6: com.github.wbb.core.ProjectData.TokenDistributionEntry
-	(*emptypb.Empty)(nil), // 7: google.protobuf.Empty
+	(*StudentProjectUsername)(nil), // 0: com.github.wbb.core.StudentProjectUsername
+	(*TokenProjectData)(nil),       // 1: com.github.wbb.core.TokenProjectData
+	(*ProjectData)(nil),            // 2: com.github.wbb.core.ProjectData
+	(*ProfProjectUsername)(nil),    // 3: com.github.wbb.core.ProfProjectUsername
+	(*ProjectList)(nil),            // 4: com.github.wbb.core.ProjectList
+	(*ProjectId)(nil),              // 5: com.github.wbb.core.ProjectId
+	nil,                            // 6: com.github.wbb.core.ProjectData.TokenDistributionEntry
+	(*emptypb.Empty)(nil),          // 7: google.protobuf.Empty
 }
 var file_core_proto_project_proto_depIdxs = []int32{
 	6, // 0: com.github.wbb.core.ProjectData.token_distribution:type_name -> com.github.wbb.core.ProjectData.TokenDistributionEntry
 	2, // 1: com.github.wbb.core.ProjectList.projects:type_name -> com.github.wbb.core.ProjectData
-	2, // 2: com.github.wbb.core.CoreService.AddProject:input_type -> com.github.wbb.core.ProjectData
-	5, // 3: com.github.wbb.core.CoreService.FetchProject:input_type -> com.github.wbb.core.ProjectId
-	7, // 4: com.github.wbb.core.CoreService.FetchAllProjects:input_type -> google.protobuf.Empty
-	3, // 5: com.github.wbb.core.CoreService.FetchProjectByProfId:input_type -> com.github.wbb.core.ProfId
-	1, // 6: com.github.wbb.core.CoreService.AddStudentTokenToProject:input_type -> com.github.wbb.core.TokenData
-	0, // 7: com.github.wbb.core.CoreService.DeleteStudentTokenToProject:input_type -> com.github.wbb.core.StudentId
-	5, // 8: com.github.wbb.core.CoreService.AddProject:output_type -> com.github.wbb.core.ProjectId
-	2, // 9: com.github.wbb.core.CoreService.FetchProject:output_type -> com.github.wbb.core.ProjectData
-	4, // 10: com.github.wbb.core.CoreService.FetchAllProjects:output_type -> com.github.wbb.core.ProjectList
-	4, // 11: com.github.wbb.core.CoreService.FetchProjectByProfId:output_type -> com.github.wbb.core.ProjectList
-	5, // 12: com.github.wbb.core.CoreService.AddStudentTokenToProject:output_type -> com.github.wbb.core.ProjectId
-	5, // 13: com.github.wbb.core.CoreService.DeleteStudentTokenToProject:output_type -> com.github.wbb.core.ProjectId
+	2, // 2: com.github.wbb.core.CoreProjectService.AddProject:input_type -> com.github.wbb.core.ProjectData
+	5, // 3: com.github.wbb.core.CoreProjectService.FetchProject:input_type -> com.github.wbb.core.ProjectId
+	3, // 4: com.github.wbb.core.CoreProjectService.FetchProjectByProfId:input_type -> com.github.wbb.core.ProfProjectUsername
+	7, // 5: com.github.wbb.core.CoreProjectService.FetchAllProjects:input_type -> google.protobuf.Empty
+	1, // 6: com.github.wbb.core.CoreProjectService.AddStudentTokenToProject:input_type -> com.github.wbb.core.TokenProjectData
+	0, // 7: com.github.wbb.core.CoreProjectService.DeleteStudentTokenToProject:input_type -> com.github.wbb.core.StudentProjectUsername
+	5, // 8: com.github.wbb.core.CoreProjectService.AddProject:output_type -> com.github.wbb.core.ProjectId
+	2, // 9: com.github.wbb.core.CoreProjectService.FetchProject:output_type -> com.github.wbb.core.ProjectData
+	4, // 10: com.github.wbb.core.CoreProjectService.FetchProjectByProfId:output_type -> com.github.wbb.core.ProjectList
+	4, // 11: com.github.wbb.core.CoreProjectService.FetchAllProjects:output_type -> com.github.wbb.core.ProjectList
+	5, // 12: com.github.wbb.core.CoreProjectService.AddStudentTokenToProject:output_type -> com.github.wbb.core.ProjectId
+	5, // 13: com.github.wbb.core.CoreProjectService.DeleteStudentTokenToProject:output_type -> com.github.wbb.core.ProjectId
 	8, // [8:14] is the sub-list for method output_type
 	2, // [2:8] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

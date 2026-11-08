@@ -36,13 +36,22 @@ var (
 	_ = metadata.Join
 )
 
-func request_CoreService_AddProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CoreProjectService_AddProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectData
 		metadata runtime.ServerMetadata
+		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	val, ok := pathParams["prof_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "prof_username")
+	}
+	protoReq.ProfUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "prof_username", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
@@ -51,31 +60,40 @@ func request_CoreService_AddProject_0(ctx context.Context, marshaler runtime.Mar
 	return msg, metadata, err
 }
 
-func local_request_CoreService_AddProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CoreProjectService_AddProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectData
 		metadata runtime.ServerMetadata
+		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	val, ok := pathParams["prof_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "prof_username")
+	}
+	protoReq.ProfUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "prof_username", err)
 	}
 	msg, err := server.AddProject(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-func request_CoreService_FetchProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CoreProjectService_FetchProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectId
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	val, ok := pathParams["project_id"]
+	val, ok := pathParams["proj_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "project_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "proj_id")
 	}
-	protoReq.ProjectId, err = runtime.String(val)
+	protoReq.ProjId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "project_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "proj_id", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
@@ -84,25 +102,64 @@ func request_CoreService_FetchProject_0(ctx context.Context, marshaler runtime.M
 	return msg, metadata, err
 }
 
-func local_request_CoreService_FetchProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CoreProjectService_FetchProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq ProjectId
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	val, ok := pathParams["project_id"]
+	val, ok := pathParams["proj_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "project_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "proj_id")
 	}
-	protoReq.ProjectId, err = runtime.String(val)
+	protoReq.ProjId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "project_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "proj_id", err)
 	}
 	msg, err := server.FetchProject(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-func request_CoreService_FetchAllProjects_0(ctx context.Context, marshaler runtime.Marshaler, client CoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CoreProjectService_FetchProjectByProfId_0(ctx context.Context, marshaler runtime.Marshaler, client CoreProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ProfProjectUsername
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["prof_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "prof_username")
+	}
+	protoReq.ProfUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "prof_username", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.FetchProjectByProfId(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_CoreProjectService_FetchProjectByProfId_0(ctx context.Context, marshaler runtime.Marshaler, server CoreProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq ProfProjectUsername
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["prof_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "prof_username")
+	}
+	protoReq.ProfUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "prof_username", err)
+	}
+	msg, err := server.FetchProjectByProfId(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_CoreProjectService_FetchAllProjects_0(ctx context.Context, marshaler runtime.Marshaler, client CoreProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq emptypb.Empty
 		metadata runtime.ServerMetadata
@@ -114,7 +171,7 @@ func request_CoreService_FetchAllProjects_0(ctx context.Context, marshaler runti
 	return msg, metadata, err
 }
 
-func local_request_CoreService_FetchAllProjects_0(ctx context.Context, marshaler runtime.Marshaler, server CoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CoreProjectService_FetchAllProjects_0(ctx context.Context, marshaler runtime.Marshaler, server CoreProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq emptypb.Empty
 		metadata runtime.ServerMetadata
@@ -123,57 +180,22 @@ func local_request_CoreService_FetchAllProjects_0(ctx context.Context, marshaler
 	return msg, metadata, err
 }
 
-var filter_CoreService_FetchProjectByProfId_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-
-func request_CoreService_FetchProjectByProfId_0(ctx context.Context, marshaler runtime.Marshaler, client CoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CoreProjectService_AddStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq ProfId
-		metadata runtime.ServerMetadata
-	)
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CoreService_FetchProjectByProfId_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if req.Body != nil {
-		_, _ = io.Copy(io.Discard, req.Body)
-	}
-	msg, err := client.FetchProjectByProfId(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-}
-
-func local_request_CoreService_FetchProjectByProfId_0(ctx context.Context, marshaler runtime.Marshaler, server CoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var (
-		protoReq ProfId
-		metadata runtime.ServerMetadata
-	)
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CoreService_FetchProjectByProfId_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	msg, err := server.FetchProjectByProfId(ctx, &protoReq)
-	return msg, metadata, err
-}
-
-func request_CoreService_AddStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var (
-		protoReq TokenData
+		protoReq TokenProjectData
 		metadata runtime.ServerMetadata
 		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	val, ok := pathParams["project_id"]
+	val, ok := pathParams["proj_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "project_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "proj_id")
 	}
-	protoReq.ProjectId, err = runtime.String(val)
+	protoReq.ProjId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "project_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "proj_id", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
@@ -182,47 +204,47 @@ func request_CoreService_AddStudentTokenToProject_0(ctx context.Context, marshal
 	return msg, metadata, err
 }
 
-func local_request_CoreService_AddStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CoreProjectService_AddStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq TokenData
+		protoReq TokenProjectData
 		metadata runtime.ServerMetadata
 		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	val, ok := pathParams["project_id"]
+	val, ok := pathParams["proj_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "project_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "proj_id")
 	}
-	protoReq.ProjectId, err = runtime.String(val)
+	protoReq.ProjId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "project_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "proj_id", err)
 	}
 	msg, err := server.AddStudentTokenToProject(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_CoreService_DeleteStudentTokenToProject_0 = &utilities.DoubleArray{Encoding: map[string]int{"project_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+var filter_CoreProjectService_DeleteStudentTokenToProject_0 = &utilities.DoubleArray{Encoding: map[string]int{"proj_id": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 
-func request_CoreService_DeleteStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_CoreProjectService_DeleteStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, client CoreProjectServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq StudentId
+		protoReq StudentProjectUsername
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	val, ok := pathParams["project_id"]
+	val, ok := pathParams["proj_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "project_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "proj_id")
 	}
-	protoReq.ProjectId, err = runtime.String(val)
+	protoReq.ProjId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "project_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "proj_id", err)
 	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CoreService_DeleteStudentTokenToProject_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CoreProjectService_DeleteStudentTokenToProject_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	if req.Body != nil {
@@ -232,163 +254,163 @@ func request_CoreService_DeleteStudentTokenToProject_0(ctx context.Context, mars
 	return msg, metadata, err
 }
 
-func local_request_CoreService_DeleteStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_CoreProjectService_DeleteStudentTokenToProject_0(ctx context.Context, marshaler runtime.Marshaler, server CoreProjectServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq StudentId
+		protoReq StudentProjectUsername
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	val, ok := pathParams["project_id"]
+	val, ok := pathParams["proj_id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "project_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "proj_id")
 	}
-	protoReq.ProjectId, err = runtime.String(val)
+	protoReq.ProjId, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "project_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "proj_id", err)
 	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CoreService_DeleteStudentTokenToProject_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_CoreProjectService_DeleteStudentTokenToProject_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.DeleteStudentTokenToProject(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-// RegisterCoreServiceHandlerServer registers the http handlers for service CoreService to "mux".
-// UnaryRPC     :call CoreServiceServer directly.
+// RegisterCoreProjectServiceHandlerServer registers the http handlers for service CoreProjectService to "mux".
+// UnaryRPC     :call CoreProjectServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterCoreServiceHandlerFromEndpoint instead.
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterCoreProjectServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterCoreServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server CoreServiceServer) error {
-	mux.Handle(http.MethodPost, pattern_CoreService_AddProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+func RegisterCoreProjectServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server CoreProjectServiceServer) error {
+	mux.Handle(http.MethodPost, pattern_CoreProjectService_AddProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreService/AddProject", runtime.WithHTTPPathPattern("/v1/core/add_project"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/AddProject", runtime.WithHTTPPathPattern("/v1/core/projects/{prof_username}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_CoreService_AddProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_CoreProjectService_AddProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_AddProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_AddProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_CoreService_FetchProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CoreProjectService_FetchProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreService/FetchProject", runtime.WithHTTPPathPattern("/v1/core/fetch_project/{project_id}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/FetchProject", runtime.WithHTTPPathPattern("/v1/core/projects/{proj_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_CoreService_FetchProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_CoreProjectService_FetchProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_FetchProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_FetchProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_CoreService_FetchAllProjects_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CoreProjectService_FetchProjectByProfId_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreService/FetchAllProjects", runtime.WithHTTPPathPattern("/v1/core/fetch_projects"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/FetchProjectByProfId", runtime.WithHTTPPathPattern("/v1/core/projects/prof/{prof_username}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_CoreService_FetchAllProjects_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_CoreProjectService_FetchProjectByProfId_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_FetchAllProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_FetchProjectByProfId_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_CoreService_FetchProjectByProfId_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CoreProjectService_FetchAllProjects_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreService/FetchProjectByProfId", runtime.WithHTTPPathPattern("/v1/core/fetch_prof_projects"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/FetchAllProjects", runtime.WithHTTPPathPattern("/v1/core/projects"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_CoreService_FetchProjectByProfId_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_CoreProjectService_FetchAllProjects_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_FetchProjectByProfId_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_FetchAllProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPost, pattern_CoreService_AddStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_CoreProjectService_AddStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreService/AddStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/{project_id}/tokens"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/AddStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/tokens/{proj_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_CoreService_AddStudentTokenToProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_CoreProjectService_AddStudentTokenToProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_AddStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_AddStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodDelete, pattern_CoreService_DeleteStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodDelete, pattern_CoreProjectService_DeleteStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreService/DeleteStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/{project_id}/tokens"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/DeleteStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/tokens/{proj_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_CoreService_DeleteStudentTokenToProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_CoreProjectService_DeleteStudentTokenToProject_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_DeleteStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_DeleteStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
 }
 
-// RegisterCoreServiceHandlerFromEndpoint is same as RegisterCoreServiceHandler but
+// RegisterCoreProjectServiceHandlerFromEndpoint is same as RegisterCoreProjectServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterCoreServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterCoreProjectServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.NewClient(endpoint, opts...)
 	if err != nil {
 		return err
@@ -407,140 +429,140 @@ func RegisterCoreServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.Se
 			}
 		}()
 	}()
-	return RegisterCoreServiceHandler(ctx, mux, conn)
+	return RegisterCoreProjectServiceHandler(ctx, mux, conn)
 }
 
-// RegisterCoreServiceHandler registers the http handlers for service CoreService to "mux".
+// RegisterCoreProjectServiceHandler registers the http handlers for service CoreProjectService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterCoreServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterCoreServiceHandlerClient(ctx, mux, NewCoreServiceClient(conn))
+func RegisterCoreProjectServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterCoreProjectServiceHandlerClient(ctx, mux, NewCoreProjectServiceClient(conn))
 }
 
-// RegisterCoreServiceHandlerClient registers the http handlers for service CoreService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "CoreServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "CoreServiceClient"
+// RegisterCoreProjectServiceHandlerClient registers the http handlers for service CoreProjectService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "CoreProjectServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "CoreProjectServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "CoreServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterCoreServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client CoreServiceClient) error {
-	mux.Handle(http.MethodPost, pattern_CoreService_AddProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+// "CoreProjectServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
+func RegisterCoreProjectServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client CoreProjectServiceClient) error {
+	mux.Handle(http.MethodPost, pattern_CoreProjectService_AddProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreService/AddProject", runtime.WithHTTPPathPattern("/v1/core/add_project"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/AddProject", runtime.WithHTTPPathPattern("/v1/core/projects/{prof_username}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_CoreService_AddProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_CoreProjectService_AddProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_AddProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_AddProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_CoreService_FetchProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CoreProjectService_FetchProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreService/FetchProject", runtime.WithHTTPPathPattern("/v1/core/fetch_project/{project_id}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/FetchProject", runtime.WithHTTPPathPattern("/v1/core/projects/{proj_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_CoreService_FetchProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_CoreProjectService_FetchProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_FetchProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_FetchProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_CoreService_FetchAllProjects_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CoreProjectService_FetchProjectByProfId_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreService/FetchAllProjects", runtime.WithHTTPPathPattern("/v1/core/fetch_projects"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/FetchProjectByProfId", runtime.WithHTTPPathPattern("/v1/core/projects/prof/{prof_username}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_CoreService_FetchAllProjects_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_CoreProjectService_FetchProjectByProfId_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_FetchAllProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_FetchProjectByProfId_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_CoreService_FetchProjectByProfId_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_CoreProjectService_FetchAllProjects_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreService/FetchProjectByProfId", runtime.WithHTTPPathPattern("/v1/core/fetch_prof_projects"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/FetchAllProjects", runtime.WithHTTPPathPattern("/v1/core/projects"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_CoreService_FetchProjectByProfId_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_CoreProjectService_FetchAllProjects_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_FetchProjectByProfId_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_FetchAllProjects_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPost, pattern_CoreService_AddStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPost, pattern_CoreProjectService_AddStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreService/AddStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/{project_id}/tokens"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/AddStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/tokens/{proj_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_CoreService_AddStudentTokenToProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_CoreProjectService_AddStudentTokenToProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_AddStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_AddStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodDelete, pattern_CoreService_DeleteStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodDelete, pattern_CoreProjectService_DeleteStudentTokenToProject_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreService/DeleteStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/{project_id}/tokens"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreProjectService/DeleteStudentTokenToProject", runtime.WithHTTPPathPattern("/v1/core/projects/tokens/{proj_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_CoreService_DeleteStudentTokenToProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_CoreProjectService_DeleteStudentTokenToProject_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_CoreService_DeleteStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_CoreProjectService_DeleteStudentTokenToProject_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }
 
 var (
-	pattern_CoreService_AddProject_0                  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "core", "add_project"}, ""))
-	pattern_CoreService_FetchProject_0                = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "core", "fetch_project", "project_id"}, ""))
-	pattern_CoreService_FetchAllProjects_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "core", "fetch_projects"}, ""))
-	pattern_CoreService_FetchProjectByProfId_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "core", "fetch_prof_projects"}, ""))
-	pattern_CoreService_AddStudentTokenToProject_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "core", "projects", "project_id", "tokens"}, ""))
-	pattern_CoreService_DeleteStudentTokenToProject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "core", "projects", "project_id", "tokens"}, ""))
+	pattern_CoreProjectService_AddProject_0                  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "core", "projects", "prof_username"}, ""))
+	pattern_CoreProjectService_FetchProject_0                = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "core", "projects", "proj_id"}, ""))
+	pattern_CoreProjectService_FetchProjectByProfId_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "projects", "prof", "prof_username"}, ""))
+	pattern_CoreProjectService_FetchAllProjects_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "core", "projects"}, ""))
+	pattern_CoreProjectService_AddStudentTokenToProject_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "projects", "tokens", "proj_id"}, ""))
+	pattern_CoreProjectService_DeleteStudentTokenToProject_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "projects", "tokens", "proj_id"}, ""))
 )
 
 var (
-	forward_CoreService_AddProject_0                  = runtime.ForwardResponseMessage
-	forward_CoreService_FetchProject_0                = runtime.ForwardResponseMessage
-	forward_CoreService_FetchAllProjects_0            = runtime.ForwardResponseMessage
-	forward_CoreService_FetchProjectByProfId_0        = runtime.ForwardResponseMessage
-	forward_CoreService_AddStudentTokenToProject_0    = runtime.ForwardResponseMessage
-	forward_CoreService_DeleteStudentTokenToProject_0 = runtime.ForwardResponseMessage
+	forward_CoreProjectService_AddProject_0                  = runtime.ForwardResponseMessage
+	forward_CoreProjectService_FetchProject_0                = runtime.ForwardResponseMessage
+	forward_CoreProjectService_FetchProjectByProfId_0        = runtime.ForwardResponseMessage
+	forward_CoreProjectService_FetchAllProjects_0            = runtime.ForwardResponseMessage
+	forward_CoreProjectService_AddStudentTokenToProject_0    = runtime.ForwardResponseMessage
+	forward_CoreProjectService_DeleteStudentTokenToProject_0 = runtime.ForwardResponseMessage
 )

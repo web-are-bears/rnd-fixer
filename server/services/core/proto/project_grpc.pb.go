@@ -20,291 +20,291 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CoreService_AddProject_FullMethodName                  = "/com.github.wbb.core.CoreService/AddProject"
-	CoreService_FetchProject_FullMethodName                = "/com.github.wbb.core.CoreService/FetchProject"
-	CoreService_FetchAllProjects_FullMethodName            = "/com.github.wbb.core.CoreService/FetchAllProjects"
-	CoreService_FetchProjectByProfId_FullMethodName        = "/com.github.wbb.core.CoreService/FetchProjectByProfId"
-	CoreService_AddStudentTokenToProject_FullMethodName    = "/com.github.wbb.core.CoreService/AddStudentTokenToProject"
-	CoreService_DeleteStudentTokenToProject_FullMethodName = "/com.github.wbb.core.CoreService/DeleteStudentTokenToProject"
+	CoreProjectService_AddProject_FullMethodName                  = "/com.github.wbb.core.CoreProjectService/AddProject"
+	CoreProjectService_FetchProject_FullMethodName                = "/com.github.wbb.core.CoreProjectService/FetchProject"
+	CoreProjectService_FetchProjectByProfId_FullMethodName        = "/com.github.wbb.core.CoreProjectService/FetchProjectByProfId"
+	CoreProjectService_FetchAllProjects_FullMethodName            = "/com.github.wbb.core.CoreProjectService/FetchAllProjects"
+	CoreProjectService_AddStudentTokenToProject_FullMethodName    = "/com.github.wbb.core.CoreProjectService/AddStudentTokenToProject"
+	CoreProjectService_DeleteStudentTokenToProject_FullMethodName = "/com.github.wbb.core.CoreProjectService/DeleteStudentTokenToProject"
 )
 
-// CoreServiceClient is the client API for CoreService service.
+// CoreProjectServiceClient is the client API for CoreProjectService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type CoreServiceClient interface {
+type CoreProjectServiceClient interface {
 	AddProject(ctx context.Context, in *ProjectData, opts ...grpc.CallOption) (*ProjectId, error)
 	FetchProject(ctx context.Context, in *ProjectId, opts ...grpc.CallOption) (*ProjectData, error)
+	FetchProjectByProfId(ctx context.Context, in *ProfProjectUsername, opts ...grpc.CallOption) (*ProjectList, error)
 	FetchAllProjects(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ProjectList, error)
-	FetchProjectByProfId(ctx context.Context, in *ProfId, opts ...grpc.CallOption) (*ProjectList, error)
-	AddStudentTokenToProject(ctx context.Context, in *TokenData, opts ...grpc.CallOption) (*ProjectId, error)
-	DeleteStudentTokenToProject(ctx context.Context, in *StudentId, opts ...grpc.CallOption) (*ProjectId, error)
+	AddStudentTokenToProject(ctx context.Context, in *TokenProjectData, opts ...grpc.CallOption) (*ProjectId, error)
+	DeleteStudentTokenToProject(ctx context.Context, in *StudentProjectUsername, opts ...grpc.CallOption) (*ProjectId, error)
 }
 
-type coreServiceClient struct {
+type coreProjectServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewCoreServiceClient(cc grpc.ClientConnInterface) CoreServiceClient {
-	return &coreServiceClient{cc}
+func NewCoreProjectServiceClient(cc grpc.ClientConnInterface) CoreProjectServiceClient {
+	return &coreProjectServiceClient{cc}
 }
 
-func (c *coreServiceClient) AddProject(ctx context.Context, in *ProjectData, opts ...grpc.CallOption) (*ProjectId, error) {
+func (c *coreProjectServiceClient) AddProject(ctx context.Context, in *ProjectData, opts ...grpc.CallOption) (*ProjectId, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectId)
-	err := c.cc.Invoke(ctx, CoreService_AddProject_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CoreProjectService_AddProject_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreServiceClient) FetchProject(ctx context.Context, in *ProjectId, opts ...grpc.CallOption) (*ProjectData, error) {
+func (c *coreProjectServiceClient) FetchProject(ctx context.Context, in *ProjectId, opts ...grpc.CallOption) (*ProjectData, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectData)
-	err := c.cc.Invoke(ctx, CoreService_FetchProject_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CoreProjectService_FetchProject_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreServiceClient) FetchAllProjects(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ProjectList, error) {
+func (c *coreProjectServiceClient) FetchProjectByProfId(ctx context.Context, in *ProfProjectUsername, opts ...grpc.CallOption) (*ProjectList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectList)
-	err := c.cc.Invoke(ctx, CoreService_FetchAllProjects_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CoreProjectService_FetchProjectByProfId_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreServiceClient) FetchProjectByProfId(ctx context.Context, in *ProfId, opts ...grpc.CallOption) (*ProjectList, error) {
+func (c *coreProjectServiceClient) FetchAllProjects(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ProjectList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectList)
-	err := c.cc.Invoke(ctx, CoreService_FetchProjectByProfId_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CoreProjectService_FetchAllProjects_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreServiceClient) AddStudentTokenToProject(ctx context.Context, in *TokenData, opts ...grpc.CallOption) (*ProjectId, error) {
+func (c *coreProjectServiceClient) AddStudentTokenToProject(ctx context.Context, in *TokenProjectData, opts ...grpc.CallOption) (*ProjectId, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectId)
-	err := c.cc.Invoke(ctx, CoreService_AddStudentTokenToProject_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CoreProjectService_AddStudentTokenToProject_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *coreServiceClient) DeleteStudentTokenToProject(ctx context.Context, in *StudentId, opts ...grpc.CallOption) (*ProjectId, error) {
+func (c *coreProjectServiceClient) DeleteStudentTokenToProject(ctx context.Context, in *StudentProjectUsername, opts ...grpc.CallOption) (*ProjectId, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ProjectId)
-	err := c.cc.Invoke(ctx, CoreService_DeleteStudentTokenToProject_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CoreProjectService_DeleteStudentTokenToProject_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// CoreServiceServer is the server API for CoreService service.
-// All implementations must embed UnimplementedCoreServiceServer
+// CoreProjectServiceServer is the server API for CoreProjectService service.
+// All implementations must embed UnimplementedCoreProjectServiceServer
 // for forward compatibility.
-type CoreServiceServer interface {
+type CoreProjectServiceServer interface {
 	AddProject(context.Context, *ProjectData) (*ProjectId, error)
 	FetchProject(context.Context, *ProjectId) (*ProjectData, error)
+	FetchProjectByProfId(context.Context, *ProfProjectUsername) (*ProjectList, error)
 	FetchAllProjects(context.Context, *emptypb.Empty) (*ProjectList, error)
-	FetchProjectByProfId(context.Context, *ProfId) (*ProjectList, error)
-	AddStudentTokenToProject(context.Context, *TokenData) (*ProjectId, error)
-	DeleteStudentTokenToProject(context.Context, *StudentId) (*ProjectId, error)
-	mustEmbedUnimplementedCoreServiceServer()
+	AddStudentTokenToProject(context.Context, *TokenProjectData) (*ProjectId, error)
+	DeleteStudentTokenToProject(context.Context, *StudentProjectUsername) (*ProjectId, error)
+	mustEmbedUnimplementedCoreProjectServiceServer()
 }
 
-// UnimplementedCoreServiceServer must be embedded to have
+// UnimplementedCoreProjectServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedCoreServiceServer struct{}
+type UnimplementedCoreProjectServiceServer struct{}
 
-func (UnimplementedCoreServiceServer) AddProject(context.Context, *ProjectData) (*ProjectId, error) {
+func (UnimplementedCoreProjectServiceServer) AddProject(context.Context, *ProjectData) (*ProjectId, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddProject not implemented")
 }
-func (UnimplementedCoreServiceServer) FetchProject(context.Context, *ProjectId) (*ProjectData, error) {
+func (UnimplementedCoreProjectServiceServer) FetchProject(context.Context, *ProjectId) (*ProjectData, error) {
 	return nil, status.Error(codes.Unimplemented, "method FetchProject not implemented")
 }
-func (UnimplementedCoreServiceServer) FetchAllProjects(context.Context, *emptypb.Empty) (*ProjectList, error) {
-	return nil, status.Error(codes.Unimplemented, "method FetchAllProjects not implemented")
-}
-func (UnimplementedCoreServiceServer) FetchProjectByProfId(context.Context, *ProfId) (*ProjectList, error) {
+func (UnimplementedCoreProjectServiceServer) FetchProjectByProfId(context.Context, *ProfProjectUsername) (*ProjectList, error) {
 	return nil, status.Error(codes.Unimplemented, "method FetchProjectByProfId not implemented")
 }
-func (UnimplementedCoreServiceServer) AddStudentTokenToProject(context.Context, *TokenData) (*ProjectId, error) {
+func (UnimplementedCoreProjectServiceServer) FetchAllProjects(context.Context, *emptypb.Empty) (*ProjectList, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchAllProjects not implemented")
+}
+func (UnimplementedCoreProjectServiceServer) AddStudentTokenToProject(context.Context, *TokenProjectData) (*ProjectId, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddStudentTokenToProject not implemented")
 }
-func (UnimplementedCoreServiceServer) DeleteStudentTokenToProject(context.Context, *StudentId) (*ProjectId, error) {
+func (UnimplementedCoreProjectServiceServer) DeleteStudentTokenToProject(context.Context, *StudentProjectUsername) (*ProjectId, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteStudentTokenToProject not implemented")
 }
-func (UnimplementedCoreServiceServer) mustEmbedUnimplementedCoreServiceServer() {}
-func (UnimplementedCoreServiceServer) testEmbeddedByValue()                     {}
+func (UnimplementedCoreProjectServiceServer) mustEmbedUnimplementedCoreProjectServiceServer() {}
+func (UnimplementedCoreProjectServiceServer) testEmbeddedByValue()                            {}
 
-// UnsafeCoreServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to CoreServiceServer will
+// UnsafeCoreProjectServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CoreProjectServiceServer will
 // result in compilation errors.
-type UnsafeCoreServiceServer interface {
-	mustEmbedUnimplementedCoreServiceServer()
+type UnsafeCoreProjectServiceServer interface {
+	mustEmbedUnimplementedCoreProjectServiceServer()
 }
 
-func RegisterCoreServiceServer(s grpc.ServiceRegistrar, srv CoreServiceServer) {
-	// If the following call panics, it indicates UnimplementedCoreServiceServer was
+func RegisterCoreProjectServiceServer(s grpc.ServiceRegistrar, srv CoreProjectServiceServer) {
+	// If the following call panics, it indicates UnimplementedCoreProjectServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&CoreService_ServiceDesc, srv)
+	s.RegisterService(&CoreProjectService_ServiceDesc, srv)
 }
 
-func _CoreService_AddProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CoreProjectService_AddProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectData)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServiceServer).AddProject(ctx, in)
+		return srv.(CoreProjectServiceServer).AddProject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CoreService_AddProject_FullMethodName,
+		FullMethod: CoreProjectService_AddProject_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServiceServer).AddProject(ctx, req.(*ProjectData))
+		return srv.(CoreProjectServiceServer).AddProject(ctx, req.(*ProjectData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CoreService_FetchProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CoreProjectService_FetchProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ProjectId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServiceServer).FetchProject(ctx, in)
+		return srv.(CoreProjectServiceServer).FetchProject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CoreService_FetchProject_FullMethodName,
+		FullMethod: CoreProjectService_FetchProject_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServiceServer).FetchProject(ctx, req.(*ProjectId))
+		return srv.(CoreProjectServiceServer).FetchProject(ctx, req.(*ProjectId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CoreService_FetchAllProjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CoreProjectService_FetchProjectByProfId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProfProjectUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreProjectServiceServer).FetchProjectByProfId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreProjectService_FetchProjectByProfId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreProjectServiceServer).FetchProjectByProfId(ctx, req.(*ProfProjectUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreProjectService_FetchAllProjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServiceServer).FetchAllProjects(ctx, in)
+		return srv.(CoreProjectServiceServer).FetchAllProjects(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CoreService_FetchAllProjects_FullMethodName,
+		FullMethod: CoreProjectService_FetchAllProjects_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServiceServer).FetchAllProjects(ctx, req.(*emptypb.Empty))
+		return srv.(CoreProjectServiceServer).FetchAllProjects(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CoreService_FetchProjectByProfId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProfId)
+func _CoreProjectService_AddStudentTokenToProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TokenProjectData)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServiceServer).FetchProjectByProfId(ctx, in)
+		return srv.(CoreProjectServiceServer).AddStudentTokenToProject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CoreService_FetchProjectByProfId_FullMethodName,
+		FullMethod: CoreProjectService_AddStudentTokenToProject_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServiceServer).FetchProjectByProfId(ctx, req.(*ProfId))
+		return srv.(CoreProjectServiceServer).AddStudentTokenToProject(ctx, req.(*TokenProjectData))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CoreService_AddStudentTokenToProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenData)
+func _CoreProjectService_DeleteStudentTokenToProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentProjectUsername)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CoreServiceServer).AddStudentTokenToProject(ctx, in)
+		return srv.(CoreProjectServiceServer).DeleteStudentTokenToProject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CoreService_AddStudentTokenToProject_FullMethodName,
+		FullMethod: CoreProjectService_DeleteStudentTokenToProject_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServiceServer).AddStudentTokenToProject(ctx, req.(*TokenData))
+		return srv.(CoreProjectServiceServer).DeleteStudentTokenToProject(ctx, req.(*StudentProjectUsername))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CoreService_DeleteStudentTokenToProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StudentId)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CoreServiceServer).DeleteStudentTokenToProject(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CoreService_DeleteStudentTokenToProject_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreServiceServer).DeleteStudentTokenToProject(ctx, req.(*StudentId))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// CoreService_ServiceDesc is the grpc.ServiceDesc for CoreService service.
+// CoreProjectService_ServiceDesc is the grpc.ServiceDesc for CoreProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var CoreService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "com.github.wbb.core.CoreService",
-	HandlerType: (*CoreServiceServer)(nil),
+var CoreProjectService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "com.github.wbb.core.CoreProjectService",
+	HandlerType: (*CoreProjectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddProject",
-			Handler:    _CoreService_AddProject_Handler,
+			Handler:    _CoreProjectService_AddProject_Handler,
 		},
 		{
 			MethodName: "FetchProject",
-			Handler:    _CoreService_FetchProject_Handler,
-		},
-		{
-			MethodName: "FetchAllProjects",
-			Handler:    _CoreService_FetchAllProjects_Handler,
+			Handler:    _CoreProjectService_FetchProject_Handler,
 		},
 		{
 			MethodName: "FetchProjectByProfId",
-			Handler:    _CoreService_FetchProjectByProfId_Handler,
+			Handler:    _CoreProjectService_FetchProjectByProfId_Handler,
+		},
+		{
+			MethodName: "FetchAllProjects",
+			Handler:    _CoreProjectService_FetchAllProjects_Handler,
 		},
 		{
 			MethodName: "AddStudentTokenToProject",
-			Handler:    _CoreService_AddStudentTokenToProject_Handler,
+			Handler:    _CoreProjectService_AddStudentTokenToProject_Handler,
 		},
 		{
 			MethodName: "DeleteStudentTokenToProject",
-			Handler:    _CoreService_DeleteStudentTokenToProject_Handler,
+			Handler:    _CoreProjectService_DeleteStudentTokenToProject_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
