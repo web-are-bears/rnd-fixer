@@ -23,7 +23,13 @@ func NewCoreClient(c *grpc.ClientConn) Client {
 }
 
 func (c *CoreClient) RegisterHandler(ctx context.Context, mux *runtime.ServeMux) error {
-	if err := core_pb.RegisterCoreServiceHandler(ctx, mux, c.conn); err != nil {
+	if err := core_pb.RegisterCoreProjectServiceHandler(ctx, mux, c.conn); err != nil {
+		return err
+	}
+	if err := core_pb.RegisterCoreProfessorServiceHandler(ctx, mux, c.conn); err != nil {
+		return err
+	}
+	if err := core_pb.RegisterCoreStudentServiceHandler(ctx, mux, c.conn); err != nil {
 		return err
 	}
 	return nil
