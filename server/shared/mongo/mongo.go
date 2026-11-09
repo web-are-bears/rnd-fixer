@@ -77,12 +77,7 @@ func getMongoURI(cfg *config.MongoConfig) (string, error) {
 	return uri, nil
 }
 
-func MongoConnect(ctx context.Context) (*mongo.Client, error) {
-	cfg, err := config.LoadMongoConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load MongoDB configuration: %w", err)
-	}
-
+func MongoConnect(ctx context.Context, cfg *config.MongoConfig) (*mongo.Client, error) {
 	uri, err := getMongoURI(cfg)
 	if err != nil {
 		return nil, err

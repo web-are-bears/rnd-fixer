@@ -1,0 +1,49 @@
+syntax = "proto3";
+package com.github.wbb.core;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service CoreStudentService {
+    rpc AddStudentProfile(StudentData) returns (StudentUsername) {
+        option (google.api.http) = { post: "/v1/core/students" body: "*" };
+    }
+
+    rpc EditStudentProfile(StudentData) returns (StudentUsername) {
+        option (google.api.http) = { post: "/v1/core/students/edit" body: "*" };
+    }
+
+    rpc AddProjectTokenToStudent(TokenStudentData) returns (StudentUsername) {
+        option (google.api.http) = { post: "/v1/core/students/tokens/{stud_username}" body: "*" };
+    }
+
+    rpc DeleteProjectTokenToStudent(ProjectStudentId) returns (StudentUsername) {
+        option (google.api.http) = { delete: "/v1/core/students/tokens/{stud_username}" };
+    }
+}
+
+message TokenStudentData {
+    string stud_username = 1;
+    string proj_id = 2;
+    uint32 token = 3;
+}
+
+message ProjectStudentId {
+    string proj_id = 1;
+    string stud_username = 2;
+}
+
+message StudentUsername {
+    string stud_username = 1;
+}
+
+message StudentData {
+    string stud_id   = 1;
+    string stud_username  = 2;
+    string stud_name = 3;
+    string email     = 4;
+    string about     = 5;
+    repeated string link = 6;
+    string final_proj_id = 7;
+    map<string, uint32> token_distribution = 8;
+}

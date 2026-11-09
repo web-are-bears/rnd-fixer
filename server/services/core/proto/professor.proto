@@ -1,0 +1,36 @@
+syntax = "proto3";
+package com.github.wbb.core;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service CoreProfessorService {
+    rpc AddProfessorProfile(ProfessorData) returns (ProfessorUsername) {
+        option (google.api.http) = { post: "/v1/core/professors" body: "*" };
+    }
+
+    rpc EditProfessorProfile(ProfessorEditData) returns (ProfessorUsername) {
+        option (google.api.http) = { post: "/v1/core/professors/edit/{prof_username}" body: "*" };
+    }
+}
+
+message ProfessorUsername {
+    string prof_username = 1;
+}
+
+message ProfessorData {
+    string prof_id   = 1;
+    string prof_username  = 2;
+    string prof_name = 3;
+    string email     = 4;
+    string about     = 5;
+    repeated string link = 6;
+}
+
+message ProfessorEditData {
+    string prof_username  = 1;
+    string prof_name = 2;
+    string email     = 3;
+    string about     = 4;
+    repeated string link = 5;
+}

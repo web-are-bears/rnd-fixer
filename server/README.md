@@ -116,7 +116,7 @@ Make sure you have retrieved all three files listed below:
 Place these files at these exact paths:
 
 - `public.pem` and `private.pem` inside `./server/shared/jwtauth/keys/`
-- `mongo_credentials.txt` inside `./server/shared/mongo/keys/`
+- `credentials.txt` inside `./server/shared/mongo/keys/`
 
 > Warning: Never commit these files, make sure the directories they reside in are listed in .gitignore
 

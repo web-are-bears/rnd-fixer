@@ -1,0 +1,63 @@
+syntax = "proto3";
+package com.github.wbb.core;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service CoreProjectService {
+    rpc AddProject(ProjectData) returns (ProjectId) {
+        option (google.api.http) = { post: "/v1/core/projects/{prof_username}" body: "*" };
+    }
+
+    rpc FetchProject(ProjectId) returns (ProjectData) {
+        option (google.api.http) = { get: "/v1/core/projects/{proj_id}" };
+    }
+
+    rpc FetchProjectByProfId(ProfProjectUsername) returns (ProjectList) {
+        option (google.api.http) = { get: "/v1/core/projects/prof/{prof_username}" };
+    }
+
+    rpc FetchAllProjects(google.protobuf.Empty) returns (ProjectList) {
+        option (google.api.http) = { get: "/v1/core/projects" };
+    }
+
+    rpc AddStudentTokenToProject(TokenProjectData) returns (ProjectId) {
+        option (google.api.http) = { post: "/v1/core/projects/tokens/{proj_id}" body: "*" };
+    }
+
+    rpc DeleteStudentTokenToProject(StudentProjectUsername) returns (ProjectId) {
+        option (google.api.http) = { delete: "/v1/core/projects/tokens/{proj_id}" };
+    }
+}
+
+message StudentProjectUsername {
+    string proj_id = 1;
+    string stud_username = 2;
+}
+
+message TokenProjectData {
+    string proj_id = 1;
+    string stud_username = 2;
+    uint32 token      = 3;
+}
+
+message ProjectData {
+    string proj_id = 1;
+    string proj_name = 2;
+    string prof_username = 3;
+    string description = 4;
+    uint32 max_occupancy = 5;
+    map<string, uint32> token_distribution = 6;
+}
+
+message ProfProjectUsername {
+    string prof_username = 1;
+}
+
+message ProjectList {
+    repeated ProjectData projects = 1;
+}
+
+message ProjectId {
+    string proj_id = 1;
+}

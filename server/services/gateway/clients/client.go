@@ -41,6 +41,7 @@ func NewClients(cfg config.GatewayConfig) (*Clients, error) {
 		constructor  func(*grpc.ClientConn) Client
 	}{
 		{config.Env("AUTH_ADDR", "localhost:9001"), NewAuthClient},
+		{config.Env("CORE_ADDR", "localhost:9002"), NewCoreClient},
 	} {
 		conn, err := dial(d.addr)
 		if err != nil {
