@@ -55,12 +55,17 @@ func main() {
 		}
 
 		// create a store
-		mstore := mongo.NewStore[mdl.ProjectDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection)
+		proj_store := mongo.NewStore[mdl.ProjectDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection + "_project")
+		prof_store := mongo.NewStore[mdl.ProfessorDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection + "_professor")
+		stud_store := mongo.NewStore[mdl.StudentDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection + "_student")
 		grpcServer := grpc.NewServer()
 		ch <- grpcServer
 		
 		// register your gRPC services here
-		pb.RegisterCoreServiceServer(grpcServer, handler.NewHandler(mstore))
+		var handle *handler.Handler = handler.NewHandler(proj_store, prof_store, stud_store)
+		pb.RegisterCoreProfessorServiceServer(grpcServer, handle)
+		pb.RegisterCoreProjectServiceServer(grpcServer, handle)
+		pb.RegisterCoreStudentServiceServer(grpcServer, handle)
 
 		logger.Info("starting gRPC core service on", "port", cfg.Port)
 		if err := grpcServer.Serve(lis); err != nil {
