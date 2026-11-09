@@ -6,6 +6,7 @@ import Button from "./Button";
 export default function Navbar() {
   const nav = useNavigate();
   const [user, setUser] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     async function loadUser() {
@@ -13,18 +14,9 @@ export default function Navbar() {
         const token = getToken();
         const uname = token?.uname;
 
-        if (!uname) {
-          console.error("No authenticated user found.");
-          return;
-        }
+        if (!uname) return;
 
         const currentUser = await users.get(uname);
-
-        if (!currentUser) {
-          console.error("User not found:", uname);
-          return;
-        }
-
         setUser(currentUser);
       } catch (err) {
         console.error("Failed to load Navbar user:", err);
@@ -41,54 +33,90 @@ export default function Navbar() {
 
   const role = user?.role?.toLowerCase();
 
+  const links = [
+    ...(role === "student"
+      ? [
+          { to: "/profs", label: "Professors" },
+          { to: "/projects", label: "Projects" },
+        ]
+      : []),
+
+    ...(role === "prof" || role === "professor"
+      ? [
+          { to: "/students", label: "Students" },
+          { to: "/projects", label: "Projects" },
+        ]
+      : []),
+
+    ...(role === "admin"
+      ? [
+          { to: "/profs", label: "Professors" },
+          { to: "/projects", label: "Projects" },
+          { to: "/students", label: "Students" },
+          { to: "/users", label: "User Accounts" },
+        ]
+      : []),
+  ];
+
   return (
     <nav className="nav">
-      <Link to="/" className="underline">
-        Dashboard
-      </Link>
+      <div className="flex w-full items-center gap-6">
+        <Link to="/" className="underline" onClick={() => setMenuOpen(false)}>
+          Dashboard
+        </Link>
 
-      {role === "student" && (
-        <>
-          <Link to="/profs" className="underline">
-            Professors
+        {/* Desktop navigation */}
+        <div className="hidden items-center gap-6 md:flex">
+          {links.map((link) => (
+            <Link key={link.to} to={link.to} className="underline">
+              {link.label}
+            </Link>
+          ))}
+
+          <Link to="/settings" className="underline">
+            Settings
           </Link>
-          <Link to="/projects" className="underline">
-            Projects
+        </div>
+
+        <Button onClick={handleLogout} className="ml-auto hidden md:block">
+          Logout
+        </Button>
+
+        {/* hamburger */}
+        <button
+          onClick={() => setMenuOpen((open) => !open)}
+          className="ml-auto text-2xl md:hidden"
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
+      </div>
+
+      {menuOpen && (
+        <div className="mt-4 flex flex-col gap-4 border-t border-line pt-4 md:hidden">
+          {links.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="underline"
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+
+          <Link
+            to="/settings"
+            className="underline"
+            onClick={() => setMenuOpen(false)}
+          >
+            Settings
           </Link>
-        </>
+
+          <Button onClick={handleLogout}>Logout</Button>
+        </div>
       )}
-
-      {(role === "prof" || role === "professor") && (
-        <>
-          <Link to="/students" className="underline">
-            Students
-          </Link>
-          <Link to="/projects" className="underline">
-            Projects
-          </Link>
-        </>
-      )}
-
-      {role === "admin" && (
-        <>
-          <Link to="/profs" className="underline">
-            Professors
-          </Link>
-          <Link to="/projects" className="underline">
-            Projects
-          </Link>
-          <Link to="/students" className="underline">
-            Students
-          </Link>
-          <Link to="/users" className="underline">
-            User Accounts
-          </Link>
-        </>
-      )}
-
-      <Button onClick={handleLogout} className="ml-auto">
-        Logout
-      </Button>
     </nav>
   );
 }
