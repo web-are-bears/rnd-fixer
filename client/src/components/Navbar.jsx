@@ -59,64 +59,94 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="nav">
-      <div className="flex w-full items-center gap-6">
-        <Link to="/" className="underline" onClick={() => setMenuOpen(false)}>
-          Dashboard
-        </Link>
-
-        {/* Desktop navigation */}
-        <div className="hidden items-center gap-6 md:flex">
-          {links.map((link) => (
-            <Link key={link.to} to={link.to} className="underline">
-              {link.label}
-            </Link>
-          ))}
-
-          <Link to="/settings" className="underline">
-            Settings
+    <>
+      <nav className="nav relative">
+        <div className="flex w-full items-center gap-6">
+          <Link to="/" className="underline" onClick={() => setMenuOpen(false)}>
+            Dashboard
           </Link>
+
+          <div className="hidden items-center gap-6 md:flex">
+            {links.map((link) => (
+              <Link key={link.to} to={link.to} className="underline">
+                {link.label}
+              </Link>
+            ))}
+
+            <Link to="/settings" className="underline">
+              Settings
+            </Link>
+          </div>
+
+          <Button onClick={handleLogout} className="ml-auto hidden md:block">
+            Logout
+          </Button>
+
+          {/* hamburger */}
+          <button
+            onClick={() => setMenuOpen((open) => !open)}
+            className="ml-auto text-2xl md:hidden"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? "✕" : "☰"}
+          </button>
         </div>
-
-        <Button onClick={handleLogout} className="ml-auto hidden md:block">
-          Logout
-        </Button>
-
-        {/* hamburger */}
-        <button
-          onClick={() => setMenuOpen((open) => !open)}
-          className="ml-auto text-2xl md:hidden"
-          aria-label="Toggle navigation menu"
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? "✕" : "☰"}
-        </button>
-      </div>
+      </nav>
 
       {menuOpen && (
-        <div className="mt-4 flex flex-col gap-4 border-t border-line pt-4 md:hidden">
-          {links.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="underline"
+        <div className="mobile-menu fixed inset-0 z-[100] flex min-h-screen flex-col bg-ink p-6 text-paper md:hidden">
+          <div className="flex items-center justify-between border-b border-butter pb-5">
+            <h2 className="font-serif text-2xl font-bold">RnD Fixer</h2>
+
+            <button
               onClick={() => setMenuOpen(false)}
+              className="text-3xl text-paper"
+              aria-label="Close menu"
             >
-              {link.label}
+              &times;
+            </button>
+          </div>
+
+          <div className="mt-8 flex flex-col">
+            <Link
+              to="/"
+              onClick={() => setMenuOpen(false)}
+              className="border-b border-butter/30 py-5 text-lg"
+            >
+              Dashboard
             </Link>
-          ))}
 
-          <Link
-            to="/settings"
-            className="underline"
-            onClick={() => setMenuOpen(false)}
-          >
-            Settings
-          </Link>
+            {links.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                className="border-b border-butter/30 py-5 text-lg"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
 
-          <Button onClick={handleLogout}>Logout</Button>
+          <div className="mt-auto border-t border-butter pt-5">
+            <Link
+              to="/settings"
+              onClick={() => setMenuOpen(false)}
+              className="block py-4 text-lg"
+            >
+              Settings
+            </Link>
+
+            <Button
+              onClick={handleLogout}
+              className="btn btn--secondary mt-3 w-full"
+            >
+              Logout
+            </Button>
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 }
