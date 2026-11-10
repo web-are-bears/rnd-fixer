@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { profs, projects, getCurrentUser } from "@/api";
+import { profs, projects, students, getCurrentUser, getPhase } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
 import Button from "@/components/Button";
 
-function ProjectDetail({ project, onClose }) {
+function ProjectDetail({ project, studentList, showStudents, onClose }) {
   return (
     <div className="space-y-4">
       <div>
@@ -19,6 +19,27 @@ function ProjectDetail({ project, onClose }) {
         <p className="font-bold">{project.max_students}</p>
       </div>
 
+      {showStudents && (
+        <div>
+          <h3 className="heading text-lg">Students</h3>
+
+          {studentList.length == 0 ? (
+            <p className="text-sm text-ink-soft">
+              No students have selected this project.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {studentList.map((student) => (
+                <div key={student.uname} className="tile">
+                  <p className="font-bold">{student.name}</p>
+                  <p className="text-sm text-ink-soft">{student.email}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       <Link
         to={`/projects?prof=${encodeURIComponent(project.prof_uname)}`}
         onClick={onClose}
@@ -30,7 +51,6 @@ function ProjectDetail({ project, onClose }) {
   );
 }
 
-// can we inline this? maybe not
 function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
   const [form, setForm] = useState({
     pname: project?.pname ?? "",
@@ -90,7 +110,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
           value={form.pname}
           onChange={(e) => update("pname", e.target.value)}
           required
-          className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
+          className="input"
         />
       </div>
 
@@ -101,7 +121,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
           onChange={(e) => update("desc", e.target.value)}
           required
           rows={5}
-          className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
+          className="input"
         />
       </div>
 
@@ -117,7 +137,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
             value={form.max_students}
             onChange={(e) => update("max_students", e.target.value)}
             required
-            className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
+            className="input"
           />
         </div>
 
@@ -127,7 +147,8 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
             value={form.prof_uname}
             onChange={(e) => update("prof_uname", e.target.value)}
             required
-            className="w-full rounded border border-line bg-surface px-3 py-2 text-sm"
+            className="input"
+            disabled={!!defaultProfId}
           >
             <option value="">Select professor</option>
             {profList.map((prof) => (
@@ -149,7 +170,7 @@ function ProjectEditor({ project, profList, defaultProfId, onSave, onClose }) {
         <Button type="button" variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button type="submit" disabled={saving || profList.length == 0}>
+        <Button type="submit" disabled={saving || profList.length === 0}>
           {saving ? "Saving..." : "Save"}
         </Button>
       </div>
@@ -164,75 +185,66 @@ export default function Projects() {
   const [projectList, setProjectList] = useState(null);
   const [profList, setProfList] = useState([]);
   const [prof, setProf] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [phase, setPhase] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isProfessor, setIsProfessor] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedStudents, setSelectedStudents] = useState([]);
   const [editingProject, setEditingProject] = useState(undefined);
   const [error, setError] = useState("");
 
   async function load() {
-    const [list, professors, user] = await Promise.all([
-      profId ? projects.getByProf(profId) : projects.getAll(),
-      profs.getAll(),
+    const [user, currentPhase, professors] = await Promise.all([
       getCurrentUser(),
+      getPhase(),
+      profs.getAll(),
     ]);
 
-    let professor = null;
+    const admin = user?.role?.toLowerCase() == "admin";
+    const professor = user?.role?.toLowerCase() == "prof";
 
-    if (profId) {
-      professor = await profs.get(profId);
-    }
+    const list = professor
+      ? await projects.getByProf(user.uname)
+      : profId
+        ? await projects.getByProf(profId)
+        : await projects.getAll();
 
-    setProjectList(list);
+    const profile = professor
+      ? await profs.get(user.uname)
+      : profId
+        ? await profs.get(profId)
+        : null;
+
+    setCurrentUser(user);
+    setPhase(currentPhase);
     setProfList(professors);
-    setProf(professor);
-    setIsAdmin(user?.role?.toLowerCase() == "admin");
+    setProjectList(list);
+    setProf(profile);
+    setIsAdmin(admin);
+    setIsProfessor(professor);
     setError("");
   }
 
   useEffect(() => {
-    let active = true;
-
-    async function initialLoad() {
-      try {
-        const [list, professors, user, professor] = await Promise.all([
-          profId ? projects.getByProf(profId) : projects.getAll(),
-          profs.getAll(),
-          getCurrentUser(),
-          profId ? profs.get(profId) : Promise.resolve(null),
-        ]);
-
-        if (active) {
-          setProjectList(list);
-          setProfList(professors);
-          setProf(professor);
-          setIsAdmin(user?.role?.toLowerCase() == "admin");
-        }
-      } catch (err) {
-        if (active) {
-          setError(err.message || "Failed to load projects.");
-        }
-      }
-    }
-
     setProjectList(null);
     setProf(null);
     setError("");
 
-    initialLoad();
-
-    return () => {
-      active = false;
-    };
+    load().catch((err) => {
+      setError(err.message || "Failed to load projects.");
+    });
   }, [profId]);
 
-  if (error) return <ErrorMessage message={error} />;
-  if (!projectList) return <Loading />;
-
   async function saveProject(data, original) {
+    const projectData = isProfessor
+      ? { ...data, prof_uname: currentUser.uname }
+      : data;
+
     if (original) {
-      await projects.update(original._id, data);
+      await projects.update(original._id, projectData);
     } else {
-      await projects.add(data);
+      await projects.add(projectData);
     }
 
     await load();
@@ -249,6 +261,29 @@ export default function Projects() {
     }
   }
 
+  async function selectProject(project) {
+    setSelectedProject(project);
+    setSelectedStudents([]);
+
+    if (isProfessor && [1, 2, 3, 5].includes(phase)) {
+      try {
+        const list = await students.getByProject(project._id);
+        setSelectedStudents(list);
+      } catch (err) {
+        setError(err.message || "Failed to load students.");
+      }
+    }
+  }
+
+  if (error) return <ErrorMessage message={error} />;
+  if (!projectList) return <Loading />;
+
+  const canManage = isAdmin || (isProfessor && phase === 0);
+  const showStudents = isProfessor && [1, 2, 3, 5].includes(phase);
+  const editorProfList = isProfessor
+    ? profList.filter((p) => p.uname === currentUser?.uname)
+    : profList;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -263,7 +298,7 @@ export default function Projects() {
               : "Browse all available projects."}
           </p>
 
-          {prof && (
+          {profId && !isProfessor && (
             <Link
               to="/projects"
               className="mt-3 inline-block text-sm font-bold underline hover:text-ink-soft"
@@ -273,7 +308,7 @@ export default function Projects() {
           )}
         </div>
 
-        {isAdmin && (
+        {canManage && (
           <Button onClick={() => setEditingProject(null)}>+ Add project</Button>
         )}
       </div>
@@ -300,7 +335,7 @@ export default function Projects() {
             <tbody>
               {projectList.map((project) => {
                 const supervisor = profList.find(
-                  (p) => p.uname == project.prof_uname,
+                  (p) => p.uname === project.prof_uname,
                 );
 
                 return (
@@ -333,7 +368,7 @@ export default function Projects() {
                 );
               })}
 
-              {projectList.length == 0 && (
+              {projectList.length === 0 && (
                 <tr>
                   <td colSpan={5} className="p-6 text-center text-ink-soft">
                     No projects available.
@@ -343,14 +378,14 @@ export default function Projects() {
             </tbody>
           </table>
         </div>
-      ) : projectList.length == 0 ? (
+      ) : projectList.length === 0 ? (
         <p className="text-sm text-ink-soft">No projects available.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {projectList.map((project) => (
             <Card
               key={project._id}
-              onClick={() => setSelectedProject(project)}
+              onClick={() => selectProject(project)}
               className="cursor-pointer space-y-2 hover:bg-butter"
             >
               <h3 className="heading text-xl">{project.pname}</h3>
@@ -372,6 +407,8 @@ export default function Projects() {
         >
           <ProjectDetail
             project={selectedProject}
+            studentList={selectedStudents}
+            showStudents={showStudents}
             onClose={() => setSelectedProject(null)}
           />
         </Popup>
@@ -386,8 +423,8 @@ export default function Projects() {
         >
           <ProjectEditor
             project={editingProject}
-            profList={profList}
-            defaultProfId={profId}
+            profList={editorProfList}
+            defaultProfId={isProfessor ? currentUser.uname : profId}
             onSave={saveProject}
             onClose={() => setEditingProject(undefined)}
           />
