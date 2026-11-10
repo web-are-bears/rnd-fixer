@@ -11,44 +11,46 @@ import (
 )
 
 type Handler struct {
-	pb.UnimplementedCoreServiceServer
-	projectStore *mdl.CoreStore
+	pb.UnimplementedCoreProfessorServiceServer
+	pb.UnimplementedCoreProjectServiceServer
+	pb.UnimplementedCoreStudentServiceServer
+	Store *mdl.CoreStore
 }
 
-func NewHandler(ps *mongo.Store[mdl.ProjectDoc]) *Handler {
+func NewHandler(projs *mongo.Store[mdl.ProjectDoc], profs *mongo.Store[mdl.ProfessorDoc], studs *mongo.Store[mdl.StudentDoc]) *Handler {
 	return &Handler{
-		projectStore: mdl.NewCoreStore(ps),
+		Store: mdl.NewCoreStore(projs, profs, studs),
 	}
 }
 
 func (handle *Handler) AddProject(ctx context.Context, req *pb.ProjectData) (*pb.ProjectId, error) {
 	document := mdl.ProjectDoc{
-		ProjectId: rng.GenerateUUID(),
-		ProjectName: req.ProjectName,
-		ProfId: req.ProfId,
+		ProjId: rng.GenerateUUID(),
+		ProjName: req.ProjName,
+		ProfUsername: req.ProfUsername,
 		Description: req.Description,
 		MaxOccupancy: req.MaxOccupancy,
 		TokenDistribution: req.TokenDistribution,
 	}
 
-	id, err := handle.projectStore.AddProject(ctx, &document)
+	id, err := handle.Store.AddProject(ctx, &document)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.ProjectId{ ProjectId: id }, nil
+	return &pb.ProjectId{ ProjId: id }, nil
 }
 
 func (handle *Handler) FetchProject(ctx context.Context, req *pb.ProjectId) (*pb.ProjectData, error) {
-	document, err := handle.projectStore.FetchProject(ctx, req.ProjectId)
+	document, err := handle.Store.FetchProject(ctx, req.ProjId)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.ProjectData{
-		ProjectId: document.ProjectId,
-		ProjectName: document.ProjectName,
-		ProfId: document.ProfId,
+		ProjId: document.ProjId,
+		ProjName: document.ProjName,
+		ProfUsername: document.ProfUsername,
 		Description: document.Description,
 		MaxOccupancy: document.MaxOccupancy,
 		TokenDistribution: document.TokenDistribution,
@@ -56,7 +58,7 @@ func (handle *Handler) FetchProject(ctx context.Context, req *pb.ProjectId) (*pb
 }
 
 func (handle *Handler) FetchAllProjects(ctx context.Context, _ *emptypb.Empty) (*pb.ProjectList, error) {
-	projects, err := handle.projectStore.FetchAllProjects(ctx)
+	projects, err := handle.Store.FetchAllProjects(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -64,9 +66,9 @@ func (handle *Handler) FetchAllProjects(ctx context.Context, _ *emptypb.Empty) (
 	var pl pb.ProjectList
 	for _, proj := range projects {
 		pl.Projects = append(pl.Projects, &pb.ProjectData{
-			ProjectId: proj.ProjectId,
-			ProjectName: proj.ProjectName,
-			ProfId: proj.ProfId,
+			ProjId: proj.ProjId,
+			ProjName: proj.ProjName,
+			ProfUsername: proj.ProfUsername,
 			Description: proj.Description,
 			MaxOccupancy: proj.MaxOccupancy,
 			TokenDistribution: proj.TokenDistribution,
@@ -75,8 +77,8 @@ func (handle *Handler) FetchAllProjects(ctx context.Context, _ *emptypb.Empty) (
 	return &pl, nil
 }
 
-func (handle *Handler) FetchProjectByProfId(ctx context.Context, req *pb.ProfId) (*pb.ProjectList, error) {
-	projects, err := handle.projectStore.FetchProjectByProfId(ctx, req.ProfId)
+func (handle *Handler) FetchProjectByProfId(ctx context.Context, req *pb.ProfProjectUsername) (*pb.ProjectList, error) {
+	projects, err := handle.Store.FetchProjectByProfId(ctx, req.ProfUsername)
 	if err != nil {
 		return nil, err
 	}
@@ -84,9 +86,9 @@ func (handle *Handler) FetchProjectByProfId(ctx context.Context, req *pb.ProfId)
 	var pl pb.ProjectList
 	for _, proj := range projects {
 		pl.Projects = append(pl.Projects, &pb.ProjectData{
-			ProjectId: proj.ProfId,
-			ProjectName: proj.ProjectName,
-			ProfId: proj.ProfId,
+			ProjId: proj.ProjId,
+			ProjName: proj.ProjName,
+			ProfUsername: proj.ProfUsername,
 			Description: proj.Description,
 			MaxOccupancy: proj.MaxOccupancy,
 			TokenDistribution: proj.TokenDistribution,
@@ -95,10 +97,10 @@ func (handle *Handler) FetchProjectByProfId(ctx context.Context, req *pb.ProfId)
 	return &pl, nil
 }
 
-func (handle *Handler) AddStudentTokenToProject(ctx context.Context, req *pb.TokenData) (*pb.ProjectId, error) {
-	id, err := handle.projectStore.AddStudentTokenToProject(ctx, mdl.TokenDoc{
-		ProjectId: req.ProjectId,
-		StudentId: req.StudentId,
+func (handle *Handler) AddStudentTokenToProject(ctx context.Context, req *pb.TokenProjectData) (*pb.ProjectId, error) {
+	id, err := handle.Store.AddStudentTokenToProject(ctx, mdl.TokenDoc{
+		ProjId: req.ProjId,
+		StudUsername: req.StudUsername,
 		Token: req.Token,
 	})
 
@@ -106,14 +108,103 @@ func (handle *Handler) AddStudentTokenToProject(ctx context.Context, req *pb.Tok
 		return nil, err
 	}
 
-	return &pb.ProjectId{ProjectId: id}, nil
+	return &pb.ProjectId{ ProjId: id}, nil
 }
 
-func (handle *Handler) DeleteStudentTokenToProject(ctx context.Context, req *pb.StudentId) (*pb.ProjectId, error) {
-	id, err := handle.projectStore.DeleteStudentTokenToProject(ctx, req.ProjectId, req.StudentId)
+func (handle *Handler) DeleteStudentTokenToProject(ctx context.Context, req *pb.StudentProjectUsername) (*pb.ProjectId, error) {
+	id, err := handle.Store.DeleteStudentTokenToProject(ctx, req.ProjId, req.StudUsername)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.ProjectId{ProjectId: id}, nil
+	return &pb.ProjectId{ ProjId: id}, nil
+}
+
+func (handle *Handler) AddProfessorProfile(ctx context.Context, req *pb.ProfessorData) (*pb.ProfessorUsername, error) {
+	id, err := handle.Store.AddProfessorProfile(ctx, &mdl.ProfessorDoc{
+		ProfId: rng.GenerateUUID(),
+		ProfUsername: req.ProfUsername,
+		ProfName: req.ProfName,
+		Email: req.Email,
+		About: req.About,
+		Link: req.Link,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ProfessorUsername{ ProfUsername: id }, nil
+}
+
+func (handle *Handler) EditProfessorProfile(ctx context.Context, req *pb.ProfessorEditData) (*pb.ProfessorUsername, error) {
+	id, err := handle.Store.EditProfessorProfile(ctx, &mdl.ProfessorEdit{
+		ProfName: req.ProfName,
+		Email: req.Email,
+		About: req.About,
+		Link: req.Link,
+	}, req.ProfUsername)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ProfessorUsername{ ProfUsername: id}, nil
+}
+
+func (handle *Handler) AddStudentProfile(ctx context.Context, req *pb.StudentData) (*pb.StudentUsername, error) {
+	id, err := handle.Store.AddStudentProfile(ctx, &mdl.StudentDoc{
+		StudId: rng.GenerateUUID(),
+		StudUsername: req.StudUsername,
+		StudName: req.StudName,
+		Email: req.Email,
+		About: req.About,
+		FinalProjId: req.FinalProjId,
+		Link: req.Link,
+		TokenDistribution: req.TokenDistribution,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StudentUsername{ StudUsername: id }, nil
+}
+
+func (handle *Handler) EditStudentProfile(ctx context.Context, req *pb.StudentData) (*pb.StudentUsername, error) {
+	id, err := handle.Store.EditStudentProfile(ctx, &mdl.StudentEdit{
+		StudName: req.StudName,
+		Email: req.Email,
+		About: req.About,
+		Link: req.Link,
+	}, req.StudName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StudentUsername{ StudUsername: id}, nil
+}
+
+func (handle *Handler) AddProjectTokenToStudent(ctx context.Context, req *pb.TokenStudentData) (*pb.StudentUsername, error) {
+	id, err := handle.Store.AddProjectTokenToStudent(ctx, mdl.TokenDoc{
+		ProjId: req.ProjId,
+		StudUsername: req.StudUsername,
+		Token: req.Token,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StudentUsername{ StudUsername: id}, nil
+}
+
+func (handle *Handler) DeleteProjectTokenToStudent(ctx context.Context, req *pb.ProjectStudentId) (*pb.StudentUsername, error) {
+	id, err := handle.Store.DeleteProjectTokenToStudent(ctx, req.ProjId, req.StudUsername)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StudentUsername{ StudUsername: id}, nil
 }
