@@ -8,6 +8,7 @@ import Projects from "@/pages/Projects";
 import Students from "@/pages/Students";
 import Users from "./pages/Users";
 import Register from "./pages/Register";
+import Settings from "./pages/Settings";
 
 function Layout({ children }) {
   return (
@@ -67,8 +68,15 @@ export default function App() {
           path="/users"
           element={
             <Protected>
-              {" "}
-              <Users />{" "}
+              <Users />
+            </Protected>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Protected>
+              <Settings />
             </Protected>
           }
         />
