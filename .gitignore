@@ -25,3 +25,5 @@ keys/
 *.sln
 *.sw?
 *.lock
+
+server/match_algo
