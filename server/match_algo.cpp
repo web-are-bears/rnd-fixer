@@ -1,19 +1,15 @@
-#include<iostream>
-#include<string>
-#include<queue>
-#include<map>
-#include<tuple>
+#include<bits/stdc++.h>
 using namespace std;
 
 int main()
 {
 	//int no_students=3,no_projects=5;
 	//cin>>no_students>>no_projects;
-	queue<tuple<string,map<string,int>>> student_alloc;
-	queue<tuple<string,int,map<string,int>>> project_alloc;
-	tuple<string,map<string,int>> temp_stud_tuple;
-	tuple<string,int,map<string,int>> temp_proj_tuple;
-	map<string,int> temp_map;
+	queue<tuple<string,unordered_map<string,int>>> student_alloc;
+	queue<tuple<string,int,unordered_map<string,int>>> project_alloc;
+	tuple<string,unordered_map<string,int>> temp_stud_tuple;
+	tuple<string,int,unordered_map<string,int>> temp_proj_tuple;
+	unordered_map<string,int> temp_map;
 
 	temp_map={{"data",25},{"compute",25},{"memory",10}};
 	temp_stud_tuple=make_tuple("Alice",temp_map);
@@ -40,6 +36,8 @@ int main()
         project_alloc.push(temp_proj_tuple);
 
 	//cout<<get<1>(student_alloc.back())["data"]<<endl;
+	
+
 
 	return 0;
 }
