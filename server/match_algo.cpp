@@ -6,7 +6,7 @@ int main()
 	//int no_students=3,no_projects=5;
 	//cin>>no_students>>no_projects;
 	queue<tuple<string,unordered_map<string,int>>> student_alloc;
-	queue<tuple<string,int,unordered_map<string,int>>> project_alloc;
+	vector<tuple<string,int,unordered_map<string,int>>> project_alloc;
 	tuple<string,unordered_map<string,int>> temp_stud_tuple;
 	tuple<string,int,unordered_map<string,int>> temp_proj_tuple;
 	unordered_map<string,int> temp_map;
@@ -25,19 +25,17 @@ int main()
 
 	temp_map={{"Alice",100},{"Bob",0},{"Callie",0}};
 	temp_proj_tuple=make_tuple("data",2,temp_map);
-	project_alloc.push(temp_proj_tuple);
+	project_alloc.push_back(temp_proj_tuple);
 
 	temp_map={{"Alice",50},{"Bob",25},{"Callie",25}};
         temp_proj_tuple=make_tuple("compute",2,temp_map);
-        project_alloc.push(temp_proj_tuple);
+        project_alloc.push_back(temp_proj_tuple);
 
 	temp_map={{"Alice",34},{"Bob",33},{"Callie",33}};
         temp_proj_tuple=make_tuple("memory",1,temp_map);
-        project_alloc.push(temp_proj_tuple);
+        project_alloc.push_back(temp_proj_tuple);
 
 	//cout<<get<1>(student_alloc.back())["data"]<<endl;
 	
-
-
 	return 0;
 }
