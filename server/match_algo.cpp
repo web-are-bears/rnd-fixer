@@ -37,5 +37,26 @@ int main()
 
 	//cout<<get<1>(student_alloc.back())["data"]<<endl;
 	
+	while(!student_alloc.empty())
+	{
+		temp_stud_tuple=student_alloc.front();
+		student_alloc.pop();
+		if(!get<1>(temp_stud_tuple).empty())
+		{
+			int max=-1;
+			string max_alloc_proj="";
+			for(auto i:get<1>(temp_stud_tuple))
+			{
+				if(max<i.second)
+				{
+					max=i.second;
+					max_alloc_proj=i.first;
+				}
+			}
+			
+			//cout<<get<0>(temp_stud_tuple)<<" "<<max_alloc_proj<<": "<<max<<endl;
+		}
+	}
+
 	return 0;
 }
