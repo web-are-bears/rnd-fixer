@@ -7,6 +7,9 @@ int main()
 	//cin>>no_students>>no_projects;
 	queue<tuple<string,unordered_map<string,int>>> student_alloc;
 	vector<tuple<string,int,unordered_map<string,int>>> project_alloc;
+
+	map<string,vector<tuple<string,unordered_map<string,int>>>> stud_proj_map;
+
 	tuple<string,unordered_map<string,int>> temp_stud_tuple;
 	tuple<string,int,unordered_map<string,int>> temp_proj_tuple;
 	unordered_map<string,int> temp_map;
@@ -37,6 +40,8 @@ int main()
 
 	//cout<<get<1>(student_alloc.back())["data"]<<endl;
 	
+	for(auto i:project_alloc) stud_proj_map[get<0>(i)]={};
+
 	while(!student_alloc.empty())
 	{
 		temp_stud_tuple=student_alloc.front();
@@ -55,6 +60,17 @@ int main()
 			}
 			
 			//cout<<get<0>(temp_stud_tuple)<<" "<<max_alloc_proj<<": "<<max<<endl;
+
+			for(auto i:project_alloc)
+			{
+				if(max_alloc_proj==get<0>(i))
+				{
+					temp_proj_tuple=i;
+					break;
+				}
+			}
+			if(stud_proj_map[max_alloc_proj].size()<get<1>(temp_proj_tuple))
+			{}
 		}
 	}
 
