@@ -69,9 +69,31 @@ int main()
 					break;
 				}
 			}
-			if(stud_proj_map[max_alloc_proj].size()<get<1>(temp_proj_tuple))
-			{}
+			stud_proj_map[max_alloc_proj].push_back(temp_stud_tuple);
+			while(stud_proj_map[max_alloc_proj].size()>get<1>(temp_proj_tuple))
+			{
+				int min=101,mini=-1;
+				for(int i=0;i<stud_proj_map[max_alloc_proj].size();i++)
+				{
+					if(get<2>(temp_proj_tuple)[get<0>(stud_proj_map[max_alloc_proj][i])]<min)
+					{
+						min=get<2>(temp_proj_tuple)[get<0>(stud_proj_map[max_alloc_proj][i])];
+						mini=i;
+					}
+				}
+				temp_stud_tuple=stud_proj_map[max_alloc_proj][mini];
+				stud_proj_map[max_alloc_proj].erase(stud_proj_map[max_alloc_proj].begin()+mini);
+				get<1>(temp_stud_tuple).erase(max_alloc_proj);
+				student_alloc.push(temp_stud_tuple);
+			}
 		}
+	}
+
+	for(auto i:stud_proj_map)
+	{
+		cout<<i.first<<": ";
+		for(auto j:i.second) cout<<get<0>(j)<<" ";
+		cout<<endl;
 	}
 
 	return 0;
