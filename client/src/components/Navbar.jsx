@@ -11,7 +11,7 @@ export default function Navbar() {
   useEffect(() => {
     async function loadUser() {
       try {
-        const token = getToken();
+        const token = await getToken();
         const uname = token?.uname;
 
         if (!uname) return;
