@@ -75,6 +75,14 @@
     @apply underline text-butter;
   }
 
+  .mobile-menu a {
+    @apply no-underline font-semibold text-paper;
+  }
+
+  .mobile-menu a:hover {
+    @apply underline text-butter;
+  }
+
   .card {
     @apply block w-full p-4
            text-left bg-butter
