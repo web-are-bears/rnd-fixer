@@ -5,9 +5,12 @@ import (
 
 	mdl "github.com/wbb/rnd-fixer/services/core/model"
 	pb "github.com/wbb/rnd-fixer/services/core/proto"
-	"google.golang.org/protobuf/types/known/emptypb"
+	"github.com/wbb/rnd-fixer/shared/authctx"
 	"github.com/wbb/rnd-fixer/shared/mongo"
 	"github.com/wbb/rnd-fixer/shared/rng"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Handler struct {
@@ -17,6 +20,20 @@ type Handler struct {
 	Store *mdl.CoreStore
 }
 
+func requireSelf(ctx context.Context, role, username string) error {
+	c := authctx.FromContext(ctx)
+	if c == nil {
+		return status.Error(codes.Unauthenticated, "missing identity")
+	}
+	if c.Role == "admin" {
+		return nil
+	}
+	if c.Role != role || c.ID != username {
+		return status.Error(codes.PermissionDenied, "not allowed to act for this user")
+	}
+	return nil
+}
+
 func NewHandler(projs *mongo.Store[mdl.ProjectDoc], profs *mongo.Store[mdl.ProfessorDoc], studs *mongo.Store[mdl.StudentDoc]) *Handler {
 	return &Handler{
 		Store: mdl.NewCoreStore(projs, profs, studs),
@@ -24,6 +41,10 @@ func NewHandler(projs *mongo.Store[mdl.ProjectDoc], profs *mongo.Store[mdl.Profe
 }
 
 func (handle *Handler) AddProject(ctx context.Context, req *pb.ProjectData) (*pb.ProjectId, error) {
+	if err := requireSelf(ctx, "professor", req.ProfUsername); err != nil {
+		return nil, err
+	}
+
 	document := mdl.ProjectDoc{
 		ProjId: rng.GenerateUUID(),
 		ProjName: req.ProjName,
@@ -121,6 +142,10 @@ func (handle *Handler) DeleteStudentTokenToProject(ctx context.Context, req *pb.
 }
 
 func (handle *Handler) AddProfessorProfile(ctx context.Context, req *pb.ProfessorData) (*pb.ProfessorUsername, error) {
+	if err := requireSelf(ctx, "professor", req.ProfUsername); err != nil {
+		return nil, err
+	}
+
 	id, err := handle.Store.AddProfessorProfile(ctx, &mdl.ProfessorDoc{
 		ProfId: rng.GenerateUUID(),
 		ProfUsername: req.ProfUsername,
@@ -138,6 +163,10 @@ func (handle *Handler) AddProfessorProfile(ctx context.Context, req *pb.Professo
 }
 
 func (handle *Handler) EditProfessorProfile(ctx context.Context, req *pb.ProfessorEditData) (*pb.ProfessorUsername, error) {
+	if err := requireSelf(ctx, "professor", req.ProfUsername); err != nil {
+		return nil, err
+	}
+
 	id, err := handle.Store.EditProfessorProfile(ctx, &mdl.ProfessorEdit{
 		ProfName: req.ProfName,
 		Email: req.Email,
@@ -153,6 +182,10 @@ func (handle *Handler) EditProfessorProfile(ctx context.Context, req *pb.Profess
 }
 
 func (handle *Handler) AddStudentProfile(ctx context.Context, req *pb.StudentData) (*pb.StudentUsername, error) {
+	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
+		return nil, err
+	}
+
 	id, err := handle.Store.AddStudentProfile(ctx, &mdl.StudentDoc{
 		StudId: rng.GenerateUUID(),
 		StudUsername: req.StudUsername,
@@ -171,13 +204,17 @@ func (handle *Handler) AddStudentProfile(ctx context.Context, req *pb.StudentDat
 	return &pb.StudentUsername{ StudUsername: id }, nil
 }
 
-func (handle *Handler) EditStudentProfile(ctx context.Context, req *pb.StudentData) (*pb.StudentUsername, error) {
+func (handle *Handler) EditStudentProfile(ctx context.Context, req *pb.StudentDataEdit) (*pb.StudentUsername, error) {
+	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
+		return nil, err
+	}
+
 	id, err := handle.Store.EditStudentProfile(ctx, &mdl.StudentEdit{
 		StudName: req.StudName,
 		Email: req.Email,
 		About: req.About,
 		Link: req.Link,
-	}, req.StudName)
+	}, req.StudUsername)
 
 	if err != nil {
 		return nil, err
@@ -187,6 +224,10 @@ func (handle *Handler) EditStudentProfile(ctx context.Context, req *pb.StudentDa
 }
 
 func (handle *Handler) AddProjectTokenToStudent(ctx context.Context, req *pb.TokenStudentData) (*pb.StudentUsername, error) {
+	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
+		return nil, err
+	}
+
 	id, err := handle.Store.AddProjectTokenToStudent(ctx, mdl.TokenDoc{
 		ProjId: req.ProjId,
 		StudUsername: req.StudUsername,
@@ -201,6 +242,10 @@ func (handle *Handler) AddProjectTokenToStudent(ctx context.Context, req *pb.Tok
 }
 
 func (handle *Handler) DeleteProjectTokenToStudent(ctx context.Context, req *pb.ProjectStudentId) (*pb.StudentUsername, error) {
+	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
+		return nil, err
+	}
+
 	id, err := handle.Store.DeleteProjectTokenToStudent(ctx, req.ProjId, req.StudUsername)
 	if err != nil {
 		return nil, err
