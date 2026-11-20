@@ -30,7 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CoreStudentServiceClient interface {
 	AddStudentProfile(ctx context.Context, in *StudentData, opts ...grpc.CallOption) (*StudentUsername, error)
-	EditStudentProfile(ctx context.Context, in *StudentData, opts ...grpc.CallOption) (*StudentUsername, error)
+	EditStudentProfile(ctx context.Context, in *StudentDataEdit, opts ...grpc.CallOption) (*StudentUsername, error)
 	AddProjectTokenToStudent(ctx context.Context, in *TokenStudentData, opts ...grpc.CallOption) (*StudentUsername, error)
 	DeleteProjectTokenToStudent(ctx context.Context, in *ProjectStudentId, opts ...grpc.CallOption) (*StudentUsername, error)
 }
@@ -53,7 +53,7 @@ func (c *coreStudentServiceClient) AddStudentProfile(ctx context.Context, in *St
 	return out, nil
 }
 
-func (c *coreStudentServiceClient) EditStudentProfile(ctx context.Context, in *StudentData, opts ...grpc.CallOption) (*StudentUsername, error) {
+func (c *coreStudentServiceClient) EditStudentProfile(ctx context.Context, in *StudentDataEdit, opts ...grpc.CallOption) (*StudentUsername, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StudentUsername)
 	err := c.cc.Invoke(ctx, CoreStudentService_EditStudentProfile_FullMethodName, in, out, cOpts...)
@@ -88,7 +88,7 @@ func (c *coreStudentServiceClient) DeleteProjectTokenToStudent(ctx context.Conte
 // for forward compatibility.
 type CoreStudentServiceServer interface {
 	AddStudentProfile(context.Context, *StudentData) (*StudentUsername, error)
-	EditStudentProfile(context.Context, *StudentData) (*StudentUsername, error)
+	EditStudentProfile(context.Context, *StudentDataEdit) (*StudentUsername, error)
 	AddProjectTokenToStudent(context.Context, *TokenStudentData) (*StudentUsername, error)
 	DeleteProjectTokenToStudent(context.Context, *ProjectStudentId) (*StudentUsername, error)
 	mustEmbedUnimplementedCoreStudentServiceServer()
@@ -104,7 +104,7 @@ type UnimplementedCoreStudentServiceServer struct{}
 func (UnimplementedCoreStudentServiceServer) AddStudentProfile(context.Context, *StudentData) (*StudentUsername, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddStudentProfile not implemented")
 }
-func (UnimplementedCoreStudentServiceServer) EditStudentProfile(context.Context, *StudentData) (*StudentUsername, error) {
+func (UnimplementedCoreStudentServiceServer) EditStudentProfile(context.Context, *StudentDataEdit) (*StudentUsername, error) {
 	return nil, status.Error(codes.Unimplemented, "method EditStudentProfile not implemented")
 }
 func (UnimplementedCoreStudentServiceServer) AddProjectTokenToStudent(context.Context, *TokenStudentData) (*StudentUsername, error) {
@@ -153,7 +153,7 @@ func _CoreStudentService_AddStudentProfile_Handler(srv interface{}, ctx context.
 }
 
 func _CoreStudentService_EditStudentProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StudentData)
+	in := new(StudentDataEdit)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func _CoreStudentService_EditStudentProfile_Handler(srv interface{}, ctx context
 		FullMethod: CoreStudentService_EditStudentProfile_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CoreStudentServiceServer).EditStudentProfile(ctx, req.(*StudentData))
+		return srv.(CoreStudentServiceServer).EditStudentProfile(ctx, req.(*StudentDataEdit))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -64,11 +64,20 @@ func local_request_CoreStudentService_AddStudentProfile_0(ctx context.Context, m
 
 func request_CoreStudentService_EditStudentProfile_0(ctx context.Context, marshaler runtime.Marshaler, client CoreStudentServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq StudentData
+		protoReq StudentDataEdit
 		metadata runtime.ServerMetadata
+		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	val, ok := pathParams["stud_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "stud_username")
+	}
+	protoReq.StudUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "stud_username", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
@@ -79,11 +88,20 @@ func request_CoreStudentService_EditStudentProfile_0(ctx context.Context, marsha
 
 func local_request_CoreStudentService_EditStudentProfile_0(ctx context.Context, marshaler runtime.Marshaler, server CoreStudentServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq StudentData
+		protoReq StudentDataEdit
 		metadata runtime.ServerMetadata
+		err      error
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	val, ok := pathParams["stud_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "stud_username")
+	}
+	protoReq.StudUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "stud_username", err)
 	}
 	msg, err := server.EditStudentProfile(ctx, &protoReq)
 	return msg, metadata, err
@@ -219,7 +237,7 @@ func RegisterCoreStudentServiceHandlerServer(ctx context.Context, mux *runtime.S
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/EditStudentProfile", runtime.WithHTTPPathPattern("/v1/core/students/edit"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/EditStudentProfile", runtime.WithHTTPPathPattern("/v1/core/students/edit/{stud_username}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -334,7 +352,7 @@ func RegisterCoreStudentServiceHandlerClient(ctx context.Context, mux *runtime.S
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/EditStudentProfile", runtime.WithHTTPPathPattern("/v1/core/students/edit"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/EditStudentProfile", runtime.WithHTTPPathPattern("/v1/core/students/edit/{stud_username}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -386,7 +404,7 @@ func RegisterCoreStudentServiceHandlerClient(ctx context.Context, mux *runtime.S
 
 var (
 	pattern_CoreStudentService_AddStudentProfile_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "core", "students"}, ""))
-	pattern_CoreStudentService_EditStudentProfile_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "core", "students", "edit"}, ""))
+	pattern_CoreStudentService_EditStudentProfile_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "students", "edit", "stud_username"}, ""))
 	pattern_CoreStudentService_AddProjectTokenToStudent_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "students", "tokens", "stud_username"}, ""))
 	pattern_CoreStudentService_DeleteProjectTokenToStudent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "students", "tokens", "stud_username"}, ""))
 )

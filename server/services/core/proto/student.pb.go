@@ -279,6 +279,82 @@ func (x *StudentData) GetTokenDistribution() map[string]uint32 {
 	return nil
 }
 
+type StudentDataEdit struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StudUsername  string                 `protobuf:"bytes,1,opt,name=stud_username,json=studUsername,proto3" json:"stud_username,omitempty"`
+	StudName      string                 `protobuf:"bytes,2,opt,name=stud_name,json=studName,proto3" json:"stud_name,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	About         string                 `protobuf:"bytes,4,opt,name=about,proto3" json:"about,omitempty"`
+	Link          []string               `protobuf:"bytes,5,rep,name=link,proto3" json:"link,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StudentDataEdit) Reset() {
+	*x = StudentDataEdit{}
+	mi := &file_core_proto_student_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StudentDataEdit) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentDataEdit) ProtoMessage() {}
+
+func (x *StudentDataEdit) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_student_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentDataEdit.ProtoReflect.Descriptor instead.
+func (*StudentDataEdit) Descriptor() ([]byte, []int) {
+	return file_core_proto_student_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *StudentDataEdit) GetStudUsername() string {
+	if x != nil {
+		return x.StudUsername
+	}
+	return ""
+}
+
+func (x *StudentDataEdit) GetStudName() string {
+	if x != nil {
+		return x.StudName
+	}
+	return ""
+}
+
+func (x *StudentDataEdit) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *StudentDataEdit) GetAbout() string {
+	if x != nil {
+		return x.About
+	}
+	return ""
+}
+
+func (x *StudentDataEdit) GetLink() []string {
+	if x != nil {
+		return x.Link
+	}
+	return nil
+}
+
 var File_core_proto_student_proto protoreflect.FileDescriptor
 
 const file_core_proto_student_proto_rawDesc = "" +
@@ -304,10 +380,16 @@ const file_core_proto_student_proto_rawDesc = "" +
 	"\x12token_distribution\x18\b \x03(\v27.com.github.wbb.core.StudentData.TokenDistributionEntryR\x11tokenDistribution\x1aD\n" +
 	"\x16TokenDistributionEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x012\xce\x04\n" +
+	"\x05value\x18\x02 \x01(\rR\x05value:\x028\x01\"\x93\x01\n" +
+	"\x0fStudentDataEdit\x12#\n" +
+	"\rstud_username\x18\x01 \x01(\tR\fstudUsername\x12\x1b\n" +
+	"\tstud_name\x18\x02 \x01(\tR\bstudName\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
+	"\x05about\x18\x04 \x01(\tR\x05about\x12\x12\n" +
+	"\x04link\x18\x05 \x03(\tR\x04link2\xe3\x04\n" +
 	"\x12CoreStudentService\x12y\n" +
-	"\x11AddStudentProfile\x12 .com.github.wbb.core.StudentData\x1a$.com.github.wbb.core.StudentUsername\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/core/students\x12\x7f\n" +
-	"\x12EditStudentProfile\x12 .com.github.wbb.core.StudentData\x1a$.com.github.wbb.core.StudentUsername\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/core/students/edit\x12\x9c\x01\n" +
+	"\x11AddStudentProfile\x12 .com.github.wbb.core.StudentData\x1a$.com.github.wbb.core.StudentUsername\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/core/students\x12\x93\x01\n" +
+	"\x12EditStudentProfile\x12$.com.github.wbb.core.StudentDataEdit\x1a$.com.github.wbb.core.StudentUsername\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/v1/core/students/edit/{stud_username}\x12\x9c\x01\n" +
 	"\x18AddProjectTokenToStudent\x12%.com.github.wbb.core.TokenStudentData\x1a$.com.github.wbb.core.StudentUsername\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/v1/core/students/tokens/{stud_username}\x12\x9c\x01\n" +
 	"\x1bDeleteProjectTokenToStudent\x12%.com.github.wbb.core.ProjectStudentId\x1a$.com.github.wbb.core.StudentUsername\"0\x82\xd3\xe4\x93\x02**(/v1/core/students/tokens/{stud_username}B\xc5\x01\n" +
 	"\x17com.com.github.wbb.coreB\fStudentProtoP\x01Z,github.com/wbb/rnd-fixer/services/core/proto\xa2\x02\x04CGWC\xaa\x02\x13Com.Github.Wbb.Core\xca\x02\x13Com\\Github\\Wbb\\Core\xe2\x02\x1fCom\\Github\\Wbb\\Core\\GPBMetadata\xea\x02\x16Com::Github::Wbb::Coreb\x06proto3"
@@ -324,18 +406,19 @@ func file_core_proto_student_proto_rawDescGZIP() []byte {
 	return file_core_proto_student_proto_rawDescData
 }
 
-var file_core_proto_student_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_core_proto_student_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_core_proto_student_proto_goTypes = []any{
 	(*TokenStudentData)(nil), // 0: com.github.wbb.core.TokenStudentData
 	(*ProjectStudentId)(nil), // 1: com.github.wbb.core.ProjectStudentId
 	(*StudentUsername)(nil),  // 2: com.github.wbb.core.StudentUsername
 	(*StudentData)(nil),      // 3: com.github.wbb.core.StudentData
-	nil,                      // 4: com.github.wbb.core.StudentData.TokenDistributionEntry
+	(*StudentDataEdit)(nil),  // 4: com.github.wbb.core.StudentDataEdit
+	nil,                      // 5: com.github.wbb.core.StudentData.TokenDistributionEntry
 }
 var file_core_proto_student_proto_depIdxs = []int32{
-	4, // 0: com.github.wbb.core.StudentData.token_distribution:type_name -> com.github.wbb.core.StudentData.TokenDistributionEntry
+	5, // 0: com.github.wbb.core.StudentData.token_distribution:type_name -> com.github.wbb.core.StudentData.TokenDistributionEntry
 	3, // 1: com.github.wbb.core.CoreStudentService.AddStudentProfile:input_type -> com.github.wbb.core.StudentData
-	3, // 2: com.github.wbb.core.CoreStudentService.EditStudentProfile:input_type -> com.github.wbb.core.StudentData
+	4, // 2: com.github.wbb.core.CoreStudentService.EditStudentProfile:input_type -> com.github.wbb.core.StudentDataEdit
 	0, // 3: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:input_type -> com.github.wbb.core.TokenStudentData
 	1, // 4: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:input_type -> com.github.wbb.core.ProjectStudentId
 	2, // 5: com.github.wbb.core.CoreStudentService.AddStudentProfile:output_type -> com.github.wbb.core.StudentUsername
@@ -360,7 +443,7 @@ func file_core_proto_student_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_proto_student_proto_rawDesc), len(file_core_proto_student_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

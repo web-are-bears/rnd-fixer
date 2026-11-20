@@ -9,8 +9,8 @@ service CoreStudentService {
         option (google.api.http) = { post: "/v1/core/students" body: "*" };
     }
 
-    rpc EditStudentProfile(StudentData) returns (StudentUsername) {
-        option (google.api.http) = { post: "/v1/core/students/edit" body: "*" };
+    rpc EditStudentProfile(StudentDataEdit) returns (StudentUsername) {
+        option (google.api.http) = { post: "/v1/core/students/edit/{stud_username}" body: "*" };
     }
 
     rpc AddProjectTokenToStudent(TokenStudentData) returns (StudentUsername) {
@@ -46,4 +46,12 @@ message StudentData {
     repeated string link = 6;
     string final_proj_id = 7;
     map<string, uint32> token_distribution = 8;
+}
+
+message StudentDataEdit {
+    string stud_username  = 1;
+    string stud_name = 2;
+    string email     = 3;
+    string about     = 4;
+    repeated string link = 5;
 }
