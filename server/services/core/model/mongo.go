@@ -10,8 +10,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-
-
 type CoreStore struct {
 	projects  *mongo.Store[ProjectDoc]
 	professor *mongo.Store[ProfessorDoc]
@@ -91,6 +89,11 @@ func (m *CoreStore) FetchProject(ctx context.Context, id string) (*ProjectDoc, e
 
 func (m *CoreStore) AddStudentTokenToProject(ctx context.Context, tok TokenDoc) (string, error) {
 	filter := bson.M{"_id": tok.ProjId}
+
+	if (tok.StudUsername == "" || tok.Token == 0) {
+		return "", status.Error(codes.InvalidArgument, "student username or token not found")
+	}
+
 	update := bson.M{"$set" : bson.M{
 		"token_distribution." + tok.StudUsername: tok.Token,
 	}}
@@ -107,6 +110,9 @@ func (m *CoreStore) AddStudentTokenToProject(ctx context.Context, tok TokenDoc) 
 }
 
 func (m *CoreStore) DeleteStudentTokenToProject(ctx context.Context, projectId, studentUsername string) (string, error) {
+	if (studentUsername == "") {
+		return "", status.Error(codes.InvalidArgument, "student username not found")
+	}
 	key := "token_distribution." + studentUsername
 	filter := bson.M{
 		"_id": projectId,
@@ -197,6 +203,10 @@ func (m *CoreStore) AddStudentProfile(ctx context.Context, doc *StudentDoc) (str
 		return "", status.Error(codes.InvalidArgument, "student email not found")
 	}
 
+	if (doc.TokenDistribution == nil) {
+		doc.TokenDistribution = map[string]uint32{}
+	}
+
 	if (doc.Link == nil) {
 		doc.Link = []string{}
 	}
@@ -252,11 +262,16 @@ func (m *CoreStore) EditStudentProfile(ctx context.Context, doc *StudentEdit, id
 
 func (m *CoreStore) AddProjectTokenToStudent(ctx context.Context, tok TokenDoc) (string, error) {
 	filter := bson.M{"stud_username": tok.StudUsername}
+
+	if (tok.ProjId == "" || tok.Token == 0) {
+		return "", status.Error(codes.NotFound, "project id or token not found")
+	}
+
 	update := bson.M{"$set": bson.M {
 		"token_distribution." + tok.ProjId: tok.Token,
 	}}
 
-	err := m.projects.UpdateOne(ctx, filter, update)
+	err := m.student.UpdateOne(ctx, filter, update)
 	if errors.Is(err, mongo.ErrNotFound) {
 		return "", status.Error(codes.NotFound, "student not found")
 	}
@@ -269,6 +284,11 @@ func (m *CoreStore) AddProjectTokenToStudent(ctx context.Context, tok TokenDoc) 
 }
 
 func (m *CoreStore) DeleteProjectTokenToStudent(ctx context.Context, projectId, studentUsername string) (string, error) {
+
+	if projectId == "" {
+		return "", status.Error(codes.InvalidArgument, "project id not found")
+	}
+
 	key := "token_distribution." + projectId
 	filter := bson.M{
 		"stud_username": studentUsername,
@@ -276,7 +296,7 @@ func (m *CoreStore) DeleteProjectTokenToStudent(ctx context.Context, projectId, 
 	}
 	update := bson.M{"$unset": bson.M{key: ""}}
 
-	err := m.projects.UpdateOne(ctx, filter, update)
+	err := m.student.UpdateOne(ctx, filter, update)
 	if errors.Is(err, mongo.ErrNotFound) {
 		return "", status.Error(codes.NotFound, "token not found")
 	}
