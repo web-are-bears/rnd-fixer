@@ -10,9 +10,11 @@ import (
 	"syscall"
 
 	"github.com/wbb/rnd-fixer/services/core/handler"
-	pb  "github.com/wbb/rnd-fixer/services/core/proto"
+	"github.com/wbb/rnd-fixer/services/core/interceptor"
 	mdl "github.com/wbb/rnd-fixer/services/core/model"
+	pb "github.com/wbb/rnd-fixer/services/core/proto"
 	"github.com/wbb/rnd-fixer/shared/config"
+	"github.com/wbb/rnd-fixer/shared/jwtauth"
 	"github.com/wbb/rnd-fixer/shared/mongo"
 	"google.golang.org/grpc"
 )
@@ -54,11 +56,19 @@ func main() {
 			os.Exit(1)
 		}
 
+		pub, err := jwtauth.LoadPublicKey(config.Env("JWT_PUBLIC_KEY", "/home/ashu3103/Desktop/rnd-fixer/server/shared/jwtauth/keys/public.pem"))
+		if (err != nil) {
+			logger.Error("failed to fetch public key", "error", err)
+			os.Exit(1)
+		}
+
 		// create a store
 		proj_store := mongo.NewStore[mdl.ProjectDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection + "_project")
 		prof_store := mongo.NewStore[mdl.ProfessorDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection + "_professor")
 		stud_store := mongo.NewStore[mdl.StudentDoc](logger, mongoClient, mongo_cfg.Database, mongo_cfg.Collection + "_student")
-		grpcServer := grpc.NewServer()
+		grpcServer := grpc.NewServer(
+			grpc.ChainUnaryInterceptor(interceptor.AuthInterceptor(&pub)),
+		)
 		ch <- grpcServer
 		
 		// register your gRPC services here
