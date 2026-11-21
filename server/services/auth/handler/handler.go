@@ -6,18 +6,34 @@ import (
 
 	mdl "github.com/wbb/rnd-fixer/services/auth/model"
 	pb "github.com/wbb/rnd-fixer/services/auth/proto"
+	"github.com/wbb/rnd-fixer/shared/authctx"
 	"github.com/wbb/rnd-fixer/shared/config"
 	"github.com/wbb/rnd-fixer/shared/jwtauth"
 	"github.com/wbb/rnd-fixer/shared/mongo"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type Handler struct {
 	pb.UnimplementedAuthServiceServer
 	store *mdl.AuthStore
 	signer *jwtauth.Signer
+}
+
+func requireSelf(ctx context.Context, role, username string) error {
+	c := authctx.FromContext(ctx)
+	if c == nil {
+		return status.Error(codes.Unauthenticated, "missing identity")
+	}
+	if c.Role == "admin" {
+		return nil
+	}
+	if c.Role != role || c.ID != username {
+		return status.Error(codes.PermissionDenied, "not allowed to act for this user")
+	}
+	return nil
 }
 
 func NewHandler(s *mongo.Store[mdl.UserDoc]) *Handler {
@@ -67,11 +83,49 @@ func (handle *Handler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
 	}
 
+	doc, err := handle.store.GetPhase(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// generate jwt token
-	tok, _, err := handle.signer.Issue(document.Username, document.Role)
+	tok, _, err := handle.signer.Issue(document.Username, document.Role, doc.Phase)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "token issue error")
 	}
 
 	return &pb.LoginResponse{AccessToken: tok}, nil
+}
+
+func (handle *Handler) SetPhase(ctx context.Context, req *pb.PhaseData) (*pb.PhaseData, error) {
+	if err := requireSelf(ctx, "admin", req.AdminUsername); err != nil {
+		return nil, err
+	}
+	_, err := handle.store.SetPhase(ctx, &mdl.PhaseDoc{
+		Phase: req.Phase,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	doc, err := handle.store.GetPhase(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.PhaseData{
+		Phase: doc.Phase,
+	}, nil
+}
+
+func (handle *Handler) GetPhase(ctx context.Context, req *emptypb.Empty) (*pb.PhaseData, error) {
+	doc, err := handle.store.GetPhase(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.PhaseData{
+		Phase: doc.Phase,
+	}, nil
 }
