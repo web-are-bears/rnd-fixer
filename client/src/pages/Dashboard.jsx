@@ -15,7 +15,7 @@ export default function Dashboard() {
 
     async function identifyAccount() {
       try {
-        const token = getToken();
+        const token = await getToken();
 
         if (!token) {
           if (active) {
