@@ -1,5 +1,9 @@
 \documentclass[12pt, aspectratio=169]{beamer}
 
+\usepackage{tikz, amssymb}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.92]{helvet}
+
 \usetheme{metropolis}
 
 \title{R\&D Matchfixer}
@@ -12,6 +16,10 @@
 
 \AtBeginSection[]{}
 \AtBeginSubsection[]{}
+
+\renewcommand{\familydefault}{\sfdefault}
+\usetikzlibrary{shapes.geometric,shapes.multipart,arrows.meta,calc,decorations.pathreplacing}
+\definecolor{accent}{RGB}{35,85,150}
 
 \begin{document}
 
@@ -87,7 +95,160 @@ MATCHFIX(S, Pr, P) {
 \section{Architecture}
 
 \begin{frame}{\insertsection}
-backend
+\centering
+\providecommand{\archscale}{1}
+\begin{tikzpicture}[
+  scale=\archscale, every node/.append style={transform shape},
+  >={Stealth[length=1.6mm,width=1.3mm]},
+  box/.style   = {draw, line width=0.5pt, rounded corners=1pt, fill=white, align=center,
+                  font=\scriptsize, minimum height=7mm, minimum width=17mm, inner sep=2pt},
+  mw/.style    = {draw, line width=0.5pt, rounded corners=1pt, fill=white,
+                  font=\scriptsize, minimum height=4.8mm, minimum width=21mm, inner sep=1pt},
+  svc/.style   = {draw, line width=0.5pt, rectangle split, rectangle split parts=2,
+                  rectangle split part fill={white, black!7}, align=center,
+                  minimum width=18mm, inner ysep=1.5pt, inner xsep=2pt, font=\scriptsize},
+  db/.style    = {cylinder, shape border rotate=90, aspect=0.22, draw, line width=0.5pt,
+                  fill=black!4, minimum width=13mm, minimum height=7.5mm,
+                  inner sep=1pt, font=\tiny, align=center},
+  frame/.style = {draw, line width=0.5pt, dash pattern=on 2.5pt off 1.5pt, rounded corners=3pt},
+  caption/.style   = {font=\scriptsize\bfseries, anchor=south},
+  note/.style  = {font=\tiny\itshape, text=black!65},
+  wire/.style  = {line width=0.5pt},
+  grpc/.style  = {<->, line width=0.5pt, draw=accent},
+  glbl/.style  = {font=\tiny, text=accent, inner sep=1.5pt},
+]
+ 
+  \node[box] (client) at (0,3.75) {Client\\[-2pt]{\tiny web / mobile}};
+ 
+  \draw[line width=0.7pt, rounded corners=3pt] (-1.25,-2.55) rectangle (1.65,2.85);
+  \node[caption] at (0.2,-2.5) {API Gateway};
+ 
+  \node[mw] (rid)   at (0,2.3)  {Request ID};
+  \node[mw] (authn) at (0,1.55) {Authentication};
+  \node[mw] (rate)  at (0,0.8)  {Rate limiting};
+  \node[box, fill=black!7, minimum width=21mm] (router) at (0,-0.15)
+       {Router};
+ 
+  \draw[decorate, decoration={brace, amplitude=2.5pt}, line width=0.4pt]
+        ($(rid.north east)+(0.08,0)$) -- ($(rate.south east)+(0.08,0)$)
+        node[midway, right=2pt, note, rotate=90, anchor=north] {middleware};
+ 
+  \draw[->, wire] ($(client.south)+(-0.3,0)$) -- node[left,  note] {HTTP request}
+                  ($(rid.north)+(-0.3,0)$);
+  \draw[<-, wire] ($(client.south)+( 0.3,0)$) -- node[right, note] {HTTP response}
+                  ($(rid.north)+( 0.3,0)$);
+ 
+  \foreach \a/\b in {rid/authn, authn/rate, rate/router} {
+    \draw[->, wire] ($(\a.south)+(-0.3,0)$) -- ($(\b.north)+(-0.3,0)$);
+    \draw[<-, wire] ($(\a.south)+( 0.3,0)$) -- ($(\b.north)+( 0.3,0)$);
+  }
+
+  \draw[frame] (2.0,-2.55) rectangle (6.25,2.85);
+  \node[caption] at (4.125,-2.5) {Services};
+ 
+  \node[svc] (auth)  at (3.15, 1.2)  {auth\nodepart{two}\tiny Mongo driver};
+  \node[svc] (notif) at (3.15,-1.5)  {notification\nodepart{two}\tiny Mongo driver};
+  \node[svc] (core)  at (5.1,-0.15)  {core\nodepart{two}\tiny Mongo driver};
+ 
+  \draw[->, wire] (router.east) -- (auth.west);
+  \draw[->, wire] (router.east) -- (notif.west);
+ 
+  \draw[grpc] (auth.south) -- node[pos=0.22, left, glbl] {gRPC} (notif.north);
+  \draw[grpc] ($(auth.south)!0.5!(auth.south east)$) -- node[sloped, above, glbl] {gRPC} (core.north);
+  \draw[grpc] ($(notif.north)!0.5!(notif.north east)$) -- node[sloped, below, glbl] {gRPC} (core.south);
+ 
+  \draw[white, line width=4pt] (2.95,-0.15) -- (3.35,-0.15);
+  \draw[->, wire] (router.east) -- (core.west);
+
+  \draw[frame] (6.5,-2.55) rectangle (7.95,2.85);
+  \node[caption] at (7.225,-2.5) {Data};
+ 
+  \foreach \s/\n in {auth/auth, core/core, notif/notification} {
+    \coordinate (\s-drv) at ($(\s.south east)+(0,0.13)$);
+    \node[db] (\s-db) at (\s-drv -| 7.225,0) {MongoDB\\[-1pt]\n};
+    \draw[wire] (\s-drv) -- (\s-db.west);
+  }
+ 
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Authentication \& Authorization}
+\centering
+\providecommand{\authscale}{1}
+\begin{tikzpicture}[
+  scale=\authscale, every node/.append style={transform shape},
+  >={Stealth[length=1.6mm,width=1.3mm]},
+  head/.style  = {draw, line width=0.5pt, rounded corners=1pt, fill=white, font=\scriptsize,
+                  minimum width=12mm, minimum height=5.5mm, inner sep=1.5pt},
+  life/.style  = {line width=0.4pt, black!40, dash pattern=on 2pt off 1.5pt},
+  msg/.style   = {->, line width=0.5pt},
+  ret/.style   = {->, line width=0.5pt, dash pattern=on 2pt off 1pt},
+  lbl/.style   = {font=\tiny, inner sep=1.2pt, align=center},
+  act/.style   = {draw, line width=0.5pt, fill=black!7, font=\tiny, align=center,
+                  rounded corners=1pt, inner sep=2pt, anchor=north},
+  phase/.style = {font=\scriptsize\bfseries, text=accent, anchor=west, inner sep=0pt},
+  panel/.style = {draw, line width=0.5pt, rounded corners=2pt, align=left, inner sep=3pt,
+                  text width=36mm, anchor=north west},
+  ttl/.style   = {font=\scriptsize\bfseries, anchor=north west, inner sep=0pt},
+  aside/.style = {font=\tiny\itshape, text=black!60, anchor=north west, inner sep=0pt,
+                  text width=38mm},
+]
+  \def\xc{0}\def\xg{1.8}\def\xa{3.55}\def\xs{5.2}\def\yend{-6.9}
+  \foreach \x/\id/\t in {\xc/c/Client, \xg/g/Gateway, \xa/a/auth, \xs/s/core} {
+    \node[head] (\id) at (\x,0) {\t};
+    \draw[life] (\id.south) -- (\x,\yend);
+  }
+  \node[phase] at (-0.6,-0.55) {1 \; Login (once)};
+  \draw[msg] (\xc,-1.05) -- node[lbl, above] {POST /login} (\xg,-1.05);
+  \draw[msg] (\xg,-1.5)  -- node[lbl, above] {Login (gRPC)} (\xa,-1.5);
+  \node[act] at (\xa,-1.62) {check credentials\\sign JWT\\\{username, role, phase\}};
+  \draw[ret] (\xa,-2.75) -- node[lbl, above] {JWT} (\xg,-2.75);
+  \draw[ret] (\xg,-3.1)  -- node[lbl, above] {JWT} (\xc,-3.1);
+ 
+  \draw[line width=0.4pt, black!30] (-0.6,-3.35) -- (6.0,-3.35);
+  \node[phase] at (-0.6,-3.62) {2 \; Every request};
+  \draw[msg] (\xc,-4.35) -- node[lbl, above] {GET /student/alice\\+ Bearer JWT} (\xg,-4.35);
+  \node[act] at (\xg,-4.47) {verify JWT (signature, expiry)\\claims $\to$ request context};
+  \draw[msg] (\xg,-5.35) -- node[lbl, above] {forward + context (gRPC)} (\xs,-5.35);
+  \node[act] at (\xs,-5.47) {guard:\\role + username};
+  \draw[ret] (\xs,-6.3)  -- node[lbl, above] {200 OK / 403 Forbidden} (\xg,-6.3);
+  \draw[ret] (\xg,-6.7)  -- node[lbl, above] {200 / 403} (\xc,-6.7);
+
+  \onslide<2->{
+  \node[ttl] (t1) at (6.3,0.25) {JWT payload};
+  \node[panel, font=\ttfamily\tiny] (jwt) at ($(t1.south west)+(0,-0.12)$)
+       {\{ "username": "alice",\\
+        \ \ "role":\ \ \ \ \ "student",\\
+        \ \ "phase":\ \ \ \ "\dots" \}};
+  \node[aside] (n1) at ($(jwt.south west)+(0,-0.08)$)
+       {signed by auth, verified at gateway};
+  }
+
+  \onslide<3->{
+  \node[ttl] (t2) at ($(n1.south west)+(0,-0.3)$) {Guard on every handler};
+  \node[panel, font=\ttfamily\tiny] (code) at ($(t2.south west)+(0,-0.12)$)
+       {\textcolor{black!55}{// GET /student/\{user\}/\dots}\\
+        need := "student" \textcolor{black!55}{// fixed}\\[1pt]
+        if ctx.role != need $\to$ 403\\
+        if ctx.username != user $\to$ 403\\[1pt]
+        $\to$ run handler};
+  \node[aside] (n2) at ($(code.south west)+(0,-0.08)$)
+       {role: student $\not\to$ professor data\\username: only your own data};
+      }
+    
+  \onslide<4->{
+  \node[ttl] (t3) at ($(n2.south west)+(0,-0.3)$) {Example: alice (student)};
+  \node[panel, font=\tiny] (ex) at ($(t3.south west)+(0,-0.12)$)
+       {\begin{tabular}{@{}l@{\hspace{5pt}}l@{}}
+         \texttt{/student/alice/\dots}   & $\checkmark$ allowed\\
+         \texttt{/student/bob/\dots}     & $\times$ username\\
+         \texttt{/professor/carol/\dots} & $\times$ role
+        \end{tabular}};
+  }
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{}
 \end{frame}
 
 \section*{Disclosure}
