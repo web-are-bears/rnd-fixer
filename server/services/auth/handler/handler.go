@@ -142,7 +142,7 @@ func (handle *Handler) FetchUserByUsername(ctx context.Context, req *pb.Username
 	}, nil
 }
 
-func (handle *Handler) FetchAllUsers(ctx context.Context, _ emptypb.Empty) (*pb.Users, error) {
+func (handle *Handler) FetchAllUsers(ctx context.Context, _ *emptypb.Empty) (*pb.Users, error) {
 	users, err := handle.store.FetchAllUsers(ctx)
 	if err != nil {
 		return nil, err
