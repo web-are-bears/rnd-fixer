@@ -31,6 +31,21 @@ services:
       MONGO_COLLECTION: "auth"
     expose:
       - "9001"
+  core:
+    <<: *go-common
+    build:
+      dockerfile: Dockerfile
+      context: .
+      args:
+        SERVICE: core
+    restart: unless-stopped
+    environment:
+      <<: [*keys-env, *mongo-env]
+      CORE_LISTEN_ADDR: ":9002"
+      MONGO_DB: "rnd_match_fixer"
+      MONGO_COLLECTION: "core"
+    expose:
+      - "9002"
   gateway:
     <<: *go-common
     build:
@@ -43,10 +58,12 @@ services:
       <<: *keys-env
       GATEWAY_LISTEN_ADDR: ":8000"
       AUTH_ADDR: auth:9001
+      CORE_ADDR: core:9002
     ports:
       - "8000:8000"
     depends_on:
       - auth
+      - core
 
 volumes:
   go-mod:

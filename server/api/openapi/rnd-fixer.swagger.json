@@ -7,6 +7,9 @@
   "tags": [
     {
       "name": "AuthService"
+    },
+    {
+      "name": "PhaseService"
     }
   ],
   "consumes": [
@@ -45,6 +48,58 @@
         ],
         "tags": [
           "AuthService"
+        ]
+      }
+    },
+    "/v1/auth/phase": {
+      "get": {
+        "operationId": "PhaseService_GetPhase",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authPhaseData"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "PhaseService"
+        ]
+      },
+      "put": {
+        "operationId": "PhaseService_SetPhase",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/authPhaseData"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/authPhaseData"
+            }
+          }
+        ],
+        "tags": [
+          "PhaseService"
         ]
       }
     },
@@ -97,6 +152,17 @@
       "type": "object",
       "properties": {
         "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "authPhaseData": {
+      "type": "object",
+      "properties": {
+        "adminUsername": {
+          "type": "string"
+        },
+        "phase": {
           "type": "string"
         }
       }
