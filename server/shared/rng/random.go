@@ -1,6 +1,6 @@
 package rng
 
-import "uuid"
+import "github.com/google/uuid"
 
 func GenerateUUID() string {
 	id := uuid.New()

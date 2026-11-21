@@ -15,5 +15,6 @@ type Config struct {
 type Claims struct {
 	Username string `json:"username"`
 	Role string `json:"role"`
+	Phase string `json:"phase"`
 	jwt.RegisteredClaims
 }

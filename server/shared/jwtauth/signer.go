@@ -20,10 +20,12 @@ func NewSigner(key ed25519.PrivateKey, cfg Config) *Signer {
 }
 
 // Issue returns the signed token and its lifetime in seconds.
-func (s *Signer) Issue(userID string, role string) (string, int32, error) {
+func (s *Signer) Issue(userID string, role string, phase string) (string, int32, error) {
 	now := time.Now()
 	claims := Claims{
 		Role: role,
+		Username: userID,
+		Phase: phase,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    s.cfg.Issuer,
 			Audience:  jwt.ClaimStrings{s.cfg.Audience},
