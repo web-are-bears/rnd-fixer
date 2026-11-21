@@ -3,8 +3,6 @@ using namespace std;
 
 int main()
 {
-	//int no_students=3,no_projects=5;
-	//cin>>no_students>>no_projects;
 	queue<tuple<string,unordered_map<string,int>>> student_alloc;
 	vector<tuple<string,int,unordered_map<string,int>>> project_alloc;
 
@@ -14,6 +12,34 @@ int main()
 	tuple<string,int,unordered_map<string,int>> temp_proj_tuple;
 	unordered_map<string,int> temp_map;
 
+	int m,n,temp_int1,temp_int2;
+	cin>>m>>n;
+	string temp_str1,temp_str2;
+	for(int i=0;i<m;i++)
+	{
+		cin>>temp_str1;
+		for(int j=0;j<n;j++)
+		{
+			cin>>temp_str2>>temp_int1;
+			temp_map.insert({temp_str2,temp_int1});
+		}
+		temp_stud_tuple=make_tuple(temp_str1,temp_map);
+		student_alloc.push(temp_stud_tuple);
+	}
+
+	for(int i=0;i<n;i++)
+	{
+		cin>>temp_str1>>temp_int1;
+		for(int j=0;j<m;j++)
+		{
+			cin>>temp_str2>>temp_int2;
+			temp_map.insert({temp_str2,temp_int2});
+		}
+		temp_proj_tuple=make_tuple(temp_str1,temp_int1,temp_map);
+		project_alloc.push_back(temp_proj_tuple);
+	}
+
+	/*
 	temp_map={{"data",25},{"compute",25},{"memory",10}};
 	temp_stud_tuple=make_tuple("Alice",temp_map);
 	student_alloc.push(temp_stud_tuple);
@@ -26,20 +52,31 @@ int main()
         temp_stud_tuple=make_tuple("Callie",temp_map);
         student_alloc.push(temp_stud_tuple);
 
-	temp_map={{"Alice",100},{"Bob",0},{"Callie",0}};
+	temp_map={{"data",25},{"compute",25},{"memory",10}};
+        temp_stud_tuple=make_tuple("test1",temp_map);
+        student_alloc.push(temp_stud_tuple);
+
+	temp_map={{"data",25},{"compute",25},{"memory",10}};
+        temp_stud_tuple=make_tuple("test2",temp_map);
+        student_alloc.push(temp_stud_tuple);
+
+	temp_map={{"data",25},{"compute",25},{"memory",10}};
+        temp_stud_tuple=make_tuple("test3",temp_map);
+        student_alloc.push(temp_stud_tuple);
+
+	temp_map={{"Alice",100},{"Bob",0},{"Callie",0},{"test1",0},{"test2",0},{"test3",0}};
 	temp_proj_tuple=make_tuple("data",2,temp_map);
 	project_alloc.push_back(temp_proj_tuple);
 
-	temp_map={{"Alice",50},{"Bob",25},{"Callie",25}};
+	temp_map={{"Alice",50},{"Bob",25},{"Callie",25},{"test1",0},{"test2",0},{"test3",0}};
         temp_proj_tuple=make_tuple("compute",2,temp_map);
         project_alloc.push_back(temp_proj_tuple);
 
-	temp_map={{"Alice",34},{"Bob",33},{"Callie",33}};
+	temp_map={{"Alice",34},{"Bob",33},{"Callie",33},{"test1",0},{"test2",0},{"test3",0}};
         temp_proj_tuple=make_tuple("memory",1,temp_map);
         project_alloc.push_back(temp_proj_tuple);
+	*/
 
-	//cout<<get<1>(student_alloc.back())["data"]<<endl;
-	
 	for(auto i:project_alloc) stud_proj_map[get<0>(i)]={};
 
 	while(!student_alloc.empty())
@@ -58,9 +95,6 @@ int main()
 					max_alloc_proj=i.first;
 				}
 			}
-			
-			//cout<<get<0>(temp_stud_tuple)<<" "<<max_alloc_proj<<": "<<max<<endl;
-
 			for(auto i:project_alloc)
 			{
 				if(max_alloc_proj==get<0>(i))
@@ -87,14 +121,30 @@ int main()
 				student_alloc.push(temp_stud_tuple);
 			}
 		}
+		else
+		{
+			for(auto i:project_alloc)
+			{
+				if(stud_proj_map[get<0>(i)].size()<get<1>(i))
+				{
+					stud_proj_map[get<0>(i)].push_back(temp_stud_tuple);
+					break;
+				}
+			}
+		}
 	}
+
+	map<string,string> output;
 
 	for(auto i:stud_proj_map)
 	{
-		cout<<i.first<<": ";
-		for(auto j:i.second) cout<<get<0>(j)<<" ";
-		cout<<endl;
+		for(auto j:i.second) output[get<0>(j)]=i.first;
 	}
+
+	for(auto i:output)
+        {
+		cout<<i.first<<": "<<i.second<<endl;
+        }
 
 	return 0;
 }
