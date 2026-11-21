@@ -44,7 +44,7 @@ func NewHandler(s *mongo.Store[mdl.UserDoc]) *Handler {
 	signer := jwtauth.NewSigner(priv, jwtauth.Config{
 		Issuer:   "rnd-fixer-auth",
 		Audience: "rnd-fixer",
-		TTL:      15 * time.Minute,
+		TTL:      3 * time.Hour,
 	})
 	return &Handler{
 		store: mdl.NewAuthStore(s),
