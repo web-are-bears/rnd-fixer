@@ -63,6 +63,7 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 
 	// add middlewares
 	return middleware.Chain(root,
+		middleware.CoreMiddleware(),
 		middleware.AuthMiddleware(verifier, public),
 		middleware.RequestIDMiddleware(),
 		middleware.RecoverMiddleware(logger),
