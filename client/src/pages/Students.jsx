@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { students, getCurrentUser } from "@/api";
+import { students, projects, getCurrentUser } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
 import Button from "@/components/Button";
 
-function StudentDetail({ student }) {
+function StudentDetail({ student, tokenAllocations }) {
   return (
     <div className="space-y-4">
       <div>
@@ -38,6 +38,28 @@ function StudentDetail({ student }) {
           </div>
         </div>
       )}
+
+      <div>
+        <p className="text-sm font-bold">Token allocations</p>
+
+        {tokenAllocations.length == 0 ? (
+          <p className="mt-1 text-sm text-ink-soft">
+            No tokens have been allocated yet.
+          </p>
+        ) : (
+          <div className="mt-2 space-y-2">
+            {tokenAllocations.map((allocation) => (
+              <div
+                key={allocation.projectId}
+                className="tile flex items-center justify-between gap-3"
+              >
+                <p className="font-bold">{allocation.pname}</p>
+                <p className="text-sm">{allocation.tokens} tokens</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -218,6 +240,7 @@ function StudentEditor({ student, onSave, onClose }) {
 
 export default function Students() {
   const [studentList, setStudentList] = useState(null);
+  const [tokenAllocations, setTokenAllocations] = useState({});
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [editingStudent, setEditingStudent] = useState(null);
@@ -225,12 +248,32 @@ export default function Students() {
 
   async function load() {
     try {
-      const [list, user] = await Promise.all([
+      const [list, user, projectList] = await Promise.all([
         students.getAll(),
         getCurrentUser(),
+        projects.getAll(),
       ]);
 
+      const allocations = {};
+
+      projectList.forEach((project) => {
+        Object.entries(project.token_dist ?? {}).forEach(
+          ([studentUname, tokens]) => {
+            if (!allocations[studentUname]) {
+              allocations[studentUname] = [];
+            }
+
+            allocations[studentUname].push({
+              projectId: project._id,
+              pname: project.pname,
+              tokens,
+            });
+          },
+        );
+      });
+
       setStudentList(list);
+      setTokenAllocations(allocations);
       setIsAdmin(user?.role?.toLowerCase() == "admin");
       setError("");
     } catch (err) {
@@ -272,16 +315,21 @@ export default function Students() {
 
       {isAdmin ? (
         <div className="w-full overflow-x-auto border-2 border-ink">
-          <table className="w-full min-w-[750px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[900px] border-collapse text-left text-sm">
             <thead className="bg-ink text-paper">
               <tr>
-                {["Username", "Name", "Email", "Links", "Actions"].map(
-                  (heading) => (
-                    <th key={heading} className="p-3 font-bold uppercase">
-                      {heading}
-                    </th>
-                  ),
-                )}
+                {[
+                  "Username",
+                  "Name",
+                  "Email",
+                  "Links",
+                  "Token Allocations",
+                  "Actions",
+                ].map((heading) => (
+                  <th key={heading} className="p-3 font-bold uppercase">
+                    {heading}
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -293,6 +341,16 @@ export default function Students() {
                   <td className="p-3">{student.email}</td>
                   <td className="p-3">
                     {Object.keys(student.links ?? {}).join(", ") || "—"}
+                  </td>
+                  <td className="p-3">
+                    {tokenAllocations[student.uname]?.length
+                      ? tokenAllocations[student.uname]
+                          .map(
+                            (allocation) =>
+                              `${allocation.pname}: ${allocation.tokens}`,
+                          )
+                          .join(", ")
+                      : "—"}
                   </td>
                   <td className="p-3">
                     <div className="flex gap-2">
@@ -315,7 +373,7 @@ export default function Students() {
 
               {studentList.length == 0 && (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-ink-soft">
+                  <td colSpan={6} className="p-6 text-center text-ink-soft">
                     No students available.
                   </td>
                 </tr>
@@ -353,7 +411,10 @@ export default function Students() {
           title={selectedStudent.name}
           onClose={() => setSelectedStudent(null)}
         >
-          <StudentDetail student={selectedStudent} />
+          <StudentDetail
+            student={selectedStudent}
+            tokenAllocations={tokenAllocations[selectedStudent.uname] ?? []}
+          />
         </Popup>
       )}
 

@@ -4,6 +4,7 @@ import { profs, projects, students, getPhase } from "@/api";
 import { ErrorMessage, Loading } from "@/components/Extras";
 import Card from "@/components/Card";
 import Popup from "@/components/Popup";
+import Button from "@/components/Button";
 
 /* phase information
  * 0 - professor can add projects and modify their projects
@@ -51,6 +52,13 @@ export default function ProfDashboard({ uname }) {
   const [projectList, setProjectList] = useState([]);
   const [projectStudents, setProjectStudents] = useState({});
   const [selectedProject, setSelectedProject] = useState(null);
+  const [editingProject, setEditingProject] = useState(false);
+  const [projectData, setProjectData] = useState({
+    pname: "",
+    desc: "",
+    max_students: "",
+  });
+  const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -99,9 +107,50 @@ export default function ProfDashboard({ uname }) {
     };
   }, [uname]);
 
+  function openProjectEditor() {
+    setProjectData({
+      pname: "",
+      desc: "",
+      max_students: "",
+    });
+    setEditingProject(true);
+  }
+
+  async function saveProject(e) {
+    e.preventDefault();
+
+    const maxStudents = Number(projectData.max_students);
+
+    if (
+      !projectData.pname.trim() ||
+      !Number.isInteger(maxStudents) ||
+      maxStudents <= 0
+    ) {
+      alert("Enter a project name and a valid maximum number of students.");
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      await projects.add({
+        ...projectData,
+        max_students: maxStudents,
+        prof_uname: uname,
+      });
+
+      const updatedList = await projects.getByProf(uname);
+      setProjectList(updatedList);
+      setEditingProject(false);
+    } catch (err) {
+      alert(err.message || "Failed to add project.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
-
   if (!info) return <ErrorMessage message="Professor profile not found." />;
 
   return (
@@ -117,9 +166,18 @@ export default function ProfDashboard({ uname }) {
       <section className="section">
         <div className="flex items-center justify-between gap-3">
           <h3 className="heading text-2xl">Your projects</h3>
-          <Link to="/projects" className="text-sm font-bold">
-            View all projects
-          </Link>
+
+          <div className="flex items-center gap-3">
+            {phase === 0 && (
+              <Button onClick={openProjectEditor}>
+                + Add project
+              </Button>
+            )}
+
+            <Link to="/projects" className="text-sm font-bold">
+              View all projects
+            </Link>
+          </div>
         </div>
 
         {projectList.length == 0 ? (
@@ -164,6 +222,71 @@ export default function ProfDashboard({ uname }) {
           />
         </Popup>
       )}
+
+      {editingProject && (
+        <Popup
+          title="Add Project"
+          onClose={() => setEditingProject(false)}
+        >
+          <form onSubmit={saveProject} className="space-y-4">
+            <div>
+              <label className="text-sm font-bold">Project Name</label>
+              <input
+                className="input w-full"
+                value={projectData.pname}
+                onChange={(e) =>
+                  setProjectData({ ...projectData, pname: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold">Description</label>
+              <textarea
+                className="input w-full"
+                rows={4}
+                value={projectData.desc}
+                onChange={(e) =>
+                  setProjectData({ ...projectData, desc: e.target.value })
+                }
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold">Maximum Students</label>
+              <input
+                className="input w-full"
+                type="number"
+                min="1"
+                value={projectData.max_students}
+                onChange={(e) =>
+                  setProjectData({
+                    ...projectData,
+                    max_students: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setEditingProject(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button type="submit" disabled={saving}>
+                {saving ? "Saving..." : "Add Project"}
+              </Button>
+            </div>
+          </form>
+        </Popup>
+      )}
     </div>
   );
 }
+
