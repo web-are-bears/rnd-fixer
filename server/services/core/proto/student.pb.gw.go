@@ -22,6 +22,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Suppress "imported and not used" errors
@@ -205,6 +206,66 @@ func local_request_CoreStudentService_DeleteProjectTokenToStudent_0(ctx context.
 	return msg, metadata, err
 }
 
+func request_CoreStudentService_FetchAllStudents_0(ctx context.Context, marshaler runtime.Marshaler, client CoreStudentServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq emptypb.Empty
+		metadata runtime.ServerMetadata
+	)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.FetchAllStudents(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_CoreStudentService_FetchAllStudents_0(ctx context.Context, marshaler runtime.Marshaler, server CoreStudentServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq emptypb.Empty
+		metadata runtime.ServerMetadata
+	)
+	msg, err := server.FetchAllStudents(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_CoreStudentService_FetchStudentByStudUsername_0(ctx context.Context, marshaler runtime.Marshaler, client CoreStudentServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq StudentUsername
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["stud_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "stud_username")
+	}
+	protoReq.StudUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "stud_username", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.FetchStudentByStudUsername(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_CoreStudentService_FetchStudentByStudUsername_0(ctx context.Context, marshaler runtime.Marshaler, server CoreStudentServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq StudentUsername
+		metadata runtime.ServerMetadata
+		err      error
+	)
+	val, ok := pathParams["stud_username"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "stud_username")
+	}
+	protoReq.StudUsername, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "stud_username", err)
+	}
+	msg, err := server.FetchStudentByStudUsername(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterCoreStudentServiceHandlerServer registers the http handlers for service CoreStudentService to "mux".
 // UnaryRPC     :call CoreStudentServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -290,6 +351,46 @@ func RegisterCoreStudentServiceHandlerServer(ctx context.Context, mux *runtime.S
 			return
 		}
 		forward_CoreStudentService_DeleteProjectTokenToStudent_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_CoreStudentService_FetchAllStudents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/FetchAllStudents", runtime.WithHTTPPathPattern("/v1/core/students"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_CoreStudentService_FetchAllStudents_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_CoreStudentService_FetchAllStudents_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_CoreStudentService_FetchStudentByStudUsername_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/FetchStudentByStudUsername", runtime.WithHTTPPathPattern("/v1/core/students/{stud_username}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_CoreStudentService_FetchStudentByStudUsername_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_CoreStudentService_FetchStudentByStudUsername_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -399,6 +500,40 @@ func RegisterCoreStudentServiceHandlerClient(ctx context.Context, mux *runtime.S
 		}
 		forward_CoreStudentService_DeleteProjectTokenToStudent_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodGet, pattern_CoreStudentService_FetchAllStudents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/FetchAllStudents", runtime.WithHTTPPathPattern("/v1/core/students"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_CoreStudentService_FetchAllStudents_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_CoreStudentService_FetchAllStudents_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_CoreStudentService_FetchStudentByStudUsername_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/com.github.wbb.core.CoreStudentService/FetchStudentByStudUsername", runtime.WithHTTPPathPattern("/v1/core/students/{stud_username}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_CoreStudentService_FetchStudentByStudUsername_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_CoreStudentService_FetchStudentByStudUsername_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
@@ -407,6 +542,8 @@ var (
 	pattern_CoreStudentService_EditStudentProfile_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "students", "edit", "stud_username"}, ""))
 	pattern_CoreStudentService_AddProjectTokenToStudent_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "students", "tokens", "stud_username"}, ""))
 	pattern_CoreStudentService_DeleteProjectTokenToStudent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"v1", "core", "students", "tokens", "stud_username"}, ""))
+	pattern_CoreStudentService_FetchAllStudents_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "core", "students"}, ""))
+	pattern_CoreStudentService_FetchStudentByStudUsername_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "core", "students", "stud_username"}, ""))
 )
 
 var (
@@ -414,4 +551,6 @@ var (
 	forward_CoreStudentService_EditStudentProfile_0          = runtime.ForwardResponseMessage
 	forward_CoreStudentService_AddProjectTokenToStudent_0    = runtime.ForwardResponseMessage
 	forward_CoreStudentService_DeleteProjectTokenToStudent_0 = runtime.ForwardResponseMessage
+	forward_CoreStudentService_FetchAllStudents_0            = runtime.ForwardResponseMessage
+	forward_CoreStudentService_FetchStudentByStudUsername_0  = runtime.ForwardResponseMessage
 )

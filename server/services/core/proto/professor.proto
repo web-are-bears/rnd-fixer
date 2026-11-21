@@ -10,12 +10,24 @@ service CoreProfessorService {
     }
 
     rpc EditProfessorProfile(ProfessorEditData) returns (ProfessorUsername) {
-        option (google.api.http) = { post: "/v1/core/professors/edit/{prof_username}" body: "*" };
+        option (google.api.http) = { patch: "/v1/core/professors/edit/{prof_username}" body: "*" };
+    }
+
+    rpc FetchAllProfessors(google.protobuf.Empty) returns (ProfessorList) {
+        option (google.api.http) = { get: "/v1/core/professors" };
+    }
+
+    rpc FetchProfessorByProfUsername(ProfessorUsername) returns (ProfessorData) {
+        option (google.api.http) = { get: "/v1/core/professors/{prof_username}" };
     }
 }
 
 message ProfessorUsername {
     string prof_username = 1;
+}
+
+message ProfessorList {
+    repeated ProfessorData profs = 1;
 }
 
 message ProfessorData {

@@ -20,6 +20,18 @@ service CoreStudentService {
     rpc DeleteProjectTokenToStudent(ProjectStudentId) returns (StudentUsername) {
         option (google.api.http) = { delete: "/v1/core/students/tokens/{stud_username}" };
     }
+
+    rpc FetchAllStudents(google.protobuf.Empty) returns (StudentList) {
+        option (google.api.http) = { get: "/v1/core/students" };
+    }
+
+    rpc FetchStudentByStudUsername(StudentUsername) returns (StudentData) {
+        option (google.api.http) = { get: "/v1/core/students/{stud_username}" };
+    }
+}
+
+message StudentList {
+    repeated StudentData students = 1;
 }
 
 message TokenStudentData {

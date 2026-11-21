@@ -10,7 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/emptypb"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -23,6 +23,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type StudentList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Students      []*StudentData         `protobuf:"bytes,1,rep,name=students,proto3" json:"students,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StudentList) Reset() {
+	*x = StudentList{}
+	mi := &file_core_proto_student_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StudentList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StudentList) ProtoMessage() {}
+
+func (x *StudentList) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_student_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StudentList.ProtoReflect.Descriptor instead.
+func (*StudentList) Descriptor() ([]byte, []int) {
+	return file_core_proto_student_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *StudentList) GetStudents() []*StudentData {
+	if x != nil {
+		return x.Students
+	}
+	return nil
+}
+
 type TokenStudentData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StudUsername  string                 `protobuf:"bytes,1,opt,name=stud_username,json=studUsername,proto3" json:"stud_username,omitempty"`
@@ -34,7 +78,7 @@ type TokenStudentData struct {
 
 func (x *TokenStudentData) Reset() {
 	*x = TokenStudentData{}
-	mi := &file_core_proto_student_proto_msgTypes[0]
+	mi := &file_core_proto_student_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -46,7 +90,7 @@ func (x *TokenStudentData) String() string {
 func (*TokenStudentData) ProtoMessage() {}
 
 func (x *TokenStudentData) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_student_proto_msgTypes[0]
+	mi := &file_core_proto_student_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -59,7 +103,7 @@ func (x *TokenStudentData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TokenStudentData.ProtoReflect.Descriptor instead.
 func (*TokenStudentData) Descriptor() ([]byte, []int) {
-	return file_core_proto_student_proto_rawDescGZIP(), []int{0}
+	return file_core_proto_student_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *TokenStudentData) GetStudUsername() string {
@@ -93,7 +137,7 @@ type ProjectStudentId struct {
 
 func (x *ProjectStudentId) Reset() {
 	*x = ProjectStudentId{}
-	mi := &file_core_proto_student_proto_msgTypes[1]
+	mi := &file_core_proto_student_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -105,7 +149,7 @@ func (x *ProjectStudentId) String() string {
 func (*ProjectStudentId) ProtoMessage() {}
 
 func (x *ProjectStudentId) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_student_proto_msgTypes[1]
+	mi := &file_core_proto_student_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -118,7 +162,7 @@ func (x *ProjectStudentId) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProjectStudentId.ProtoReflect.Descriptor instead.
 func (*ProjectStudentId) Descriptor() ([]byte, []int) {
-	return file_core_proto_student_proto_rawDescGZIP(), []int{1}
+	return file_core_proto_student_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ProjectStudentId) GetProjId() string {
@@ -144,7 +188,7 @@ type StudentUsername struct {
 
 func (x *StudentUsername) Reset() {
 	*x = StudentUsername{}
-	mi := &file_core_proto_student_proto_msgTypes[2]
+	mi := &file_core_proto_student_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -156,7 +200,7 @@ func (x *StudentUsername) String() string {
 func (*StudentUsername) ProtoMessage() {}
 
 func (x *StudentUsername) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_student_proto_msgTypes[2]
+	mi := &file_core_proto_student_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -169,7 +213,7 @@ func (x *StudentUsername) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentUsername.ProtoReflect.Descriptor instead.
 func (*StudentUsername) Descriptor() ([]byte, []int) {
-	return file_core_proto_student_proto_rawDescGZIP(), []int{2}
+	return file_core_proto_student_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *StudentUsername) GetStudUsername() string {
@@ -195,7 +239,7 @@ type StudentData struct {
 
 func (x *StudentData) Reset() {
 	*x = StudentData{}
-	mi := &file_core_proto_student_proto_msgTypes[3]
+	mi := &file_core_proto_student_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -207,7 +251,7 @@ func (x *StudentData) String() string {
 func (*StudentData) ProtoMessage() {}
 
 func (x *StudentData) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_student_proto_msgTypes[3]
+	mi := &file_core_proto_student_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -220,7 +264,7 @@ func (x *StudentData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentData.ProtoReflect.Descriptor instead.
 func (*StudentData) Descriptor() ([]byte, []int) {
-	return file_core_proto_student_proto_rawDescGZIP(), []int{3}
+	return file_core_proto_student_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StudentData) GetStudId() string {
@@ -292,7 +336,7 @@ type StudentDataEdit struct {
 
 func (x *StudentDataEdit) Reset() {
 	*x = StudentDataEdit{}
-	mi := &file_core_proto_student_proto_msgTypes[4]
+	mi := &file_core_proto_student_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -304,7 +348,7 @@ func (x *StudentDataEdit) String() string {
 func (*StudentDataEdit) ProtoMessage() {}
 
 func (x *StudentDataEdit) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_student_proto_msgTypes[4]
+	mi := &file_core_proto_student_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -317,7 +361,7 @@ func (x *StudentDataEdit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StudentDataEdit.ProtoReflect.Descriptor instead.
 func (*StudentDataEdit) Descriptor() ([]byte, []int) {
-	return file_core_proto_student_proto_rawDescGZIP(), []int{4}
+	return file_core_proto_student_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StudentDataEdit) GetStudUsername() string {
@@ -359,7 +403,9 @@ var File_core_proto_student_proto protoreflect.FileDescriptor
 
 const file_core_proto_student_proto_rawDesc = "" +
 	"\n" +
-	"\x18core/proto/student.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"f\n" +
+	"\x18core/proto/student.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"K\n" +
+	"\vStudentList\x12<\n" +
+	"\bstudents\x18\x01 \x03(\v2 .com.github.wbb.core.StudentDataR\bstudents\"f\n" +
 	"\x10TokenStudentData\x12#\n" +
 	"\rstud_username\x18\x01 \x01(\tR\fstudUsername\x12\x17\n" +
 	"\aproj_id\x18\x02 \x01(\tR\x06projId\x12\x14\n" +
@@ -386,12 +432,14 @@ const file_core_proto_student_proto_rawDesc = "" +
 	"\tstud_name\x18\x02 \x01(\tR\bstudName\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
 	"\x05about\x18\x04 \x01(\tR\x05about\x12\x12\n" +
-	"\x04link\x18\x05 \x03(\tR\x04link2\xe3\x04\n" +
+	"\x04link\x18\x05 \x03(\tR\x04link2\xde\x06\n" +
 	"\x12CoreStudentService\x12y\n" +
 	"\x11AddStudentProfile\x12 .com.github.wbb.core.StudentData\x1a$.com.github.wbb.core.StudentUsername\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/core/students\x12\x93\x01\n" +
 	"\x12EditStudentProfile\x12$.com.github.wbb.core.StudentDataEdit\x1a$.com.github.wbb.core.StudentUsername\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/v1/core/students/edit/{stud_username}\x12\x9c\x01\n" +
 	"\x18AddProjectTokenToStudent\x12%.com.github.wbb.core.TokenStudentData\x1a$.com.github.wbb.core.StudentUsername\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/v1/core/students/tokens/{stud_username}\x12\x9c\x01\n" +
-	"\x1bDeleteProjectTokenToStudent\x12%.com.github.wbb.core.ProjectStudentId\x1a$.com.github.wbb.core.StudentUsername\"0\x82\xd3\xe4\x93\x02**(/v1/core/students/tokens/{stud_username}B\xc5\x01\n" +
+	"\x1bDeleteProjectTokenToStudent\x12%.com.github.wbb.core.ProjectStudentId\x1a$.com.github.wbb.core.StudentUsername\"0\x82\xd3\xe4\x93\x02**(/v1/core/students/tokens/{stud_username}\x12g\n" +
+	"\x10FetchAllStudents\x12\x16.google.protobuf.Empty\x1a .com.github.wbb.core.StudentList\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/core/students\x12\x8f\x01\n" +
+	"\x1aFetchStudentByStudUsername\x12$.com.github.wbb.core.StudentUsername\x1a .com.github.wbb.core.StudentData\")\x82\xd3\xe4\x93\x02#\x12!/v1/core/students/{stud_username}B\xc5\x01\n" +
 	"\x17com.com.github.wbb.coreB\fStudentProtoP\x01Z,github.com/wbb/rnd-fixer/services/core/proto\xa2\x02\x04CGWC\xaa\x02\x13Com.Github.Wbb.Core\xca\x02\x13Com\\Github\\Wbb\\Core\xe2\x02\x1fCom\\Github\\Wbb\\Core\\GPBMetadata\xea\x02\x16Com::Github::Wbb::Coreb\x06proto3"
 
 var (
@@ -406,30 +454,37 @@ func file_core_proto_student_proto_rawDescGZIP() []byte {
 	return file_core_proto_student_proto_rawDescData
 }
 
-var file_core_proto_student_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_core_proto_student_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_core_proto_student_proto_goTypes = []any{
-	(*TokenStudentData)(nil), // 0: com.github.wbb.core.TokenStudentData
-	(*ProjectStudentId)(nil), // 1: com.github.wbb.core.ProjectStudentId
-	(*StudentUsername)(nil),  // 2: com.github.wbb.core.StudentUsername
-	(*StudentData)(nil),      // 3: com.github.wbb.core.StudentData
-	(*StudentDataEdit)(nil),  // 4: com.github.wbb.core.StudentDataEdit
-	nil,                      // 5: com.github.wbb.core.StudentData.TokenDistributionEntry
+	(*StudentList)(nil),      // 0: com.github.wbb.core.StudentList
+	(*TokenStudentData)(nil), // 1: com.github.wbb.core.TokenStudentData
+	(*ProjectStudentId)(nil), // 2: com.github.wbb.core.ProjectStudentId
+	(*StudentUsername)(nil),  // 3: com.github.wbb.core.StudentUsername
+	(*StudentData)(nil),      // 4: com.github.wbb.core.StudentData
+	(*StudentDataEdit)(nil),  // 5: com.github.wbb.core.StudentDataEdit
+	nil,                      // 6: com.github.wbb.core.StudentData.TokenDistributionEntry
+	(*emptypb.Empty)(nil),    // 7: google.protobuf.Empty
 }
 var file_core_proto_student_proto_depIdxs = []int32{
-	5, // 0: com.github.wbb.core.StudentData.token_distribution:type_name -> com.github.wbb.core.StudentData.TokenDistributionEntry
-	3, // 1: com.github.wbb.core.CoreStudentService.AddStudentProfile:input_type -> com.github.wbb.core.StudentData
-	4, // 2: com.github.wbb.core.CoreStudentService.EditStudentProfile:input_type -> com.github.wbb.core.StudentDataEdit
-	0, // 3: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:input_type -> com.github.wbb.core.TokenStudentData
-	1, // 4: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:input_type -> com.github.wbb.core.ProjectStudentId
-	2, // 5: com.github.wbb.core.CoreStudentService.AddStudentProfile:output_type -> com.github.wbb.core.StudentUsername
-	2, // 6: com.github.wbb.core.CoreStudentService.EditStudentProfile:output_type -> com.github.wbb.core.StudentUsername
-	2, // 7: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
-	2, // 8: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: com.github.wbb.core.StudentList.students:type_name -> com.github.wbb.core.StudentData
+	6, // 1: com.github.wbb.core.StudentData.token_distribution:type_name -> com.github.wbb.core.StudentData.TokenDistributionEntry
+	4, // 2: com.github.wbb.core.CoreStudentService.AddStudentProfile:input_type -> com.github.wbb.core.StudentData
+	5, // 3: com.github.wbb.core.CoreStudentService.EditStudentProfile:input_type -> com.github.wbb.core.StudentDataEdit
+	1, // 4: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:input_type -> com.github.wbb.core.TokenStudentData
+	2, // 5: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:input_type -> com.github.wbb.core.ProjectStudentId
+	7, // 6: com.github.wbb.core.CoreStudentService.FetchAllStudents:input_type -> google.protobuf.Empty
+	3, // 7: com.github.wbb.core.CoreStudentService.FetchStudentByStudUsername:input_type -> com.github.wbb.core.StudentUsername
+	3, // 8: com.github.wbb.core.CoreStudentService.AddStudentProfile:output_type -> com.github.wbb.core.StudentUsername
+	3, // 9: com.github.wbb.core.CoreStudentService.EditStudentProfile:output_type -> com.github.wbb.core.StudentUsername
+	3, // 10: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
+	3, // 11: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
+	0, // 12: com.github.wbb.core.CoreStudentService.FetchAllStudents:output_type -> com.github.wbb.core.StudentList
+	4, // 13: com.github.wbb.core.CoreStudentService.FetchStudentByStudUsername:output_type -> com.github.wbb.core.StudentData
+	8, // [8:14] is the sub-list for method output_type
+	2, // [2:8] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_core_proto_student_proto_init() }
@@ -443,7 +498,7 @@ func file_core_proto_student_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_proto_student_proto_rawDesc), len(file_core_proto_student_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -10,7 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/emptypb"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -67,6 +67,50 @@ func (x *ProfessorUsername) GetProfUsername() string {
 	return ""
 }
 
+type ProfessorList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Profs         []*ProfessorData       `protobuf:"bytes,1,rep,name=profs,proto3" json:"profs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProfessorList) Reset() {
+	*x = ProfessorList{}
+	mi := &file_core_proto_professor_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProfessorList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProfessorList) ProtoMessage() {}
+
+func (x *ProfessorList) ProtoReflect() protoreflect.Message {
+	mi := &file_core_proto_professor_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProfessorList.ProtoReflect.Descriptor instead.
+func (*ProfessorList) Descriptor() ([]byte, []int) {
+	return file_core_proto_professor_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ProfessorList) GetProfs() []*ProfessorData {
+	if x != nil {
+		return x.Profs
+	}
+	return nil
+}
+
 type ProfessorData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProfId        string                 `protobuf:"bytes,1,opt,name=prof_id,json=profId,proto3" json:"prof_id,omitempty"`
@@ -81,7 +125,7 @@ type ProfessorData struct {
 
 func (x *ProfessorData) Reset() {
 	*x = ProfessorData{}
-	mi := &file_core_proto_professor_proto_msgTypes[1]
+	mi := &file_core_proto_professor_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -93,7 +137,7 @@ func (x *ProfessorData) String() string {
 func (*ProfessorData) ProtoMessage() {}
 
 func (x *ProfessorData) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_professor_proto_msgTypes[1]
+	mi := &file_core_proto_professor_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -106,7 +150,7 @@ func (x *ProfessorData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfessorData.ProtoReflect.Descriptor instead.
 func (*ProfessorData) Descriptor() ([]byte, []int) {
-	return file_core_proto_professor_proto_rawDescGZIP(), []int{1}
+	return file_core_proto_professor_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ProfessorData) GetProfId() string {
@@ -164,7 +208,7 @@ type ProfessorEditData struct {
 
 func (x *ProfessorEditData) Reset() {
 	*x = ProfessorEditData{}
-	mi := &file_core_proto_professor_proto_msgTypes[2]
+	mi := &file_core_proto_professor_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -176,7 +220,7 @@ func (x *ProfessorEditData) String() string {
 func (*ProfessorEditData) ProtoMessage() {}
 
 func (x *ProfessorEditData) ProtoReflect() protoreflect.Message {
-	mi := &file_core_proto_professor_proto_msgTypes[2]
+	mi := &file_core_proto_professor_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -189,7 +233,7 @@ func (x *ProfessorEditData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProfessorEditData.ProtoReflect.Descriptor instead.
 func (*ProfessorEditData) Descriptor() ([]byte, []int) {
-	return file_core_proto_professor_proto_rawDescGZIP(), []int{2}
+	return file_core_proto_professor_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ProfessorEditData) GetProfUsername() string {
@@ -233,7 +277,9 @@ const file_core_proto_professor_proto_rawDesc = "" +
 	"\n" +
 	"\x1acore/proto/professor.proto\x12\x13com.github.wbb.core\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"8\n" +
 	"\x11ProfessorUsername\x12#\n" +
-	"\rprof_username\x18\x01 \x01(\tR\fprofUsername\"\xaa\x01\n" +
+	"\rprof_username\x18\x01 \x01(\tR\fprofUsername\"I\n" +
+	"\rProfessorList\x128\n" +
+	"\x05profs\x18\x01 \x03(\v2\".com.github.wbb.core.ProfessorDataR\x05profs\"\xaa\x01\n" +
 	"\rProfessorData\x12\x17\n" +
 	"\aprof_id\x18\x01 \x01(\tR\x06profId\x12#\n" +
 	"\rprof_username\x18\x02 \x01(\tR\fprofUsername\x12\x1b\n" +
@@ -246,10 +292,12 @@ const file_core_proto_professor_proto_rawDesc = "" +
 	"\tprof_name\x18\x02 \x01(\tR\bprofName\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
 	"\x05about\x18\x04 \x01(\tR\x05about\x12\x12\n" +
-	"\x04link\x18\x05 \x03(\tR\x04link2\xb8\x02\n" +
+	"\x04link\x18\x05 \x03(\tR\x04link2\xc1\x04\n" +
 	"\x14CoreProfessorService\x12\x81\x01\n" +
 	"\x13AddProfessorProfile\x12\".com.github.wbb.core.ProfessorData\x1a&.com.github.wbb.core.ProfessorUsername\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/v1/core/professors\x12\x9b\x01\n" +
-	"\x14EditProfessorProfile\x12&.com.github.wbb.core.ProfessorEditData\x1a&.com.github.wbb.core.ProfessorUsername\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/v1/core/professors/edit/{prof_username}B\xc7\x01\n" +
+	"\x14EditProfessorProfile\x12&.com.github.wbb.core.ProfessorEditData\x1a&.com.github.wbb.core.ProfessorUsername\"3\x82\xd3\xe4\x93\x02-:\x01*2(/v1/core/professors/edit/{prof_username}\x12m\n" +
+	"\x12FetchAllProfessors\x12\x16.google.protobuf.Empty\x1a\".com.github.wbb.core.ProfessorList\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/core/professors\x12\x97\x01\n" +
+	"\x1cFetchProfessorByProfUsername\x12&.com.github.wbb.core.ProfessorUsername\x1a\".com.github.wbb.core.ProfessorData\"+\x82\xd3\xe4\x93\x02%\x12#/v1/core/professors/{prof_username}B\xc7\x01\n" +
 	"\x17com.com.github.wbb.coreB\x0eProfessorProtoP\x01Z,github.com/wbb/rnd-fixer/services/core/proto\xa2\x02\x04CGWC\xaa\x02\x13Com.Github.Wbb.Core\xca\x02\x13Com\\Github\\Wbb\\Core\xe2\x02\x1fCom\\Github\\Wbb\\Core\\GPBMetadata\xea\x02\x16Com::Github::Wbb::Coreb\x06proto3"
 
 var (
@@ -264,22 +312,29 @@ func file_core_proto_professor_proto_rawDescGZIP() []byte {
 	return file_core_proto_professor_proto_rawDescData
 }
 
-var file_core_proto_professor_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_core_proto_professor_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_core_proto_professor_proto_goTypes = []any{
 	(*ProfessorUsername)(nil), // 0: com.github.wbb.core.ProfessorUsername
-	(*ProfessorData)(nil),     // 1: com.github.wbb.core.ProfessorData
-	(*ProfessorEditData)(nil), // 2: com.github.wbb.core.ProfessorEditData
+	(*ProfessorList)(nil),     // 1: com.github.wbb.core.ProfessorList
+	(*ProfessorData)(nil),     // 2: com.github.wbb.core.ProfessorData
+	(*ProfessorEditData)(nil), // 3: com.github.wbb.core.ProfessorEditData
+	(*emptypb.Empty)(nil),     // 4: google.protobuf.Empty
 }
 var file_core_proto_professor_proto_depIdxs = []int32{
-	1, // 0: com.github.wbb.core.CoreProfessorService.AddProfessorProfile:input_type -> com.github.wbb.core.ProfessorData
-	2, // 1: com.github.wbb.core.CoreProfessorService.EditProfessorProfile:input_type -> com.github.wbb.core.ProfessorEditData
-	0, // 2: com.github.wbb.core.CoreProfessorService.AddProfessorProfile:output_type -> com.github.wbb.core.ProfessorUsername
-	0, // 3: com.github.wbb.core.CoreProfessorService.EditProfessorProfile:output_type -> com.github.wbb.core.ProfessorUsername
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: com.github.wbb.core.ProfessorList.profs:type_name -> com.github.wbb.core.ProfessorData
+	2, // 1: com.github.wbb.core.CoreProfessorService.AddProfessorProfile:input_type -> com.github.wbb.core.ProfessorData
+	3, // 2: com.github.wbb.core.CoreProfessorService.EditProfessorProfile:input_type -> com.github.wbb.core.ProfessorEditData
+	4, // 3: com.github.wbb.core.CoreProfessorService.FetchAllProfessors:input_type -> google.protobuf.Empty
+	0, // 4: com.github.wbb.core.CoreProfessorService.FetchProfessorByProfUsername:input_type -> com.github.wbb.core.ProfessorUsername
+	0, // 5: com.github.wbb.core.CoreProfessorService.AddProfessorProfile:output_type -> com.github.wbb.core.ProfessorUsername
+	0, // 6: com.github.wbb.core.CoreProfessorService.EditProfessorProfile:output_type -> com.github.wbb.core.ProfessorUsername
+	1, // 7: com.github.wbb.core.CoreProfessorService.FetchAllProfessors:output_type -> com.github.wbb.core.ProfessorList
+	2, // 8: com.github.wbb.core.CoreProfessorService.FetchProfessorByProfUsername:output_type -> com.github.wbb.core.ProfessorData
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_core_proto_professor_proto_init() }
@@ -293,7 +348,7 @@ func file_core_proto_professor_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_proto_professor_proto_rawDesc), len(file_core_proto_professor_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

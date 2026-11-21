@@ -192,6 +192,28 @@ func (m *CoreStore) EditProfessorProfile(ctx context.Context, doc *ProfessorEdit
 	return id, nil
 }
 
+func (m *CoreStore) FetchAllProfessors(ctx context.Context) ([]ProfessorDoc, error) {
+	profs, err := m.professor.Find(ctx, mongo.Query{Filter: bson.M{}})
+
+	if (len(profs) == 0 || err != nil) {
+		return nil, status.Error(codes.NotFound, "professors not found or error")
+	}
+
+	return profs, nil
+}
+
+func (m *CoreStore) FetchProfessorByProfUsername(ctx context.Context, id string) (*ProfessorDoc, error) {
+	profs, err := m.professor.Find(ctx, mongo.Query{Filter: bson.M{"prof_username": id}})
+	if (len(profs) > 1) {
+		return nil, status.Error(codes.Aborted, "multiple profs with same id exists")
+	}
+	if (err != nil) {
+		return nil, status.Error(codes.NotFound, "projects not found or error")
+	}
+
+	return &profs[0], nil
+}
+
 // Students API
 
 func (m *CoreStore) AddStudentProfile(ctx context.Context, doc *StudentDoc) (string, error) {
@@ -304,4 +326,26 @@ func (m *CoreStore) DeleteProjectTokenToStudent(ctx context.Context, projectId, 
 		return "", status.Error(codes.Internal, "internal error")
 	}
 	return studentUsername, nil
+}
+
+func (m *CoreStore) FetchAllStudents(ctx context.Context) ([]StudentDoc, error) {
+	studs, err := m.student.Find(ctx, mongo.Query{Filter: bson.M{}})
+
+	if (len(studs) == 0 || err != nil) {
+		return nil, status.Error(codes.NotFound, "students not found or error")
+	}
+
+	return studs, nil
+}
+
+func (m *CoreStore) FetchStudentByStudUsername(ctx context.Context, id string) (*StudentDoc, error) {
+	studs, err := m.student.Find(ctx, mongo.Query{Filter: bson.M{"stud_username": id}})
+	if (len(studs) > 1) {
+		return nil, status.Error(codes.Aborted, "multiple students with same id exists")
+	}
+	if (err != nil) {
+		return nil, status.Error(codes.NotFound, "projects not found or error")
+	}
+
+	return &studs[0], nil
 }
