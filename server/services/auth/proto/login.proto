@@ -2,6 +2,7 @@ syntax = "proto3";
 package com.github.wbb.auth;
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 service AuthService {
     rpc Register(RegisterRequest) returns (RegisterResponse) {
@@ -10,6 +11,27 @@ service AuthService {
     rpc Login(LoginRequest) returns (LoginResponse) {
         option (google.api.http) = { post: "/v1/auth/login" body: "*" };
     }
+
+    rpc FetchUserByUsername(UsernameRequest) returns (UsernameResponse) {
+        option (google.api.http) = { get: "/v1/auth/fetch/{username}" };
+    }
+
+    rpc FetchAllUsers(google.protobuf.Empty) returns (Users) {
+        option (google.api.http) = { get: "/v1/auth/fetch" };
+    }
+}
+
+message UsernameResponse {
+    string username = 1;
+    string role = 2;
+}
+
+message Users {
+    repeated UsernameResponse users = 1;
+}
+
+message UsernameRequest {
+    string username = 1;
 }
 
 message RegisterRequest {

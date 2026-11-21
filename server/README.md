@@ -96,6 +96,25 @@ curl -X POST http://localhost:8000/v1/auth/login \
 | 401 | `UNAUTHENTICATED` | `INVALID_CREDENTIALS` | Username does not exist or password is wrong. |
 | 500 | `INTERNAL` | — | Unexpected server error. |
 
+#### Get a user by username
+
+`GET /v1/auth/fetch/{username}` · **Public**
+
+Gets a username and role by username
+
+#### Get all users
+
+`GET /v1/auth/fetch/` · **Public**
+
+Gets all users
+
+##### Request body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `username` | string | Yes | Registered username. |
+| `password` | string | Yes | The user's password. |
+
 
 ### Core
 
