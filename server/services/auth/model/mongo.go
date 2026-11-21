@@ -10,6 +10,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const PhasedDocumentID = "phase"
+
 type AuthStore struct{ users *mongo.Store[UserDoc] }
 
 func NewAuthStore(store *mongo.Store[UserDoc]) *AuthStore {
@@ -42,4 +44,36 @@ func (m *AuthStore) GetUserByID(ctx context.Context, username string) (*UserDoc,
 	}
 
 	return user, nil
+}
+
+func (m *AuthStore) GetPhase(ctx context.Context) (*PhaseDoc, error) {
+	phase, err := m.users.FindOne(ctx, bson.M{"username": PhasedDocumentID})
+	if errors.Is(err, mongo.ErrNotFound) {
+		return nil, status.Error(codes.NotFound, "phase not found")
+	}
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal error")
+	}
+
+	pd := PhaseDoc{
+		Phase: phase.Username,
+	}
+
+	return &pd, nil
+}
+
+func (m *AuthStore) SetPhase(ctx context.Context, doc *PhaseDoc) (string, error) {
+	filter := bson.M{"_id": PhasedDocumentID}
+	update := bson.M{
+		"$set": bson.M{
+			"username": doc.Phase,
+		},
+	}
+
+	err := m.users.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return "", status.Error(codes.Internal, "internal error")
+	}
+	return "updated successfully", nil
 }
