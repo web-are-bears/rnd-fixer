@@ -1,0 +1,19 @@
+syntax = "proto3";
+package com.github.wbb.auth;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service PhaseService {
+    rpc SetPhase(PhaseData) returns (PhaseData) {
+        option (google.api.http) = { put: "/v1/auth/phase" body: "*" };
+    }
+    rpc GetPhase(google.protobuf.Empty) returns (PhaseData) {
+        option (google.api.http) = { get: "/v1/auth/phase" };
+    }
+}
+
+message PhaseData {
+    string admin_username = 1;
+    string phase = 2;
+}
