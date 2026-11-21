@@ -256,6 +256,37 @@ MATCHFIX(S, Pr, P) {
 \end{tikzpicture}
 \end{frame}
 
+\begin{frame}{gRPC-Gateway}
+  \small
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.47\textwidth}
+    \textbf{Without it}\\[-2pt]
+    {\footnotesize\color{black!60} hand-written gateway}
+    \begin{itemize}\setlength{\itemsep}{6pt}
+      \onslide<1-> \item A route + handler for \emph{every} RPC
+      \onslide<2-> \item Each handler repeats: parse request, call gRPC, build JSON, map errors
+      \onslide<3-> \item if proto changes edit gateway by hand
+      \onslide<4-> \item Routes drift out of sync with services
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \textbf{With it}\\[-2pt]
+    {\footnotesize\color{black!60} generated from \texttt{.proto}}
+    \begin{itemize}\setlength{\itemsep}{6pt}
+      \onslide<1-> \item Route declared in the \texttt{.proto}, next to the RPC
+      \onslide<2-> \item \texttt{protoc} generates the handler (\texttt{*.pb.gw.go})
+      \onslide<3-> \item Gateway just registers it + adds our middleware
+      \onslide<4-> \item if proto changes regenerate, always in sync
+    \end{itemize}
+  \end{column}
+\end{columns}
+ 
+\vspace{18pt}
+\begin{center}
+  \color{accent}\textbf{New endpoint = edit \texttt{.proto} + regenerate}
+\end{center}
+\end{frame}
+
 \section*{Disclosure}
 
 \begin{frame}{AI}
