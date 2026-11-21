@@ -27,3 +27,4 @@ keys/
 *.lock
 
 server/match_algo
+build
