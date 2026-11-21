@@ -3,7 +3,6 @@ package interceptor
 import (
 	"context"
 	"crypto/ed25519"
-	"fmt"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
