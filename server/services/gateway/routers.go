@@ -47,10 +47,6 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 		"GET /health": true,
 		"POST /v1/auth/register": true,
 		"POST /v1/auth/login": true,
-
-		"POST /v1/core/": true,
-		"GET /v1/core/": true,
-		"DELETE /v1/core/": true,
 	}
 
 	// load the public key and verify the authentication key
@@ -67,6 +63,7 @@ func NewRouter(ctx context.Context, conns *clients.Clients, logger *slog.Logger)
 
 	// add middlewares
 	return middleware.Chain(root,
+		middleware.CoreMiddleware(),
 		middleware.AuthMiddleware(verifier, public),
 		middleware.RequestIDMiddleware(),
 		middleware.RecoverMiddleware(logger),
