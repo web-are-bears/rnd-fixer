@@ -47,7 +47,7 @@ func (m *AuthStore) GetUserByID(ctx context.Context, username string) (*UserDoc,
 }
 
 func (m *AuthStore) GetPhase(ctx context.Context) (*PhaseDoc, error) {
-	phase, err := m.users.FindOne(ctx, bson.M{"username": PhasedDocumentID})
+	phase, err := m.users.FindOne(ctx, bson.M{"_id": PhasedDocumentID})
 	if errors.Is(err, mongo.ErrNotFound) {
 		return nil, status.Error(codes.NotFound, "phase not found")
 	}
