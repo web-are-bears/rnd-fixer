@@ -3,6 +3,7 @@ package interceptor
 import (
 	"context"
 	"crypto/ed25519"
+	"fmt"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -23,8 +24,10 @@ func AuthInterceptor(pub *ed25519.PublicKey) grpc.UnaryServerInterceptor {
 
 		raw := strings.TrimPrefix(vals[0], "Bearer ")
 		tok, err := jwt.Parse(raw,
-			func(*jwt.Token) (any, error) { return pub, nil },
-			jwt.WithValidMethods([]string{"EdDSA"}),
+			func(*jwt.Token) (any, error) {
+				return *pub, nil
+			},
+			jwt.WithValidMethods([]string{jwt.SigningMethodEdDSA.Alg()}),
 		)
 		if err != nil || !tok.Valid {
 			return nil, status.Error(codes.Unauthenticated, "invalid token")
