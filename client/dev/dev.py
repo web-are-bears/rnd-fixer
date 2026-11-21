@@ -193,7 +193,13 @@ def crud_make(resource, table, key, role=None):
         return jsonify(records(f"SELECT * FROM {table}"))
 
     def get_one(value):
-        return jsonify(record(f"SELECT * FROM {table} WHERE {key} = ?", (value,)))
+        result = record(f"SELECT * FROM {table} WHERE {key} = ?", (value,))
+
+        return (
+            (jsonify({"error": f"Record not found: {value}"}), 404)
+            if result is None
+            else jsonify(result)
+        )
 
     def add():
         data = request.get_json() or {}
