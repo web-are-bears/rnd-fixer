@@ -466,6 +466,91 @@ curl -X POST http://localhost:8000/v1/core/professors/edit/prof_alice \
  
 ---
  
+#### Get a professor
+ 
+`GET /v1/core/professors/{prof_username}`
+ 
+Returns a single professor.
+ 
+##### Request
+ 
+| Field | In | Type | Required | Description |
+|---|---|---|---|---|
+| `prof_username` | path | string | Yes | Username of the professor. |
+ 
+##### Example
+ 
+```bash
+curl http://localhost:8000/v1/core/professors/prof_alice \
+  -H "Authorization: Bearer $TOKEN"
+```
+ 
+##### Response `200 OK`
+ 
+| Field | Type | Description |
+|---|---|---|
+| `prof_id` | string | ID of the professor. |
+| `prof_username` | string | Username of the professor. |
+| `prof_name` | string | Name of the professor. |
+| `email` | string | Email address of the professor. |
+| `about` | string | Short description of the professor. |
+| `link` | array<string> | Links associated with the professor. |
+ 
+```json
+{
+  "prof_id": "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b",
+  "prof_username": "prof_alice",
+  "prof_name": "Alice Smith",
+  "email": "alice@example.edu",
+  "about": "Works on compiler optimizations and loop dependence analysis in MLIR.",
+  "link": [
+    "https://example.edu/~alice"
+  ]
+}
+```
+ 
+##### Errors
+ 
+| HTTP | `code` | `reason` | When |
+|---|---|---|---|
+| 404 | `NOT_FOUND` | — | No professor has this username. |
+ 
+#### List all professors
+ 
+`GET /v1/core/professors`
+ 
+Returns every professor. This endpoint takes no parameters.
+ 
+##### Example
+ 
+```bash
+curl http://localhost:8000/v1/core/professors \
+  -H "Authorization: Bearer $TOKEN"
+```
+ 
+##### Response `200 OK`
+ 
+| Field | Type | Description |
+|---|---|---|
+| `profs` | array | List of professors, each with the fields shown in [Get a professor](#get-a-professor). |
+ 
+```json
+{
+  "profs": [
+    {
+      "prof_id": "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b",
+      "prof_username": "prof_alice",
+      "prof_name": "Alice Smith",
+      "email": "alice@example.edu",
+      "about": "Works on compiler optimizations and loop dependence analysis in MLIR.",
+      "link": [
+        "https://example.edu/~alice"
+      ]
+    }
+  ]
+}
+```
+
 ### Students
  
 A student's `token_distribution` maps a project ID to the number of tokens the student has placed on that project.
@@ -568,6 +653,101 @@ curl -X POST http://localhost:8000/v1/core/students/edit/stud_bob \
 |---|---|---|---|
 | 404 | `NOT_FOUND` | — | No student has this username. |
  
+#### Get a student
+ 
+`GET /v1/core/students/{stud_username}`
+ 
+Returns a single student.
+ 
+##### Request
+ 
+| Field | In | Type | Required | Description |
+|---|---|---|---|---|
+| `stud_username` | path | string | Yes | Username of the student. |
+ 
+##### Example
+ 
+```bash
+curl http://localhost:8000/v1/core/students/stud_bob \
+  -H "Authorization: Bearer $TOKEN"
+```
+ 
+##### Response `200 OK`
+ 
+| Field | Type | Description |
+|---|---|---|
+| `stud_id` | string | ID of the student. |
+| `stud_username` | string | Username of the student. |
+| `stud_name` | string | Name of the student. |
+| `email` | string | Email address of the student. |
+| `about` | string | Short description of the student. |
+| `link` | array<string> | Links associated with the student. |
+| `final_proj_id` | string | ID of the student's final project. |
+| `token_distribution` | map<string, integer> | Tokens per project ID. |
+ 
+```json
+{
+  "stud_id": "9a7c1d2e-4b3f-4a68-8e51-0f6b7c8d9e10",
+  "stud_username": "stud_bob",
+  "stud_name": "Bob Jones",
+  "email": "bob@example.edu",
+  "about": "Interested in compilers and program analysis.",
+  "link": [
+    "https://example.edu/~bob"
+  ],
+  "final_proj_id": "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b",
+  "token_distribution": {
+    "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b": 5
+  }
+}
+```
+ 
+##### Errors
+ 
+| HTTP | `code` | `reason` | When |
+|---|---|---|---|
+| 404 | `NOT_FOUND` | — | No student has this username. |
+ 
+#### List all students
+ 
+`GET /v1/core/students`
+ 
+Returns every student. This endpoint takes no parameters.
+ 
+##### Example
+ 
+```bash
+curl http://localhost:8000/v1/core/students \
+  -H "Authorization: Bearer $TOKEN"
+```
+ 
+##### Response `200 OK`
+ 
+| Field | Type | Description |
+|---|---|---|
+| `students` | array | List of students, each with the fields shown in [Get a student](#get-a-student). |
+ 
+```json
+{
+  "students": [
+    {
+      "stud_id": "9a7c1d2e-4b3f-4a68-8e51-0f6b7c8d9e10",
+      "stud_username": "stud_bob",
+      "stud_name": "Bob Jones",
+      "email": "bob@example.edu",
+      "about": "Interested in compilers and program analysis.",
+      "link": [
+        "https://example.edu/~bob"
+      ],
+      "final_proj_id": "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b",
+      "token_distribution": {
+        "3f2b8c1e-5d4a-4e7b-9a60-1c2d3e4f5a6b": 5
+      }
+    }
+  ]
+}
+```
+
 #### Set a project token on a student
  
 `POST /v1/core/students/tokens/{stud_username}`

@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,6 +24,8 @@ const (
 	CoreStudentService_EditStudentProfile_FullMethodName          = "/com.github.wbb.core.CoreStudentService/EditStudentProfile"
 	CoreStudentService_AddProjectTokenToStudent_FullMethodName    = "/com.github.wbb.core.CoreStudentService/AddProjectTokenToStudent"
 	CoreStudentService_DeleteProjectTokenToStudent_FullMethodName = "/com.github.wbb.core.CoreStudentService/DeleteProjectTokenToStudent"
+	CoreStudentService_FetchAllStudents_FullMethodName            = "/com.github.wbb.core.CoreStudentService/FetchAllStudents"
+	CoreStudentService_FetchStudentByStudUsername_FullMethodName  = "/com.github.wbb.core.CoreStudentService/FetchStudentByStudUsername"
 )
 
 // CoreStudentServiceClient is the client API for CoreStudentService service.
@@ -33,6 +36,8 @@ type CoreStudentServiceClient interface {
 	EditStudentProfile(ctx context.Context, in *StudentDataEdit, opts ...grpc.CallOption) (*StudentUsername, error)
 	AddProjectTokenToStudent(ctx context.Context, in *TokenStudentData, opts ...grpc.CallOption) (*StudentUsername, error)
 	DeleteProjectTokenToStudent(ctx context.Context, in *ProjectStudentId, opts ...grpc.CallOption) (*StudentUsername, error)
+	FetchAllStudents(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StudentList, error)
+	FetchStudentByStudUsername(ctx context.Context, in *StudentUsername, opts ...grpc.CallOption) (*StudentData, error)
 }
 
 type coreStudentServiceClient struct {
@@ -83,6 +88,26 @@ func (c *coreStudentServiceClient) DeleteProjectTokenToStudent(ctx context.Conte
 	return out, nil
 }
 
+func (c *coreStudentServiceClient) FetchAllStudents(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StudentList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StudentList)
+	err := c.cc.Invoke(ctx, CoreStudentService_FetchAllStudents_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreStudentServiceClient) FetchStudentByStudUsername(ctx context.Context, in *StudentUsername, opts ...grpc.CallOption) (*StudentData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StudentData)
+	err := c.cc.Invoke(ctx, CoreStudentService_FetchStudentByStudUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreStudentServiceServer is the server API for CoreStudentService service.
 // All implementations must embed UnimplementedCoreStudentServiceServer
 // for forward compatibility.
@@ -91,6 +116,8 @@ type CoreStudentServiceServer interface {
 	EditStudentProfile(context.Context, *StudentDataEdit) (*StudentUsername, error)
 	AddProjectTokenToStudent(context.Context, *TokenStudentData) (*StudentUsername, error)
 	DeleteProjectTokenToStudent(context.Context, *ProjectStudentId) (*StudentUsername, error)
+	FetchAllStudents(context.Context, *emptypb.Empty) (*StudentList, error)
+	FetchStudentByStudUsername(context.Context, *StudentUsername) (*StudentData, error)
 	mustEmbedUnimplementedCoreStudentServiceServer()
 }
 
@@ -112,6 +139,12 @@ func (UnimplementedCoreStudentServiceServer) AddProjectTokenToStudent(context.Co
 }
 func (UnimplementedCoreStudentServiceServer) DeleteProjectTokenToStudent(context.Context, *ProjectStudentId) (*StudentUsername, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteProjectTokenToStudent not implemented")
+}
+func (UnimplementedCoreStudentServiceServer) FetchAllStudents(context.Context, *emptypb.Empty) (*StudentList, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchAllStudents not implemented")
+}
+func (UnimplementedCoreStudentServiceServer) FetchStudentByStudUsername(context.Context, *StudentUsername) (*StudentData, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchStudentByStudUsername not implemented")
 }
 func (UnimplementedCoreStudentServiceServer) mustEmbedUnimplementedCoreStudentServiceServer() {}
 func (UnimplementedCoreStudentServiceServer) testEmbeddedByValue()                            {}
@@ -206,6 +239,42 @@ func _CoreStudentService_DeleteProjectTokenToStudent_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoreStudentService_FetchAllStudents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreStudentServiceServer).FetchAllStudents(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreStudentService_FetchAllStudents_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreStudentServiceServer).FetchAllStudents(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreStudentService_FetchStudentByStudUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StudentUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreStudentServiceServer).FetchStudentByStudUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreStudentService_FetchStudentByStudUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreStudentServiceServer).FetchStudentByStudUsername(ctx, req.(*StudentUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CoreStudentService_ServiceDesc is the grpc.ServiceDesc for CoreStudentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +297,14 @@ var CoreStudentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProjectTokenToStudent",
 			Handler:    _CoreStudentService_DeleteProjectTokenToStudent_Handler,
+		},
+		{
+			MethodName: "FetchAllStudents",
+			Handler:    _CoreStudentService_FetchAllStudents_Handler,
+		},
+		{
+			MethodName: "FetchStudentByStudUsername",
+			Handler:    _CoreStudentService_FetchStudentByStudUsername_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

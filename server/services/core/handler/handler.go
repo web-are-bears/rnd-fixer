@@ -181,6 +181,43 @@ func (handle *Handler) EditProfessorProfile(ctx context.Context, req *pb.Profess
 	return &pb.ProfessorUsername{ ProfUsername: id}, nil
 }
 
+func (handle *Handler) FetchAllProfessors(ctx context.Context, _ *emptypb.Empty) (*pb.ProfessorList, error) {
+	professors, err := handle.Store.FetchAllProfessors(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var pl pb.ProfessorList
+	for _, prof := range professors {
+		pl.Profs = append(pl.Profs, &pb.ProfessorData{
+			ProfId: prof.ProfId,
+			ProfUsername: prof.ProfUsername,
+			ProfName: prof.ProfName,
+			Email: prof.Email,
+			About: prof.About,
+			Link: prof.Link,
+		})
+	}
+	return &pl, nil
+}
+
+func (handle *Handler) FetchProfessorByProfUsername(ctx context.Context, req *pb.ProfessorUsername) (*pb.ProfessorData, error) {
+	prof, err := handle.Store.FetchProfessorByProfUsername(ctx, req.ProfUsername)
+	if err != nil {
+		return nil, err
+	}
+
+	pl := pb.ProfessorData{
+		ProfId: prof.ProfId,
+		ProfUsername: prof.ProfUsername,
+		ProfName: prof.ProfName,
+		About: prof.About,
+		Link: prof.Link,
+	}
+
+	return &pl, nil
+}
+
 func (handle *Handler) AddStudentProfile(ctx context.Context, req *pb.StudentData) (*pb.StudentUsername, error) {
 	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
 		return nil, err
@@ -252,4 +289,46 @@ func (handle *Handler) DeleteProjectTokenToStudent(ctx context.Context, req *pb.
 	}
 
 	return &pb.StudentUsername{ StudUsername: id}, nil
+}
+
+func (handle *Handler) FetchAllStudents(ctx context.Context, _ *emptypb.Empty) (*pb.StudentList, error) {
+	students, err := handle.Store.FetchAllStudents(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var pl pb.StudentList
+	for _, stud := range students {
+		pl.Students = append(pl.Students, &pb.StudentData{
+			StudId: stud.StudId,
+			StudUsername: stud.StudUsername,
+			StudName: stud.StudName,
+			Email: stud.Email,
+			About: stud.About,
+			Link: stud.Link,
+			FinalProjId: stud.FinalProjId,
+			TokenDistribution: stud.TokenDistribution,
+		})
+	}
+	return &pl, nil
+}
+
+func (handle *Handler) FetchStudentByStudUsername(ctx context.Context, req *pb.StudentUsername) (*pb.StudentData, error) {
+	stud, err := handle.Store.FetchStudentByStudUsername(ctx, req.StudUsername)
+	if err != nil {
+		return nil, err
+	}
+
+	pl := pb.StudentData{
+		StudId: stud.StudId,
+		StudUsername: stud.StudUsername,
+		StudName: stud.StudName,
+		Email: stud.Email,
+		About: stud.About,
+		Link: stud.Link,
+		FinalProjId: stud.FinalProjId,
+		TokenDistribution: stud.TokenDistribution,
+	}
+
+	return &pl, nil
 }

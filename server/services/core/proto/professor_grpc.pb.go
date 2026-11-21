@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,8 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CoreProfessorService_AddProfessorProfile_FullMethodName  = "/com.github.wbb.core.CoreProfessorService/AddProfessorProfile"
-	CoreProfessorService_EditProfessorProfile_FullMethodName = "/com.github.wbb.core.CoreProfessorService/EditProfessorProfile"
+	CoreProfessorService_AddProfessorProfile_FullMethodName          = "/com.github.wbb.core.CoreProfessorService/AddProfessorProfile"
+	CoreProfessorService_EditProfessorProfile_FullMethodName         = "/com.github.wbb.core.CoreProfessorService/EditProfessorProfile"
+	CoreProfessorService_FetchAllProfessors_FullMethodName           = "/com.github.wbb.core.CoreProfessorService/FetchAllProfessors"
+	CoreProfessorService_FetchProfessorByProfUsername_FullMethodName = "/com.github.wbb.core.CoreProfessorService/FetchProfessorByProfUsername"
 )
 
 // CoreProfessorServiceClient is the client API for CoreProfessorService service.
@@ -29,6 +32,8 @@ const (
 type CoreProfessorServiceClient interface {
 	AddProfessorProfile(ctx context.Context, in *ProfessorData, opts ...grpc.CallOption) (*ProfessorUsername, error)
 	EditProfessorProfile(ctx context.Context, in *ProfessorEditData, opts ...grpc.CallOption) (*ProfessorUsername, error)
+	FetchAllProfessors(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ProfessorList, error)
+	FetchProfessorByProfUsername(ctx context.Context, in *ProfessorUsername, opts ...grpc.CallOption) (*ProfessorData, error)
 }
 
 type coreProfessorServiceClient struct {
@@ -59,12 +64,34 @@ func (c *coreProfessorServiceClient) EditProfessorProfile(ctx context.Context, i
 	return out, nil
 }
 
+func (c *coreProfessorServiceClient) FetchAllProfessors(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ProfessorList, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProfessorList)
+	err := c.cc.Invoke(ctx, CoreProfessorService_FetchAllProfessors_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreProfessorServiceClient) FetchProfessorByProfUsername(ctx context.Context, in *ProfessorUsername, opts ...grpc.CallOption) (*ProfessorData, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProfessorData)
+	err := c.cc.Invoke(ctx, CoreProfessorService_FetchProfessorByProfUsername_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CoreProfessorServiceServer is the server API for CoreProfessorService service.
 // All implementations must embed UnimplementedCoreProfessorServiceServer
 // for forward compatibility.
 type CoreProfessorServiceServer interface {
 	AddProfessorProfile(context.Context, *ProfessorData) (*ProfessorUsername, error)
 	EditProfessorProfile(context.Context, *ProfessorEditData) (*ProfessorUsername, error)
+	FetchAllProfessors(context.Context, *emptypb.Empty) (*ProfessorList, error)
+	FetchProfessorByProfUsername(context.Context, *ProfessorUsername) (*ProfessorData, error)
 	mustEmbedUnimplementedCoreProfessorServiceServer()
 }
 
@@ -80,6 +107,12 @@ func (UnimplementedCoreProfessorServiceServer) AddProfessorProfile(context.Conte
 }
 func (UnimplementedCoreProfessorServiceServer) EditProfessorProfile(context.Context, *ProfessorEditData) (*ProfessorUsername, error) {
 	return nil, status.Error(codes.Unimplemented, "method EditProfessorProfile not implemented")
+}
+func (UnimplementedCoreProfessorServiceServer) FetchAllProfessors(context.Context, *emptypb.Empty) (*ProfessorList, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchAllProfessors not implemented")
+}
+func (UnimplementedCoreProfessorServiceServer) FetchProfessorByProfUsername(context.Context, *ProfessorUsername) (*ProfessorData, error) {
+	return nil, status.Error(codes.Unimplemented, "method FetchProfessorByProfUsername not implemented")
 }
 func (UnimplementedCoreProfessorServiceServer) mustEmbedUnimplementedCoreProfessorServiceServer() {}
 func (UnimplementedCoreProfessorServiceServer) testEmbeddedByValue()                              {}
@@ -138,6 +171,42 @@ func _CoreProfessorService_EditProfessorProfile_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CoreProfessorService_FetchAllProfessors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreProfessorServiceServer).FetchAllProfessors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreProfessorService_FetchAllProfessors_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreProfessorServiceServer).FetchAllProfessors(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreProfessorService_FetchProfessorByProfUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProfessorUsername)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreProfessorServiceServer).FetchProfessorByProfUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreProfessorService_FetchProfessorByProfUsername_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreProfessorServiceServer).FetchProfessorByProfUsername(ctx, req.(*ProfessorUsername))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CoreProfessorService_ServiceDesc is the grpc.ServiceDesc for CoreProfessorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +221,14 @@ var CoreProfessorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditProfessorProfile",
 			Handler:    _CoreProfessorService_EditProfessorProfile_Handler,
+		},
+		{
+			MethodName: "FetchAllProfessors",
+			Handler:    _CoreProfessorService_FetchAllProfessors_Handler,
+		},
+		{
+			MethodName: "FetchProfessorByProfUsername",
+			Handler:    _CoreProfessorService_FetchProfessorByProfUsername_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
