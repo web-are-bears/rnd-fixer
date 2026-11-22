@@ -18,6 +18,7 @@ type Handler struct {
 	pb.UnimplementedCoreProfessorServiceServer
 	pb.UnimplementedCoreProjectServiceServer
 	pb.UnimplementedCoreStudentServiceServer
+	pb.UnimplementedAlgorithmServiceServer
 	Store *mdl.CoreStore
 }
 
@@ -347,19 +348,6 @@ func (handle *Handler) FetchStudentByStudUsername(ctx context.Context, req *pb.S
 	return &pl, nil
 }
 
-
-// // Student mirrors tuple<string, map<string,int>>: id and tokens given to each project.
-// type Student struct {
-// 	ID     string         `json:"id"`
-// 	Tokens map[string]int `json:"tokens"` // project id -> tokens
-// }
-
-// // Project mirrors tuple<string, int, map<string,int>>: id, occupancy and tokens given to each student.
-// type Project struct {
-// 	ID        string         `json:"id"`
-// 	Occupancy int            `json:"occupancy"`
-// 	Tokens    map[string]int `json:"tokens"` // student id -> tokens
-// }
 func (handle *Handler) ExecuteMatchFixingAlgorithm(ctx context.Context, _ *emptypb.Empty) (*pb.StudProjMapList, error) {
 	studs, err := handle.Store.FetchAllStudents(ctx)
 	if err != nil {

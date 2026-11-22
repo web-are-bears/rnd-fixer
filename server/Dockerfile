@@ -2,7 +2,12 @@ ARG GO_VERSION=1.26
 
 FROM golang:${GO_VERSION}-alpine
 WORKDIR /src
-ENV CGO_ENABLED=0
+
+# C/C++ toolchain for cgo: gcc, g++ (with libstdc++), musl-dev, make.
+RUN apk add --no-cache build-base
+
+ARG CGO_ENABLED=1
+ENV CGO_ENABLED=${CGO_ENABLED}
 
 # Download dependencies first so they're cached between code changes.
 COPY go.mod go.sum ./
