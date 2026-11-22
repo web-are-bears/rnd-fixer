@@ -3,6 +3,9 @@
 \usepackage{tikz, amssymb}
 \usepackage[T1]{fontenc}
 \usepackage[scaled=0.92]{helvet}
+\usepackage{graphicx}
+
+\graphicspath{{./assets/}}
 
 \usetheme{metropolis}
 
@@ -291,6 +294,116 @@ MATCHFIX(S, Pr, P) {
 
 \begin{frame}{AI}
 we used ai :(
+\end{frame}
+
+% I'm unsure about the section name as I can't find the layout we had discussed
+% earlier
+\section{Implementation details}
+
+\begin{frame}{\insertsection}
+  Now we'll have an overview of the implementation and the phase system
+  subsequently.
+
+  We divide the process into five phases (0 to 4):
+  \begin{itemize}
+    \item Phase 0: Project registration.
+    \item Phase 1: Student token allocation.
+    \item Phase 2: Professor token allocation.
+    \item Phase 3: Match fixing.
+    \item Phase 4: Publishing of the final allocations.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 0: Project Registration}
+    \begin{itemize}
+        \item Professors add and modify their projects.
+        \item Students can view professor and project information.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 0: Professors}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-0-profs-page.png}
+\end{frame}
+
+\begin{frame}{Phase 0: Projects}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-0-projects-page-popup.png}
+\end{frame}
+
+\begin{frame}{Phase 0: Adding a Project}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-0-add-project.png}
+\end{frame}
+
+\begin{frame}{Phase 0: Student Dashboard}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-0-student-dashboard.png}
+\end{frame}
+
+\begin{frame}{Phase 1: Student Allocation}
+    \begin{itemize}
+        \item Students distribute 100 tokens among their preferred projects.
+        \item Each allocation must satisfy the token constraints.
+        \item Students can modify their allocations until submission.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 1: Token Allocation}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-1-student-alloc.png}
+\end{frame}
+
+\begin{frame}{Phase 1: Allocation Complete :D}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-1-student-done.png}
+\end{frame}
+
+\begin{frame}{Phase 2: Professor Allocation}
+    \begin{itemize}
+        \item Professors distribute a maximum of 100 tokens per student for all
+          students who have applied for a project.
+        \item Tokens essentially indicate their preference for students.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 2: Token Allocation}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-2-prof-alloc.png}
+\end{frame}
+
+\begin{frame}{Phase 3: Match fixing}
+    \begin{itemize}
+        \item The Matchfixer algorithm processes the student and professor allocations.
+        \item Students are assigned to projects based on their preferences.
+        \item Students may be reconsidered when a project is full.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 3: Matching and fixing}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-3-fixing.png}
+\end{frame}
+
+\begin{frame}{Phase 4: Final Allocation!}
+  \begin{itemize}
+    \item The final student-project allocations are published.
+    \item Students can view their assigned projects now!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 4: Results!}
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+    {phase-4-yay.png}
 \end{frame}
 
 \section*{The End}
