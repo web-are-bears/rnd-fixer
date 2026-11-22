@@ -9,7 +9,84 @@ repository root.
 
 <!-- TODO: fill this up -->
 
-## Building and running the R&D Fixer prototype
+PS: for a quick demo just run `npm run dev` in `client` and `python dev.py` in
+`dev`.
+
+## Code organization of the R&D Fixer prototype
+
+### Client side
+
+Everything for the web app lives in `client/`.
+
+Base level:
+
+- `index.html`: the single HTML page Vite serves. React mounts into it.
+- `vite.config.js`: Vite and Tailwind setup.
+- `eslint.config.js`: lint rules.
+- `prettier.confing.js`: formatting rules.
+
+Main source files:
+
+- `main.jsx`: entry point. Mounts the React app.
+- `App.jsx`: the route definitions, which decide which page shows for which URL.
+- `Layout.jsx`: the shared page shell (navbar plus content area) that wraps
+  every page.
+- `api.js`: the API layer. It routes to either one of two backends: a prototype
+  Flask backend, and the gRPC one written in Golang.
+- `styles/index.css`: global styles and the Tailwind import. The styles loosely
+  correspond to the component library.
+
+Component library:
+
+- `Button.jsx`, `Input.jsx`, `Card.jsx`: common things supposed to be reused
+  everywhere.
+- `Navbar.jsx`: the top navigation bar.
+- `Popup.jsx`: the dialog box that appears in dashboards (add project, allocate
+  tokens and so on).
+- `EdiTable.jsx`: an editable table that has terrible nesting.
+- `Extras.jsx`: small helpers that didn't really need their own separate file...
+
+Pages:
+
+- `Login.jsx`, `Register.jsx`: sign-in and account registration through magic
+  link.
+- `Dashboard.jsx`: the landing page after login. It picks the right dashboard
+  for your role.
+- `dashboard/StudentDashboard.jsx`: shows the current phase and the student's
+  token allocation.
+- `dashboard/ProfDashboard.jsx`: shows a professor's projects and lets them
+  allocate tokens to interested students.
+- `dashboard/AdminDashboard.jsx`: manages users, switches phases and runs
+  matchfix.
+- `Profs.jsx`, `Students.jsx`, `Projects.jsx`: browse professors, students and
+  projects.
+- `Users.jsx`: admin view for managing user accounts.
+- `Settings.jsx`: profile and account settings.
+
+Testing:
+
+For the ease of testing, a local backend is stored in `client/dev`. Its purpose
+is strictly for ease of testing and perhaps for quickly seeing the functionality
+of the project. It is functionally equivalent to the Golang backend, but lacks
+modularity and ease of modification.
+
+- `test/api.js`: the API layer for the real (gRPC/Go) backend.
+- `dev.py`: a Flask server that handles a .
+
+If anything is missed out, it is possibly not that relevant!
+
+### AI use on the client slide
+
+Bug fixing was a major use case but uses of AI have been disclosed in comments
+wherever possible!
+
+### Server side
+
+<!-- TODO: fill this up -->
+
+## Building and Running
+
+This section explains the build instructions and also the
 
 ### Frontend
 

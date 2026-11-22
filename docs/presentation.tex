@@ -11,7 +11,10 @@
 
 \title{R\&D Matchfixer}
 \subtitle{cs699 project}
-\author{Swarnim Chavan, Ashutosh Sharma, Shreerang Vaidya}
+% TODO: fill in roll numbers
+\author{Swarnim Chavan (roll no.)\\
+  Ashutosh Sharma (roll no.)\\
+Shreerang Vaidya (roll no.)}
 \date{22 November, 2026}
 
 \setbeamertemplate{section in toc}[square]
@@ -24,6 +27,9 @@
 \usetikzlibrary{shapes.geometric,shapes.multipart,arrows.meta,calc,decorations.pathreplacing}
 \definecolor{accent}{RGB}{35,85,150}
 
+% \shot{width}{height}{file}: screenshot helper
+\newcommand{\shot}[3]{\includegraphics[width=#1\textwidth,height=#2\textheight,keepaspectratio]{#3}}
+
 \begin{document}
 
 \begin{frame}
@@ -34,7 +40,7 @@
   \tableofcontents
 \end{frame}
 
-\section{Introduction}
+\section{Problem Statement}
 
 \begin{frame}{\insertsection}
   R\&D project allocation at IITB every year involves many students, professors
@@ -71,83 +77,28 @@ We need a systematic process which:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{\insertsection: Tech Stack}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{grpc-icon-color.png}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{protobuf_logo.png}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{MongoDB_Fores-Green.svg.png}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{gin_web_logo.png}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{React-icon.svg.png}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{tailwindcss-logotype.png}
-	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
-	{Vitejs-logo.svg.png}
-	%\hfill
-	%\vfill
-\end{frame}
-
-\begin{frame}{\insertsection: Contribution}
-  % TODO
-\end{frame}
-
-\section{Overview}
-
-% TODO maybe elaborate this? or should we be doing it in the presentation?
-\begin{frame}{\insertsection: Phase System}
-We divide the process into five phases (0 to 4):
-\begin{itemize}
-  \item Phase 0: Project registration.
-  \item Phase 1: Student token allocation.
-  \item Phase 2: Professor token allocation.
-  \item Phase 3: Match fixing.
-  \item Phase 4: Publishing of the final allocations.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{\insertsection: Constraints}
-\begin{enumerate}
-  \item{Each student has a total of 100 tokens to be distributed
-    among N projects.}
-  \item{A student must either allocate 0 tokens to a project, or a
-    number between 5 and 25}
-  \item{Each professor has a total of 100 tokens PER PROJECT}
-  \item{Similarly, each project must either allocate 0 tokens to a
-    project, or a number between 5 and 25}
-  \item{ALL 100 tokens must be allocated}
-\end{enumerate}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{\insertsection: Algorithm}
-\ttfamily
-\begin{block}{Pseudocode}
-  %looks horrible please fix
-  \scriptsize
-\begin{verbatim}
-S = {S1, S2, S3, ...} -> set of students
-Pr = {Pr1, Pr2, ...}  -> set of professors
-P = {P1, P2, P3, ...} -> set of projects
-
-MATCHFIX(S, Pr, P) {
-    while S != \phi:
-        select some Si from S
-        select most preferred Pi from P which was never picked for S
-        if Pi has no slots left AND Si is more preferred than some Sj in Pi:
-            pick the least preferred student Sk for Pi
-            S = S union Sk
-            add Si to Pi
-            remove Sk from Pi
-        else
-            S = S - Si
-            add Si to Pi
-}
-\end{verbatim}
-\end{block}
-\rmfamily
+% TODO: check that this scope / limitations list matches what you want to claim
+\begin{frame}{Scope and Limitations}
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.47\textwidth}
+    \textbf{Scope}
+    \begin{itemize}
+      \item Allocating students to R\&D projects, one project per student.
+      \item Three roles: student, professor, admin.
+      \item Five phases: registration, student tokens, professor tokens,
+        match fixing, results.
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \textbf{Limitations}
+    \begin{itemize}
+      \item Matchfixer not yet tested against edge cases; no unit tests.
+      \item Limited input validation and error handling.
+      \item No notification system yet.
+      \item The Flask test server is for demos only.
+    \end{itemize}
+  \end{column}
+\end{columns}
 \end{frame}
 
 \section{Architecture}
@@ -238,6 +189,40 @@ MATCHFIX(S, Pr, P) {
   }
 
 \end{tikzpicture}
+\end{frame}
+
+% TODO: check these against the actual code
+\begin{frame}{Technologies by Module}
+\centering
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}ll@{}}
+  \textbf{Module} & \textbf{Technologies}\\ \hline
+  Client & React, Vite, Tailwind CSS\\
+  API Gateway & Go (Gin), gRPC-Gateway, JWT\\
+  Services (auth, core, notification) & Go, gRPC, Protocol Buffers\\
+  Matchfixer & C, bridged into Go (C interoperability)\\
+  Data & MongoDB\\
+  Test prototype & Flask, SQLite\\
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Technologies}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{grpc-icon-color.png}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{protobuf_logo.png}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{MongoDB_Fores-Green.svg.png}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{gin_web_logo.png}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{React-icon.svg.png}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{tailwindcss-logotype.png}
+\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+{Vitejs-logo.svg.png}
+%\hfill
+%\vfill
 \end{frame}
 
 \begin{frame}{Authentication \& Authorization}
@@ -364,153 +349,195 @@ MATCHFIX(S, Pr, P) {
 \end{center}
 \end{frame}
 
-% I'm unsure about the section name as I can't find the layout we had discussed
-% earlier
-\section{Implementation details}
+\section{Project Details}
 
-\begin{frame}{\insertsection}
-  Now we'll have an overview of the implementation and the phase system
-  subsequently.
-
-  We divide the process into five phases (0 to 4):
-  \begin{itemize}
-    \item Phase 0: Project registration.
-    \item Phase 1: Student token allocation.
-    \item Phase 2: Professor token allocation.
-    \item Phase 3: Match fixing.
-    \item Phase 4: Publishing of the final allocations.
-  \end{itemize}
-
-  These have already been discussed during the introduction.
+% TODO maybe elaborate this? or should we be doing it in the presentation?
+\begin{frame}{\insertsection: Phase System}
+We divide the process into five phases (0 to 4):
+\begin{itemize}
+  \item Phase 0: Project registration.
+  \item Phase 1: Student token allocation.
+  \item Phase 2: Professor token allocation.
+  \item Phase 3: Match fixing.
+  \item Phase 4: Publishing of the final allocations.
+\end{itemize}
 \end{frame}
+
+\begin{frame}{\insertsection: Constraints}
+\begin{enumerate}
+  \item{Each student has a total of 100 tokens to be distributed
+    among N projects.}
+  \item{A student must either allocate 0 tokens to a project, or a
+    number between 5 and 25}
+  \item{Each professor has a total of 100 tokens PER PROJECT}
+  \item{Similarly, each project must either allocate 0 tokens to a
+    project, or a number between 5 and 25}
+  \item{ALL 100 tokens must be allocated}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{\insertsection: Algorithm}
+\ttfamily
+\begin{block}{Pseudocode}
+  %looks horrible please fix
+  \scriptsize
+\begin{verbatim}
+S = {S1, S2, S3, ...} -> set of students
+Pr = {Pr1, Pr2, ...}  -> set of professors
+P = {P1, P2, P3, ...} -> set of projects
+
+MATCHFIX(S, Pr, P) {
+    while S != \phi:
+        select some Si from S
+        select most preferred Pi from P which was never picked for S
+        if Pi has no slots left AND Si is more preferred than some Sj in Pi:
+            pick the least preferred student Sk for Pi
+            S = S union Sk
+            add Si to Pi
+            remove Sk from Pi
+        else
+            S = S - Si
+            add Si to Pi
+}
+\end{verbatim}
+\end{block}
+\rmfamily
+\end{frame}
+
+% Each phase: bullets on top, screenshot(s) below.
 
 \begin{frame}{Phase 0: Project Registration}
-  \begin{itemize}
-    \item Professors add and modify their projects.
-    \item Students can view professor and project information.
-  \end{itemize}
+\small
+\begin{itemize}
+  \item Professors add and modify their projects.
+  \item Students can view professor and project information.
+\end{itemize}
+\centering
+\shot{0.48}{0.62}{phase-0-profs-page.png}\hfill
+\shot{0.48}{0.62}{phase-0-projects-page-popup.png}
 \end{frame}
 
-\begin{frame}{Phase 0: Professors}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-0-profs-page.png}
-\end{frame}
-
-\begin{frame}{Phase 0: Projects}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-0-projects-page-popup.png}
-\end{frame}
-
-\begin{frame}{Phase 0: Adding a Project}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-0-add-project.png}
-\end{frame}
-
-\begin{frame}{Phase 0: Student Dashboard}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-0-student-dashboard.png}
+\begin{frame}{Phase 0: Adding a Project, Student View}
+\centering
+\shot{0.48}{0.75}{phase-0-add-project.png}\hfill
+\shot{0.48}{0.75}{phase-0-student-dashboard.png}
 \end{frame}
 
 \begin{frame}{Phase 1: Student Allocation}
-  \begin{itemize}
-    \item Students distribute 100 tokens among their preferred projects.
-    \item Each allocation must satisfy the token constraints.
-    \item Students can modify their allocations until submission.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Phase 1: Token Allocation}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-1-student-alloc.png}
-\end{frame}
-
-\begin{frame}{Phase 1: Allocation Complete :D}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-1-student-done.png}
+\small
+\begin{itemize}
+  \item Students distribute 100 tokens among their preferred projects.
+  \item Each allocation must satisfy the token constraints.
+  \item Students can modify their allocations until submission.
+\end{itemize}
+\centering
+\shot{0.48}{0.55}{phase-1-student-alloc.png}\hfill
+\shot{0.48}{0.55}{phase-1-student-done.png}
 \end{frame}
 
 \begin{frame}{Phase 2: Professor Allocation}
-  \begin{itemize}
-    \item Professors distribute a maximum of 100 tokens per student for all
-      students who have applied for a project.
-    \item Tokens essentially indicate their preference for students.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Phase 2: Token Allocation}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-2-prof-alloc.png}
+\small
+\begin{itemize}
+  \item Professors distribute a maximum of 100 tokens per student for all
+    students who have applied for a project.
+  \item Tokens essentially indicate their preference for students.
+\end{itemize}
+\centering
+\shot{0.95}{0.55}{phase-2-prof-alloc.png}
 \end{frame}
 
 \begin{frame}{Phase 3: Match fixing}
-  \begin{itemize}
-    \item The Matchfixer algorithm processes the student and
-      professor allocations.
-    \item Students are assigned to projects based on their preferences.
-    \item Students may be reconsidered when a project is full.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Phase 3: Matching and fixing}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-3-fixing.png}
+\small
+\begin{itemize}
+  \item The Matchfixer algorithm processes the student and
+    professor allocations.
+  \item Students are assigned to projects based on their preferences.
+  \item Students may be reconsidered when a project is full.
+\end{itemize}
+\centering
+\shot{0.95}{0.55}{phase-3-fixing.png}
 \end{frame}
 
 \begin{frame}{Phase 4: Final Allocation!}
-  \begin{itemize}
-    \item The final student-project allocations are published.
-    \item Students can view their assigned projects now!
-  \end{itemize}
+\small
+\begin{itemize}
+  \item The final student-project allocations are published.
+  \item Students can view their assigned projects now!
+\end{itemize}
+\centering
+\shot{0.95}{0.6}{phase-4-yay.png}
 \end{frame}
 
-\begin{frame}{Phase 4: Results!}
-  \centering
-  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
-  {phase-4-yay.png}
+\section{Contribution}
+
+\begin{frame}{\insertsection: Team}
+\centering
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{@{}lp{0.65\textwidth}@{}}
+  \textbf{Member} & \textbf{Modules}\\ \hline
+  Swarnim Chavan & TODO\\
+  Ashutosh Sharma & TODO\\
+  Shreerang Vaidya & TODO\\
+\end{tabular}
+\end{frame}
+
+\begin{frame}{\insertsection: GitHub Logs}
+% TODO: add a screenshot of the contributors graph
+\end{frame}
+
+\section{Challenges}
+
+% TODO: verify these against what actually happened, add anything missing
+\begin{frame}{\insertsection}
+\begin{itemize}
+  \item \textbf{Boilerplate for every route} in a hand-written gateway\\
+    $\to$ generated the handlers from the \texttt{.proto} with gRPC-Gateway.
+  \item \textbf{Running the matchfixer algorithm inside the Go backend}\\
+    $\to$ bridged it into Go through C interoperability.
+  \item \textbf{Keeping data private between roles}\\
+    $\to$ JWT verified at the gateway, plus a role and username guard on
+    every handler.
+  \item \textbf{Frontend blocked on the backend}\\
+    $\to$ a functionally equivalent Flask + SQLite test server, so the client
+    could be built and demoed independently.
+\end{itemize}
 \end{frame}
 
 \section{Setbacks and Future Work}
 
 \begin{frame}{\insertsection}
-  \begin{itemize}
-    \item Testing the Matchfixer algorithm against edge cases.
-    \item General unit testing.          
-    \item Addition of more features post-fixing. For example:
-      \begin{itemize}
-        \item Trello-like boards for projects.
-        \item A notification/communication system, perhaps.
-        \item Better input validation and error handling.
-      \end{itemize}
-  \end{itemize}
+\begin{itemize}
+  \item Testing the Matchfixer algorithm against edge cases.
+  \item General unit testing.
+  \item Addition of more features post-fixing. For example:
+    \begin{itemize}
+      \item Trello-like boards for projects.
+      \item A notification/communication system, perhaps.
+      \item Better input validation and error handling.
+    \end{itemize}
+\end{itemize}
 \end{frame}
 
 \section*{AI Disclosure}
 
 \begin{frame}{\insertsection}
-  AI was used in the client and server for the following
-  utilities:
-  \begin{itemize}
-    \item Tuning the colours in the frontend.
-    \item Bug fixes in the test database, frontend and backend.
-    \item SQL formatting. (yes)
-    \item Bridging the match-fixing algorithm into Go via C interoperability
-    \item Implementing router multiplexer in the gateway
-  \end{itemize}
+AI was used in the client and server for the following
+utilities:
+\begin{itemize}
+  \item Tuning the colours in the frontend.
+  \item Bug fixes in the test database, frontend and backend.
+  \item SQL formatting. (yes)
+  \item Bridging the match-fixing algorithm into Go via C interoperability
+  \item Implementing router multiplexer in the gateway
+\end{itemize}
 \end{frame}
 
 \section*{The End}
 
 \begin{frame}
-  \centering
-  The End
+\centering
+The End
 \end{frame}
 
 \end{document}
