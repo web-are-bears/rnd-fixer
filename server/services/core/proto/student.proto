@@ -13,6 +13,10 @@ service CoreStudentService {
         option (google.api.http) = { post: "/v1/core/students/edit/{stud_username}" body: "*" };
     }
 
+    rpc EditStudentProjectMapping(ProjectStudentId) returns (StudentUsername) {
+        option (google.api.http) = { post: "/v1/core/students/edit/project_mapping/{stud_username}" body: "*" };
+    }
+
     rpc AddProjectTokenToStudent(TokenStudentData) returns (StudentUsername) {
         option (google.api.http) = { post: "/v1/core/students/tokens/{stud_username}" body: "*" };
     }

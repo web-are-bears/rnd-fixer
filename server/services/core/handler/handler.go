@@ -4,6 +4,7 @@ import (
 	"context"
 
 	mdl "github.com/wbb/rnd-fixer/services/core/model"
+	alloc "github.com/wbb/rnd-fixer/services/core/allocator"
 	pb "github.com/wbb/rnd-fixer/services/core/proto"
 	"github.com/wbb/rnd-fixer/shared/authctx"
 	"github.com/wbb/rnd-fixer/shared/mongo"
@@ -260,6 +261,19 @@ func (handle *Handler) EditStudentProfile(ctx context.Context, req *pb.StudentDa
 	return &pb.StudentUsername{ StudUsername: id}, nil
 }
 
+func (handle *Handler) EditStudentProjectMapping(ctx context.Context, req *pb.ProjectStudentId) (*pb.StudentUsername, error) {
+	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
+		return nil, err
+	}
+	id, err := handle.Store.EditStudentProjectMapping(ctx, req.ProjId, req.StudUsername)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.StudentUsername{ StudUsername: id}, nil
+}
+
 func (handle *Handler) AddProjectTokenToStudent(ctx context.Context, req *pb.TokenStudentData) (*pb.StudentUsername, error) {
 	if err := requireSelf(ctx, "student", req.StudUsername); err != nil {
 		return nil, err
@@ -331,4 +345,83 @@ func (handle *Handler) FetchStudentByStudUsername(ctx context.Context, req *pb.S
 	}
 
 	return &pl, nil
+}
+
+
+// // Student mirrors tuple<string, map<string,int>>: id and tokens given to each project.
+// type Student struct {
+// 	ID     string         `json:"id"`
+// 	Tokens map[string]int `json:"tokens"` // project id -> tokens
+// }
+
+// // Project mirrors tuple<string, int, map<string,int>>: id, occupancy and tokens given to each student.
+// type Project struct {
+// 	ID        string         `json:"id"`
+// 	Occupancy int            `json:"occupancy"`
+// 	Tokens    map[string]int `json:"tokens"` // student id -> tokens
+// }
+func (handle *Handler) ExecuteMatchFixingAlgorithm(ctx context.Context, _ *emptypb.Empty) (*pb.StudProjMapList, error) {
+	studs, err := handle.Store.FetchAllStudents(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var students []alloc.Student
+	for _, s := range studs {
+		students = append(students, alloc.Student{
+			ID: s.StudUsername,
+			Tokens: s.TokenDistribution,
+		})
+	}
+
+	projs, err := handle.Store.FetchAllProjects(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var projects []alloc.Project
+	for _, p := range projs {
+		projects = append(projects, alloc.Project{
+			ID: p.ProjId,
+			Occupancy: int(p.MaxOccupancy),
+			Tokens: p.TokenDistribution,
+		})
+	}
+
+	// make exhaustive list
+	for _, s := range students {
+		for _, p := range projects {
+			if _, ok := s.Tokens[p.ID]; !ok {
+				s.Tokens[p.ID] = 0
+			}
+		}
+	}
+
+	for _, p := range projects {
+		for _, s := range students {
+			if _, ok := p.Tokens[s.ID]; !ok {
+				p.Tokens[s.ID] = 0
+			}
+		}
+	}
+
+	res, err := alloc.Allocate(students, projects)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, "match fixer algorithm failed")
+	}
+
+	var spm pb.StudProjMapList
+	for k, v := range res {
+		_, err := handle.Store.EditStudentProjectMapping(ctx, v, k)
+		if err != nil {
+			return nil, err
+		}
+
+		spm.Mappings = append(spm.Mappings, &pb.StudentProjectMapping{
+			StudUsername: k,
+			ProjectId: v,
+		})
+	}
+
+	return &spm, nil
 }

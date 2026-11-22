@@ -1,0 +1,20 @@
+syntax = "proto3";
+package com.github.wbb.core;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service AlgorithmService {
+    rpc ExecuteMatchFixingAlgorithm(google.protobuf.Empty) returns (StudProjMapList) {
+        option (google.api.http) = { get: "/v1/core/matchfix" };
+    }
+}
+
+message StudProjMapList {
+    repeated StudentProjectMapping mappings = 1;
+}
+
+message StudentProjectMapping {
+    string stud_username = 1;
+    string project_id = 2;
+}

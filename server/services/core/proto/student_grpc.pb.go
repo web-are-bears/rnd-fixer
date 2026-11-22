@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	CoreStudentService_AddStudentProfile_FullMethodName           = "/com.github.wbb.core.CoreStudentService/AddStudentProfile"
 	CoreStudentService_EditStudentProfile_FullMethodName          = "/com.github.wbb.core.CoreStudentService/EditStudentProfile"
+	CoreStudentService_EditStudentProjectMapping_FullMethodName   = "/com.github.wbb.core.CoreStudentService/EditStudentProjectMapping"
 	CoreStudentService_AddProjectTokenToStudent_FullMethodName    = "/com.github.wbb.core.CoreStudentService/AddProjectTokenToStudent"
 	CoreStudentService_DeleteProjectTokenToStudent_FullMethodName = "/com.github.wbb.core.CoreStudentService/DeleteProjectTokenToStudent"
 	CoreStudentService_FetchAllStudents_FullMethodName            = "/com.github.wbb.core.CoreStudentService/FetchAllStudents"
@@ -34,6 +35,7 @@ const (
 type CoreStudentServiceClient interface {
 	AddStudentProfile(ctx context.Context, in *StudentData, opts ...grpc.CallOption) (*StudentUsername, error)
 	EditStudentProfile(ctx context.Context, in *StudentDataEdit, opts ...grpc.CallOption) (*StudentUsername, error)
+	EditStudentProjectMapping(ctx context.Context, in *ProjectStudentId, opts ...grpc.CallOption) (*StudentUsername, error)
 	AddProjectTokenToStudent(ctx context.Context, in *TokenStudentData, opts ...grpc.CallOption) (*StudentUsername, error)
 	DeleteProjectTokenToStudent(ctx context.Context, in *ProjectStudentId, opts ...grpc.CallOption) (*StudentUsername, error)
 	FetchAllStudents(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*StudentList, error)
@@ -62,6 +64,16 @@ func (c *coreStudentServiceClient) EditStudentProfile(ctx context.Context, in *S
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StudentUsername)
 	err := c.cc.Invoke(ctx, CoreStudentService_EditStudentProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coreStudentServiceClient) EditStudentProjectMapping(ctx context.Context, in *ProjectStudentId, opts ...grpc.CallOption) (*StudentUsername, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StudentUsername)
+	err := c.cc.Invoke(ctx, CoreStudentService_EditStudentProjectMapping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,6 +126,7 @@ func (c *coreStudentServiceClient) FetchStudentByStudUsername(ctx context.Contex
 type CoreStudentServiceServer interface {
 	AddStudentProfile(context.Context, *StudentData) (*StudentUsername, error)
 	EditStudentProfile(context.Context, *StudentDataEdit) (*StudentUsername, error)
+	EditStudentProjectMapping(context.Context, *ProjectStudentId) (*StudentUsername, error)
 	AddProjectTokenToStudent(context.Context, *TokenStudentData) (*StudentUsername, error)
 	DeleteProjectTokenToStudent(context.Context, *ProjectStudentId) (*StudentUsername, error)
 	FetchAllStudents(context.Context, *emptypb.Empty) (*StudentList, error)
@@ -133,6 +146,9 @@ func (UnimplementedCoreStudentServiceServer) AddStudentProfile(context.Context, 
 }
 func (UnimplementedCoreStudentServiceServer) EditStudentProfile(context.Context, *StudentDataEdit) (*StudentUsername, error) {
 	return nil, status.Error(codes.Unimplemented, "method EditStudentProfile not implemented")
+}
+func (UnimplementedCoreStudentServiceServer) EditStudentProjectMapping(context.Context, *ProjectStudentId) (*StudentUsername, error) {
+	return nil, status.Error(codes.Unimplemented, "method EditStudentProjectMapping not implemented")
 }
 func (UnimplementedCoreStudentServiceServer) AddProjectTokenToStudent(context.Context, *TokenStudentData) (*StudentUsername, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddProjectTokenToStudent not implemented")
@@ -199,6 +215,24 @@ func _CoreStudentService_EditStudentProfile_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CoreStudentServiceServer).EditStudentProfile(ctx, req.(*StudentDataEdit))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CoreStudentService_EditStudentProjectMapping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProjectStudentId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CoreStudentServiceServer).EditStudentProjectMapping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CoreStudentService_EditStudentProjectMapping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CoreStudentServiceServer).EditStudentProjectMapping(ctx, req.(*ProjectStudentId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -289,6 +323,10 @@ var CoreStudentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditStudentProfile",
 			Handler:    _CoreStudentService_EditStudentProfile_Handler,
+		},
+		{
+			MethodName: "EditStudentProjectMapping",
+			Handler:    _CoreStudentService_EditStudentProjectMapping_Handler,
 		},
 		{
 			MethodName: "AddProjectTokenToStudent",

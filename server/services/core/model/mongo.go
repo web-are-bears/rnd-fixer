@@ -282,6 +282,28 @@ func (m *CoreStore) EditStudentProfile(ctx context.Context, doc *StudentEdit, id
 	return id, nil
 }
 
+func (m *CoreStore) EditStudentProjectMapping(ctx context.Context, proj_id string, id string) (string, error) {
+	set := bson.M{}
+
+	if proj_id == "" {
+		return "", status.Error(codes.InvalidArgument, "project id not provided")
+	}
+
+	set["final_proj_id"] = proj_id
+	filter := bson.M{ "stud_username":  id}
+	update := bson.M{ "$set": set}
+
+	err := m.student.UpdateOne(ctx, filter, update)
+	if errors.Is(err, mongo.ErrNotFound) {
+		return "", status.Error(codes.NotFound, "student not found")
+	}
+	if err != nil {
+		return "", status.Error(codes.Internal, "internal error")
+	}
+
+	return id, nil
+}
+
 func (m *CoreStore) AddProjectTokenToStudent(ctx context.Context, tok TokenDoc) (string, error) {
 	filter := bson.M{"stud_username": tok.StudUsername}
 
