@@ -10,6 +10,9 @@ PS: for a quick demo just run `npm run dev` in `client` and `python dev.py` in
 
 ## Contributions
 
+Refer to [git-logs.txt](git-logs.txt) for the entire log (excluding the commit
+for this change).
+
 Contributions were dvidied in this manner:
 
 - Ashutosh (26m2107) - backend work (mostly) - refer to

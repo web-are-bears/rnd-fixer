@@ -1,0 +1,199 @@
+485a3de final changes
+5455529 add contribution files and update README
+256ee14 add my contri
+e327ea3 add assets
+d3aee7d add contribution in presentation
+0f9ca75 add architecture image
+4cd5231 modify AI disclosure bullets
+b84111f update README and presentation for cs699
+6cb1b2d update README and presentation for cs699
+2914bb5 Merge branch 'main' into s-mv/fixes
+5dde3a4 WIP on main: 338a836 modify AI disclosure bullets
+90c66ef index on main: 338a836 modify AI disclosure bullets
+338a836 modify AI disclosure bullets
+8d671d6 add AI disclosure bullets
+b3d06bf additions to the slides
+a8f0f3a add more to tech stack slide
+7cf407f server side algo interop done and tested
+7540084 add tech stack slide + relevant assets
+0f4d96c match fix algo interop done
+6eb22bf fix small error in slides
+5348923 format presentation.tex ;P
+b9d605a minor adjustments and updates
+b14ee44 improve Swarnim's slides
+f8a4210 add screenshots and relevant content
+b6d8f52 spurious commit, reset --soft later
+6cf2b8e add grpc gateway
+3387dcf modify /students and /dashboard for prof
+2633bea remove fmt
+053256b fix the pub key type
+19ae640 add admin functionality to change phase
+06b828b add username to ctx
+e4d0012 Merge branch 'main' of github.com:web-are-bears/rnd-fixer
+fe2e01a add why is RnD fixer necessary slide
+f010268 expiry to 3Hr
+074e281 fix handler
+a8a3c68 add api
+0606b66 re - add intro: what is rnd fixer slide
+7fe431f re - add intro slide
+64cc426 Merge branch 'main' into s-mv/prod-api
+bf94316 Merge branch 'main' of github.com:web-are-bears/rnd-fixer
+77c1940 fix conflict
+5d1c8ea remove the redundant file
+9fb3efd add cors middleware
+a30b373 add architecture
+d854008 add intro to what is rnd fixer slide
+7dadbb2 add slide to explain algo
+be44cf6 add production API
+0bfb991 Merge 's-mv/test-api' into s-mv/prod-api
+2591d81 add slide to explain algo constraints
+ec6a11c remove endpoints from public
+c9615ba edit presentation to make better sections
+77e1213 fix the get phase store api
+3f80a03 add docker-compose
+e08e215 add proto in auth
+7c5bdde add model in auth
+bd87975 add handler in auth
+df49e5e fix uuid module in rng
+7212e4f Merge branch 'main'
+dc04409 modify .gitignore
+7a0ea7b add presentation
+68f29f8 add guard in get_one CRUD API
+140c993 add file to test edge cases
+cd08ee3 complete algo first pass
+0a43038 added more apis
+0008d24 fix getToken bugs
+64b05e6 update test API to use SQLite database
+95d899e add requirements.txt for test backend
+9cc2b19 add test database and backend
+f2e1969 Merge branch 's-mv/client'
+3db0354 update README
+0edd0b9 update proto
+50f1968 update model
+b8aa839 update interceptor
+09b6062 update handler
+764a7fd change cmd
+d84cd03 complete logic for match-making algo
+449dd01 work more on logic
+33cc0a2 work on core logic for match-making
+80e187b improve data-structure
+8673b9e fix datatypes
+e3e26a0 fix structure for internal data management
+9013139 add files for matchmaking algo
+ac0b8ce refactor /settings and remove password handling
+25e76ee update /rprojects to reflect phase-wise behaviour
+e0bcd35 fix professor dashboard
+0946a39 fix CSS colouring for mobile navbar
+ee99543 add hamburger menu foor small screens
+223f260 add settings page
+4a467e1 add algorithm doc
+9978032 Merge branch 'main'
+8ae8866 update swagger
+8141c11 implement Longest prefix matching for auth bypass
+faf5bb5 update proto files in core
+f3e3ed6 implement prof and student model
+cc00eb7 implement APIs to core handler
+87634db register endpoints of core services to gateway router
+3b95968 add professor student clients
+56416cc register professor and student at core server entrypoint
+dfcdd5e simplify student page
+1f449ab update user creation model
+d47ec26 refactor API for new user model
+1fd3713 minor fixes
+c24f4b9 add separate user registration
+ee38a10 modfiy readme
+4f21733 add add/delete token in proto core
+141c2dd add add/delete api in core model for project
+ac5f05a modify handler in core for project
+fb26f2a add test APIs for admin
+a902fce fix projects page behaviour
+683c941 update API to use uname only
+a4f3ef0 refactor professor dashboard
+37a4f2b mongo connect accept config
+266c3af core entrypoint added
+b525f17 modify api
+5ebec8d add handler in core for project
+2300f48 add store for core
+4b07aa1 proto file for projects
+ae60b7e modify package name in auth
+d0fb9d3 add the core config and handler in client
+fd2102f add core client
+63b04f6 add core config
+a94321a add random number generator module for uuid gen
+f4b7f9e populate admin dashboard
+992e3e4 modify /students and /projects for admin
+51321de make /projects modifiable by admin
+8487cf3 modify token checking rules
+b7fa466 modify minimum page width
+a055526 Merge branch 'main'
+63c4afb resolve issue #2
+20be08e add project.proto and update other proto files
+74e8f98 make /profs modifiable by admin
+2c69d30 fix API import
+bf93f69 fix formatting
+4a27303 fix user instantiation bug
+3861843 modify student dashboard
+2b1f3c6 add test/prod 'route' for API
+cc32dc3 modify student page
+4d82a3e make navbar more informative
+a2afbac stylize login page
+72e9b88 update styling
+3817fa3 add /students
+91f8201 add /profs and /projects
+f070511 fixup! phase-wise student dashboard
+3176d21 phase-wise student dashboard
+6c57466 add more functionality to EdiTable
+b23981a add component EdiTable
+791c7e1 modularize dashboard
+e0f7a81 refactor test API
+095b5a9 enrich dummy data
+ef6ae62 Update README.md
+12f343f added README.md
+b7c31ee modify .gitignore
+29e9019 modify configs
+390741c improve error handling again
+553ece6 improve error handling
+1f2eb45 Add docker files
+ee18ccb Merge branch 's-mv/component-library'
+86e77fa cleanup:
+0c76c4c format client-side code
+dbc8e93 use components instead of inlined styling
+07e567d add card and input component
+076b747 fixup! add button component
+4f2dd58 Merge 's-mv/test-api-update' into s-mv/component-library
+504faea refactor test API
+a278213 add button component
+19efab2 separate layout with content
+b0dc50b add prof.proto file.
+9d478ea add student.proto file.
+c650ca6 Merge 's-mv/style-update' into 'main'
+8ee2cb8 refactor component styling
+313f4a2 add SCHEMA.md
+881d3aa testing gateway delegation successfully
+fc5b5d0 modifed go.mod
+23594d6 implemented jwt signer/verifier
+48ab6b1 implemented httpx wrapper around http writer
+f3ecaa4 auth service login/register done
+0755b1c gateway modified
+2c494b4 add clients to the gateway
+b845da8 added authentication middleware
+393da8f jwt auth implementation done
+070d1e2 added generate protobuf script
+69fad58 modified authctx to accomodate incoming ctx
+48f1af8 added buffer generation files for gateway and protobuf generation
+8f0bb4d added config files
+85e3df6 added handler in auth grpc server
+e5d7827 implemented mongo driver metthods to manipulate collection
+70fa014 added register handler
+fcba0fe implemented shared mongo connection driver
+4d3aac8 added TODOs
+b0a2bdd Merge pull request #4 from web-are-bears/restore-1039b79
+6e34b66 gateway microservice added
+1039b79 add login and base styling
+36e425f towards authentication
+cf9eb47 added gitignore
+18edc12 logger done
+d443afd moved CONTRIBUTING.md to the project directory
+f742b6d added config in the server
+bc1c6b0 Update project description in README
+35cff16 initial commit to the monorepo
