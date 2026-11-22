@@ -1,0 +1,27 @@
+a8f0f3a add more to tech stack slide
+7540084 add tech stack slide + relevant assets
+6eb22bf fix small error in slides
+e4d0012 Merge branch 'main' of github.com:web-are-bears/rnd-fixer
+fe2e01a add why is RnD fixer necessary slide
+0606b66 re - add intro: what is rnd fixer slide
+7fe431f re - add intro slide
+bf94316 Merge branch 'main' of github.com:web-are-bears/rnd-fixer
+77c1940 fix conflict
+d854008 add intro to what is rnd fixer slide
+7dadbb2 add slide to explain algo
+2591d81 add slide to explain algo constraints
+c9615ba edit presentation to make better sections
+140c993 add file to test edge cases
+cd08ee3 complete algo first pass
+d84cd03 complete logic for match-making algo
+449dd01 work more on logic
+33cc0a2 work on core logic for match-making
+80e187b improve data-structure
+8673b9e fix datatypes
+e3e26a0 fix structure for internal data management
+9013139 add files for matchmaking algo
+63c4afb resolve issue #2
+20be08e add project.proto and update other proto files
+b0dc50b add prof.proto file.
+9d478ea add student.proto file.
+313f4a2 add SCHEMA.md

@@ -5,12 +5,19 @@ Made for CS699.
 **NOTE:** DO NOT push presentation.pdf to the repository, if present at the
 repository root.
 
-## Contributions
-
-<!-- TODO: fill this up -->
-
 PS: for a quick demo just run `npm run dev` in `client` and `python dev.py` in
 `dev`.
+
+## Contributions
+
+Contributions were dvidied in this manner:
+
+- Ashutosh (26m2107) - backend work (mostly) - refer to
+  [docs/contributions/26m2107.txt](docs/contributions/26m2107.txt) for logs.
+- Swarnim (26m2105) - work on the algorithm and .proto files - refer to
+  [docs/contributions/26m2105.txt](docs/contributions/26m2105.txt) for logs.
+- Shreerang (26m2121) - frontend work (mostly) - refer to
+  [docs/contributions/26m2121.txt](docs/contributions/26m2121.txt) for logs.
 
 ## Code organization of the R&D Fixer prototype
 

@@ -1,0 +1,79 @@
+b84111f update README and presentation for cs699
+6cb1b2d update README and presentation for cs699
+2914bb5 Merge branch 'main' into s-mv/fixes
+b3d06bf additions to the slides
+5348923 format presentation.tex ;P
+b9d605a minor adjustments and updates
+b14ee44 improve Swarnim's slides
+f8a4210 add screenshots and relevant content
+b6d8f52 spurious commit, reset --soft later
+3387dcf modify /students and /dashboard for prof
+19ae640 add admin functionality to change phase
+64cc426 Merge branch 'main' into s-mv/prod-api
+be44cf6 add production API
+0bfb991 Merge 's-mv/test-api' into s-mv/prod-api
+7212e4f Merge branch 'main'
+dc04409 modify .gitignore
+7a0ea7b add presentation
+68f29f8 add guard in get_one CRUD API
+0008d24 fix getToken bugs
+64b05e6 update test API to use SQLite database
+95d899e add requirements.txt for test backend
+9cc2b19 add test database and backend
+f2e1969 Merge branch 's-mv/client'
+ac0b8ce refactor /settings and remove password handling
+25e76ee update /rprojects to reflect phase-wise behaviour
+e0bcd35 fix professor dashboard
+0946a39 fix CSS colouring for mobile navbar
+ee99543 add hamburger menu foor small screens
+223f260 add settings page
+4a467e1 add algorithm doc
+9978032 Merge branch 'main'
+dfcdd5e simplify student page
+1f449ab update user creation model
+d47ec26 refactor API for new user model
+1fd3713 minor fixes
+c24f4b9 add separate user registration
+fb26f2a add test APIs for admin
+a902fce fix projects page behaviour
+683c941 update API to use uname only
+a4f3ef0 refactor professor dashboard
+f4b7f9e populate admin dashboard
+992e3e4 modify /students and /projects for admin
+51321de make /projects modifiable by admin
+8487cf3 modify token checking rules
+b7fa466 modify minimum page width
+a055526 Merge branch 'main'
+74e8f98 make /profs modifiable by admin
+2c69d30 fix API import
+bf93f69 fix formatting
+4a27303 fix user instantiation bug
+3861843 modify student dashboard
+2b1f3c6 add test/prod 'route' for API
+cc32dc3 modify student page
+4d82a3e make navbar more informative
+a2afbac stylize login page
+72e9b88 update styling
+3817fa3 add /students
+91f8201 add /profs and /projects
+f070511 fixup! phase-wise student dashboard
+3176d21 phase-wise student dashboard
+6c57466 add more functionality to EdiTable
+b23981a add component EdiTable
+791c7e1 modularize dashboard
+e0f7a81 refactor test API
+095b5a9 enrich dummy data
+ee18ccb Merge branch 's-mv/component-library'
+86e77fa cleanup:
+0c76c4c format client-side code
+dbc8e93 use components instead of inlined styling
+07e567d add card and input component
+076b747 fixup! add button component
+4f2dd58 Merge 's-mv/test-api-update' into s-mv/component-library
+504faea refactor test API
+a278213 add button component
+19efab2 separate layout with content
+c650ca6 Merge 's-mv/style-update' into 'main'
+8ee2cb8 refactor component styling
+1039b79 add login and base styling
+35cff16 initial commit to the monorepo
