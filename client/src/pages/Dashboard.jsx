@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { getToken, users } from "@/api";
 import ProfDashboard from "@/pages/dashboard/ProfDashboard";
 import StudentDashboard from "@/pages/dashboard/StudentDashboard";
@@ -9,6 +10,7 @@ export default function Dashboard() {
   const [account, setAccount] = useState(null);
   const [role, setRole] = useState(null);
   const [error, setError] = useState("");
+  const [loggedOut, setLoggedOut] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -18,9 +20,7 @@ export default function Dashboard() {
         const token = await getToken();
 
         if (!token) {
-          if (active) {
-            setError("You are not logged in! Please log in again.");
-          }
+          if (active) setLoggedOut(true);
           return;
         }
 
@@ -44,6 +44,7 @@ export default function Dashboard() {
     };
   }, []);
 
+  if (loggedOut) return <Navigate to="/login" replace />;
   if (error) return <ErrorMessage message={error} />;
   if (!account || !role) return <Loading />;
 

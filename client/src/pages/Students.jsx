@@ -54,7 +54,9 @@ function StudentDetail({ student, tokenAllocations }) {
                 className="tile flex items-center justify-between gap-3"
               >
                 <p className="font-bold">{allocation.pname}</p>
-                <p className="text-sm">{allocation.tokens} tokens</p>
+                <p className="text-sm">
+                  {allocation.tokens} tokens
+                </p>
               </div>
             ))}
           </div>
@@ -345,11 +347,11 @@ export default function Students() {
                   <td className="p-3">
                     {tokenAllocations[student.uname]?.length
                       ? tokenAllocations[student.uname]
-                          .map(
-                            (allocation) =>
-                              `${allocation.pname}: ${allocation.tokens}`,
-                          )
-                          .join(", ")
+                        .map(
+                          (allocation) =>
+                            `${allocation.pname}: ${allocation.tokens}`,
+                        )
+                        .join(", ")
                       : "—"}
                   </td>
                   <td className="p-3">

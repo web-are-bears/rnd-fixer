@@ -16,4 +16,5 @@ export const {
   getCurrentUser,
   getPhase,
   setPhase,
+  fixmatch
 } = api;

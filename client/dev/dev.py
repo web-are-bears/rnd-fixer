@@ -347,7 +347,73 @@ crud_make("students", "students", "uname", "student")
 crud_make("projects", "projects", "id")
 
 
-# Special operations
+@app.get("/api/students/by-allocation/<project_id>")
+def students_by_allocation(project_id):
+    return jsonify(
+        records(
+            """
+            SELECT students.uname, students.name, students.email
+            FROM students
+            WHERE EXISTS (
+                SELECT 1
+                FROM json_each(students.token_dist)
+                WHERE json_each.key = ?
+                  AND CAST(json_each.value AS INTEGER) > 0
+            )
+            """,
+            (str(project_id),),
+        )
+    )
+
+
+@app.put("/api/projects/<int:project_id>/allocate-tokens")
+def allocate_professor_tokens(project_id):
+    data = request.get_json() or {}
+    token_dist = data.get("token_dist")
+
+    if not isinstance(token_dist, dict):
+        return jsonify({"error": "Invalid token distribution"}), 400
+
+    if any(type(n) is not int or n < 0 for n in token_dist.values()):
+        return jsonify({"error": "Tokens must be nonnegative integers"}), 400
+
+    db = dbget()
+    project = record("SELECT * FROM projects WHERE id = ?", (project_id,))
+    if project is None:
+        return jsonify({"error": "Project not found"}), 404
+
+    owned = records(
+        "SELECT * FROM projects WHERE prof_uname = ?",
+        (project["prof_uname"],),
+    )
+    students = {r["uname"] for r in db.execute("SELECT uname FROM students")}
+    if not set(token_dist).issubset(students):
+        return jsonify({"error": "Unknown student"}), 400
+
+    for uname in students:
+        amounts = [
+            (
+                token_dist.get(uname, 0)
+                if p["_id"] == project_id
+                else int(p["token_dist"].get(uname, 0))
+            )
+            for p in owned
+        ]
+        positive = [n for n in amounts if n > 0]
+        if sum(amounts) > 100:
+            return jsonify({"error": f"Professor tokens exceed 100 for {uname}"}), 400
+        if len(positive) != len(set(positive)):
+            return (
+                jsonify({"error": f"Repeated positive token amounts for {uname}"}),
+                400,
+            )
+
+    db.execute(
+        "UPDATE projects SET token_dist = ? WHERE id = ?",
+        (json.dumps(token_dist), project_id),
+    )
+    db.commit()
+    return jsonify(record("SELECT * FROM projects WHERE id = ?", (project_id,)))
 
 
 @app.get("/api/students/by-project/<project_id>")
@@ -413,6 +479,191 @@ def set_phase():
     db.commit()
 
     return jsonify({"phase": phase})
+
+
+@app.post("/api/matchfix")
+def run_matchfix():
+    token = request.cookies.get("pikachu")
+
+    user = record(
+        """
+        SELECT users.uname, users.role
+        FROM users
+        JOIN sessions ON users.uname = sessions.uname
+        WHERE sessions.token = ?
+        """,
+        (token,),
+    )
+
+    if user is None:
+        return jsonify({"error": "Not logged in"}), 401
+
+    if user["role"].lower() != "admin":
+        return jsonify({"error": "Admin access required"}), 403
+
+    db = dbget()
+
+    students = records("SELECT * FROM students ORDER BY uname")
+    projects = records("SELECT * FROM projects ORDER BY id")
+
+    if not students:
+        return jsonify({"error": "No students registered"}), 400
+
+    if not projects:
+        return jsonify({"error": "No projects registered"}), 400
+
+    student_names = {s["uname"] for s in students}
+    project_ids = {p["_id"] for p in projects}
+
+    preferences = {}
+    for student in students:
+        dist = student["token_dist"] or {}
+
+        preferences[student["uname"]] = sorted(
+            [
+                (int(project_id), amount)
+                for project_id, amount in dist.items()
+                if amount > 0
+            ],
+            key=lambda item: item[1],
+            reverse=True,
+        )
+
+    capacities = {}
+    professor_tokens = {}
+
+    for project in projects:
+        project_id = project["_id"]
+        capacity = project["max_students"]
+
+        if not isinstance(capacity, int) or capacity < 0:
+            return jsonify({"error": f"Invalid capacity for project {project_id}"}), 400
+
+        capacities[project_id] = capacity
+        professor_tokens[project_id] = project["token_dist"] or {}
+
+    # Validate that all preferences refer to existing projects.
+    for uname, prefs in preferences.items():
+        if any(pid not in project_ids for pid, _ in prefs):
+            return (
+                jsonify(
+                    {"error": f"Student {uname} has an unknown project preference"}
+                ),
+                400,
+            )
+
+    # Each project maintains its currently accepted students.
+    accepted = {pid: [] for pid in project_ids}
+
+    # Each student tracks which projects they have already tried.
+    next_choice = {uname: 0 for uname in student_names}
+
+    queue = list(student_names)
+
+    while queue:
+        uname = queue.pop(0)
+
+        choices = preferences[uname]
+
+        if next_choice[uname] >= len(choices):
+            continue
+
+        project_id, _ = choices[next_choice[uname]]
+        next_choice[uname] += 1
+
+        capacity = capacities[project_id]
+
+        if capacity == 0:
+            queue.append(uname)
+            continue
+
+        current = accepted[project_id]
+
+        if len(current) < capacity:
+            current.append(uname)
+            continue
+
+        # Find the least-preferred currently accepted student.
+        least_preferred = min(
+            current,
+            key=lambda student: (
+                int(professor_tokens[project_id].get(student, 0)),
+                student,
+            ),
+        )
+
+        new_score = int(professor_tokens[project_id].get(uname, 0))
+
+        old_score = int(professor_tokens[project_id].get(least_preferred, 0))
+
+        if new_score > old_score:
+            current.remove(least_preferred)
+            current.append(uname)
+            queue.append(least_preferred)
+        else:
+            queue.append(uname)
+
+    # Construct the final assignments.
+    assignments = {}
+
+    for project_id, assigned_students in accepted.items():
+        for uname in assigned_students:
+            assignments[uname] = project_id
+
+    # Refuse to save incomplete matching results.
+    if set(assignments) != student_names:
+        unmatched = sorted(student_names - set(assignments))
+
+        return (
+            jsonify(
+                {
+                    "error": "Some students could not be matched",
+                    "unmatched": unmatched,
+                    "assigned": len(assignments),
+                    "total": len(students),
+                }
+            ),
+            400,
+        )
+
+    # Validate capacities once more before committing.
+    for project_id, assigned_students in accepted.items():
+        if len(assigned_students) > capacities[project_id]:
+            return jsonify({"error": f"Project {project_id} exceeded capacity"}), 500
+
+    try:
+        db.executemany(
+            """
+            UPDATE students
+            SET final_proj_id = ?
+            WHERE uname = ?
+            """,
+            [(project_id, uname) for uname, project_id in assignments.items()],
+        )
+
+        db.commit()
+
+    except sqlite3.Error as err:
+        db.rollback()
+        return (
+            jsonify(
+                {
+                    "error": "Failed to save assignments",
+                    "details": str(err),
+                }
+            ),
+            500,
+        )
+
+    return (
+        jsonify(
+            {
+                "success": True,
+                "assignments": assignments,
+            }
+        ),
+        200,
+    )
 
 
 bootstrap_admin()

@@ -101,6 +101,10 @@ export const admins = createCRUD("admins");
 export const students = {
   ...createCRUD("students"),
 
+  getByAllocation(projectID) {
+    return get(`/students/by-allocation/${encodeURIComponent(projectID)}`);
+  },
+
   getByProject(projectID) {
     return get(`/students/by-project/${encodeURIComponent(projectID)}`);
   },
@@ -120,6 +124,12 @@ export const projects = {
   getByProf(prof_uname) {
     return get(`/projects/by-prof/${encodeURIComponent(prof_uname)}`);
   },
+
+  allocateTokens(id, token_dist) {
+    return put(`/projects/${encodeURIComponent(id)}/allocate-tokens`, {
+      token_dist,
+    });
+  },
 };
 
 
@@ -134,3 +144,7 @@ export async function setPhase(n) {
   const data = await put("/phase", { phase: n });
   return data.phase;
 }
+
+/*** THE match fixer wooo ***/
+
+export const fixmatch = () => post("/matchfix", {});
