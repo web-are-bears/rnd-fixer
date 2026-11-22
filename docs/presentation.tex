@@ -76,8 +76,16 @@ how is rnd
 
 \section{Implementation}
 
+% TODO maybe elaborate this? or should we be doing it in the presentation?
 \begin{frame}{\insertsection: Phase System}
-multiple phases
+  We divide the process into five phases (0 to 4):
+  \begin{itemize}
+    \item Phase 0: Project registration.
+    \item Phase 1: Student token allocation.
+    \item Phase 2: Professor token allocation.
+    \item Phase 3: Match fixing.
+    \item Phase 4: Publishing of the final allocations.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{\insertsection: Constraints}
@@ -94,13 +102,15 @@ multiple phases
 \frametitle{\insertsection: Algorithm}
 \ttfamily
 \begin{block}{Pseudocode}
-\begin{verbatim} %looks horrible please fix
+%looks horrible please fix
+\scriptsize
+\begin{verbatim}
 S = {S1, S2, S3, ...} -> set of students
 Pr = {Pr1, Pr2, ...}  -> set of professors
 P = {P1, P2, P3, ...} -> set of projects
 
 MATCHFIX(S, Pr, P) {
-    while S != PHI:
+    while S != \phi:
         select some Si from S
         select most preferred Pi from P which was never picked for S
         if Pi has no slots left AND Si is more preferred than some Sj in Pi:
@@ -326,6 +336,8 @@ we used ai :(
     \item Phase 3: Match fixing.
     \item Phase 4: Publishing of the final allocations.
     \end{itemize}
+
+    These have already been discussed during the introduction.
 \end{frame}
 
 \begin{frame}{Phase 0: Project Registration}
@@ -418,6 +430,20 @@ we used ai :(
     \centering
     \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
     {phase-4-yay.png}
+\end{frame}
+
+
+\section{Setbacks and Future Work}
+
+\begin{frame}{\insertsection}
+\begin{itemize}
+    \item Testing the Matchfixer algorithm against edge cases.
+    \item Addition of more features post-fixing. For example:
+      \begin{itemize}
+        \item Trello-like boards for projects.
+        \item A notification/communication system, perhaps.
+    \item Better input validation and error handling.
+\end{itemize}
 \end{frame}
 
 \section*{The End}
