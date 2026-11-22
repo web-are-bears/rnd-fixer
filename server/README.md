@@ -78,7 +78,7 @@ Both `auth` and `core` follow the same internal organization:
 
 ## Architecture
 
-![Architecture diagram](../docs/assets/backend_architecture.png)
+![Architecture diagram](../docs/assets/backend-architecture.png)
 
 ## Services
 
