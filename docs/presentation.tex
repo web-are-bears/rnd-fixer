@@ -36,24 +36,38 @@
 
 \section{Introduction}
 
-%Please imporvvve this slide
 \begin{frame}{\insertsection}
-R\&D FIxer is an application which helps both
- students and professors in deciding their R\&D
- projects and in general streamlines the process.
+  R\&D project allocation at IITB every year involves many students, professors
+  and projects, each with their own preferences and constraints.
+
+  Coordinating these allocations manually can be cumbersome...
 \end{frame}
 
-%Please improve this slide
-\begin{frame}{\insertsection: What}
-R\&D Fixer takes token allocations from both students and professors,
- and allocates each student to a project.
+\begin{frame}{\insertsection: Insert R\&D Fixer!}
+R\&D Matchfixer automates the entire allocation process:
+\begin{itemize}
+    \item Students express their project preferences through token allocation.
+    \item Professors express their student preferences for each project.
+    \item The Matchfixer algorithm uses these allocatons to assign students to projects.
+\end{itemize}
+
+  \onslide<2->
+  It is, although not entirely, inspired by TA Matchfixer. :) Though it serves\
+  a very different purpose and works quite differently.
 \end{frame}
 
-%PLease improve this slide
-\begin{frame}{\insertsection: Lacuna} %Also do we need to change this title?
-We require R\&D Fixer to make sure the process of students
- being assigned their appropriate project
- is a smooth and stress-free one.
+\begin{frame}{\insertsection: Lacuna}
+  A manual allocation process becomes difficult to manage as the number of
+  students, professors and projects increases. Furthermore, due to no formal
+  process for the allocation, the process becomes confusing for students and
+  irritating for professors.
+
+  We need a systematic process which:
+  \begin{itemize}
+    \item Accounts for preferences from both sides.
+    \item Respects the allocation constraints.
+    \item Produces project allocations without manual intervention.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{\insertsection: Tech Stack}
