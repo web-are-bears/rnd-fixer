@@ -1,5 +1,0 @@
-\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
-\beamer@sectionintoc {2}{Overview}{8}{0}{2}
-\beamer@sectionintoc {3}{Architecture}{11}{0}{3}
-\beamer@sectionintoc {4}{Implementation details}{19}{0}{4}
-\beamer@sectionintoc {5}{Setbacks and Future Work}{34}{0}{5}
