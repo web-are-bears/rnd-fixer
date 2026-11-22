@@ -76,6 +76,7 @@ func main() {
 		pb.RegisterCoreProfessorServiceServer(grpcServer, handle)
 		pb.RegisterCoreProjectServiceServer(grpcServer, handle)
 		pb.RegisterCoreStudentServiceServer(grpcServer, handle)
+		pb.RegisterAlgorithmServiceServer(grpcServer, handle)
 
 		logger.Info("starting gRPC core service on", "port", cfg.Port)
 		if err := grpcServer.Serve(lis); err != nil {

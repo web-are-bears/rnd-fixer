@@ -32,5 +32,8 @@ func (c *CoreClient) RegisterHandler(ctx context.Context, mux *runtime.ServeMux)
 	if err := core_pb.RegisterCoreStudentServiceHandler(ctx, mux, c.conn); err != nil {
 		return err
 	}
+	if err := core_pb.RegisterAlgorithmServiceHandler(ctx, mux, c.conn); err != nil {
+		return err
+	}
 	return nil
 }

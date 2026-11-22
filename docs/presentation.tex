@@ -3,6 +3,9 @@
 \usepackage{tikz, amssymb}
 \usepackage[T1]{fontenc}
 \usepackage[scaled=0.92]{helvet}
+\usepackage{graphicx}
+
+\graphicspath{{./assets/}}
 
 \usetheme{metropolis}
 
@@ -34,34 +37,83 @@
 \section{Introduction}
 
 \begin{frame}{\insertsection}
-intro
+  R\&D project allocation at IITB every year involves many students, professors
+  and projects, each with their own preferences and constraints.
+
+  Coordinating these allocations manually can be cumbersome...
 \end{frame}
 
-\begin{frame}{\insertsection: What}
-what is rnd
+\begin{frame}{\insertsection: Insert R\&D Fixer!}
+  R\&D Matchfixer automates the entire allocation process:
+  \begin{itemize}
+    \item Students express their project preferences through token allocation.
+    \item Professors express their student preferences for each project.
+    \item The Matchfixer algorithm uses these allocatons to assign
+      students to projects.
+  \end{itemize}
+
+  \onslide<2->
+It is, although not entirely, inspired by TA Matchfixer. :) Though it serves\
+a very different purpose and works quite differently.
 \end{frame}
 
 \begin{frame}{\insertsection: Lacuna}
-why is rnd
+A manual allocation process becomes difficult to manage as the number of
+students, professors and projects increases. Furthermore, due to no formal
+process for the allocation, the process becomes confusing for students and
+irritating for professors.
+
+We need a systematic process which:
+\begin{itemize}
+  \item Accounts for preferences from both sides.
+  \item Respects the allocation constraints.
+  \item Produces project allocations without manual intervention.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{\insertsection: Tech Stack}
-how is rnd
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{grpc-icon-color.png}
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{protobuf_logo.png}
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{MongoDB_Fores-Green.svg.png}
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{gin_web_logo.png}
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{React-icon.svg.png}
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{tailwindcss-logotype.png}
+	\includegraphics[width=0.45\textwidth,height=0.2\textheight,keepaspectratio]
+	{Vitejs-logo.svg.png}
+	%\hfill
+	%\vfill
 \end{frame}
 
-\section{Implementation}
+\section{Overview}
 
+% TODO maybe elaborate this? or should we be doing it in the presentation?
 \begin{frame}{\insertsection: Phase System}
-multiple phases
+We divide the process into five phases (0 to 4):
+\begin{itemize}
+  \item Phase 0: Project registration.
+  \item Phase 1: Student token allocation.
+  \item Phase 2: Professor token allocation.
+  \item Phase 3: Match fixing.
+  \item Phase 4: Publishing of the final allocations.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{\insertsection: Constraints}
 \begin{enumerate}
-\item{Each student has a total of 100 tokens to be distributed among N projects.}
-\item{A student must either allocate 0 tokens to a project, or a number between 5 and 25}
-\item{Each professor has a total of 100 tokens PER PROJECT}
-\item{Similarly, each project must either allocate 0 tokens to a project, or a number between 5 and 25}
-\item{ALL 100 tokens must be allocated}
+  \item{Each student has a total of 100 tokens to be distributed
+    among N projects.}
+  \item{A student must either allocate 0 tokens to a project, or a
+    number between 5 and 25}
+  \item{Each professor has a total of 100 tokens PER PROJECT}
+  \item{Similarly, each project must either allocate 0 tokens to a
+    project, or a number between 5 and 25}
+  \item{ALL 100 tokens must be allocated}
 \end{enumerate}
 \end{frame}
 
@@ -69,13 +121,15 @@ multiple phases
 \frametitle{\insertsection: Algorithm}
 \ttfamily
 \begin{block}{Pseudocode}
-\begin{verbatim} %looks horrible please fix
+  %looks horrible please fix
+  \scriptsize
+\begin{verbatim}
 S = {S1, S2, S3, ...} -> set of students
 Pr = {Pr1, Pr2, ...}  -> set of professors
 P = {P1, P2, P3, ...} -> set of projects
 
 MATCHFIX(S, Pr, P) {
-    while S != PHI:
+    while S != \phi:
         select some Si from S
         select most preferred Pi from P which was never picked for S
         if Pi has no slots left AND Si is more preferred than some Sj in Pi:
@@ -98,46 +152,53 @@ MATCHFIX(S, Pr, P) {
 \centering
 \providecommand{\archscale}{1}
 \begin{tikzpicture}[
-  scale=\archscale, every node/.append style={transform shape},
-  >={Stealth[length=1.6mm,width=1.3mm]},
-  box/.style   = {draw, line width=0.5pt, rounded corners=1pt, fill=white, align=center,
-                  font=\scriptsize, minimum height=7mm, minimum width=17mm, inner sep=2pt},
-  mw/.style    = {draw, line width=0.5pt, rounded corners=1pt, fill=white,
-                  font=\scriptsize, minimum height=4.8mm, minimum width=21mm, inner sep=1pt},
-  svc/.style   = {draw, line width=0.5pt, rectangle split, rectangle split parts=2,
-                  rectangle split part fill={white, black!7}, align=center,
-                  minimum width=18mm, inner ysep=1.5pt, inner xsep=2pt, font=\scriptsize},
-  db/.style    = {cylinder, shape border rotate=90, aspect=0.22, draw, line width=0.5pt,
-                  fill=black!4, minimum width=13mm, minimum height=7.5mm,
-                  inner sep=1pt, font=\tiny, align=center},
-  frame/.style = {draw, line width=0.5pt, dash pattern=on 2.5pt off 1.5pt, rounded corners=3pt},
-  caption/.style   = {font=\scriptsize\bfseries, anchor=south},
-  note/.style  = {font=\tiny\itshape, text=black!65},
-  wire/.style  = {line width=0.5pt},
-  grpc/.style  = {<->, line width=0.5pt, draw=accent},
-  glbl/.style  = {font=\tiny, text=accent, inner sep=1.5pt},
-]
- 
+    scale=\archscale, every node/.append style={transform shape},
+    >={Stealth[length=1.6mm,width=1.3mm]},
+    box/.style   = {draw, line width=0.5pt, rounded corners=1pt,
+      fill=white, align=center,
+    font=\scriptsize, minimum height=7mm, minimum width=17mm, inner sep=2pt},
+    mw/.style    = {draw, line width=0.5pt, rounded corners=1pt, fill=white,
+    font=\scriptsize, minimum height=4.8mm, minimum width=21mm, inner sep=1pt},
+    svc/.style   = {draw, line width=0.5pt, rectangle split,
+      rectangle split parts=2,
+      rectangle split part fill={white, black!7}, align=center,
+    minimum width=18mm, inner ysep=1.5pt, inner xsep=2pt, font=\scriptsize},
+    db/.style    = {cylinder, shape border rotate=90, aspect=0.22,
+      draw, line width=0.5pt,
+      fill=black!4, minimum width=13mm, minimum height=7.5mm,
+    inner sep=1pt, font=\tiny, align=center},
+    frame/.style = {draw, line width=0.5pt, dash pattern=on 2.5pt off
+    1.5pt, rounded corners=3pt},
+    caption/.style   = {font=\scriptsize\bfseries, anchor=south},
+    note/.style  = {font=\tiny\itshape, text=black!65},
+    wire/.style  = {line width=0.5pt},
+    grpc/.style  = {<->, line width=0.5pt, draw=accent},
+    glbl/.style  = {font=\tiny, text=accent, inner sep=1.5pt},
+  ]
+
   \node[box] (client) at (0,3.75) {Client\\[-2pt]{\tiny web / mobile}};
- 
-  \draw[line width=0.7pt, rounded corners=3pt] (-1.25,-2.55) rectangle (1.65,2.85);
+
+  \draw[line width=0.7pt, rounded corners=3pt] (-1.25,-2.55)
+  rectangle (1.65,2.85);
   \node[caption] at (0.2,-2.5) {API Gateway};
- 
+
   \node[mw] (rid)   at (0,2.3)  {Request ID};
   \node[mw] (authn) at (0,1.55) {Authentication};
   \node[mw] (rate)  at (0,0.8)  {Rate limiting};
   \node[box, fill=black!7, minimum width=21mm] (router) at (0,-0.15)
-       {Router};
- 
+  {Router};
+
   \draw[decorate, decoration={brace, amplitude=2.5pt}, line width=0.4pt]
-        ($(rid.north east)+(0.08,0)$) -- ($(rate.south east)+(0.08,0)$)
-        node[midway, right=2pt, note, rotate=90, anchor=north] {middleware};
- 
-  \draw[->, wire] ($(client.south)+(-0.3,0)$) -- node[left,  note] {HTTP request}
-                  ($(rid.north)+(-0.3,0)$);
-  \draw[<-, wire] ($(client.south)+( 0.3,0)$) -- node[right, note] {HTTP response}
-                  ($(rid.north)+( 0.3,0)$);
- 
+  ($(rid.north east)+(0.08,0)$) -- ($(rate.south east)+(0.08,0)$)
+  node[midway, right=2pt, note, rotate=90, anchor=north] {middleware};
+
+  \draw[->, wire] ($(client.south)+(-0.3,0)$) -- node[left,  note]
+  {HTTP request}
+  ($(rid.north)+(-0.3,0)$);
+  \draw[<-, wire] ($(client.south)+( 0.3,0)$) -- node[right, note]
+  {HTTP response}
+  ($(rid.north)+( 0.3,0)$);
+
   \foreach \a/\b in {rid/authn, authn/rate, rate/router} {
     \draw[->, wire] ($(\a.south)+(-0.3,0)$) -- ($(\b.north)+(-0.3,0)$);
     \draw[<-, wire] ($(\a.south)+( 0.3,0)$) -- ($(\b.north)+( 0.3,0)$);
@@ -145,30 +206,33 @@ MATCHFIX(S, Pr, P) {
 
   \draw[frame] (2.0,-2.55) rectangle (6.25,2.85);
   \node[caption] at (4.125,-2.5) {Services};
- 
+
   \node[svc] (auth)  at (3.15, 1.2)  {auth\nodepart{two}\tiny Mongo driver};
-  \node[svc] (notif) at (3.15,-1.5)  {notification\nodepart{two}\tiny Mongo driver};
+  \node[svc] (notif) at (3.15,-1.5)  {notification\nodepart{two}\tiny
+  Mongo driver};
   \node[svc] (core)  at (5.1,-0.15)  {core\nodepart{two}\tiny Mongo driver};
- 
+
   \draw[->, wire] (router.east) -- (auth.west);
   \draw[->, wire] (router.east) -- (notif.west);
- 
+
   \draw[grpc] (auth.south) -- node[pos=0.22, left, glbl] {gRPC} (notif.north);
-  \draw[grpc] ($(auth.south)!0.5!(auth.south east)$) -- node[sloped, above, glbl] {gRPC} (core.north);
-  \draw[grpc] ($(notif.north)!0.5!(notif.north east)$) -- node[sloped, below, glbl] {gRPC} (core.south);
- 
+  \draw[grpc] ($(auth.south)!0.5!(auth.south east)$) -- node[sloped,
+  above, glbl] {gRPC} (core.north);
+  \draw[grpc] ($(notif.north)!0.5!(notif.north east)$) --
+  node[sloped, below, glbl] {gRPC} (core.south);
+
   \draw[white, line width=4pt] (2.95,-0.15) -- (3.35,-0.15);
   \draw[->, wire] (router.east) -- (core.west);
 
   \draw[frame] (6.5,-2.55) rectangle (7.95,2.85);
   \node[caption] at (7.225,-2.5) {Data};
- 
+
   \foreach \s/\n in {auth/auth, core/core, notif/notification} {
     \coordinate (\s-drv) at ($(\s.south east)+(0,0.13)$);
     \node[db] (\s-db) at (\s-drv -| 7.225,0) {MongoDB\\[-1pt]\n};
     \draw[wire] (\s-drv) -- (\s-db.west);
   }
- 
+
 \end{tikzpicture}
 \end{frame}
 
@@ -176,23 +240,29 @@ MATCHFIX(S, Pr, P) {
 \centering
 \providecommand{\authscale}{1}
 \begin{tikzpicture}[
-  scale=\authscale, every node/.append style={transform shape},
-  >={Stealth[length=1.6mm,width=1.3mm]},
-  head/.style  = {draw, line width=0.5pt, rounded corners=1pt, fill=white, font=\scriptsize,
-                  minimum width=12mm, minimum height=5.5mm, inner sep=1.5pt},
-  life/.style  = {line width=0.4pt, black!40, dash pattern=on 2pt off 1.5pt},
-  msg/.style   = {->, line width=0.5pt},
-  ret/.style   = {->, line width=0.5pt, dash pattern=on 2pt off 1pt},
-  lbl/.style   = {font=\tiny, inner sep=1.2pt, align=center},
-  act/.style   = {draw, line width=0.5pt, fill=black!7, font=\tiny, align=center,
-                  rounded corners=1pt, inner sep=2pt, anchor=north},
-  phase/.style = {font=\scriptsize\bfseries, text=accent, anchor=west, inner sep=0pt},
-  panel/.style = {draw, line width=0.5pt, rounded corners=2pt, align=left, inner sep=3pt,
-                  text width=36mm, anchor=north west},
-  ttl/.style   = {font=\scriptsize\bfseries, anchor=north west, inner sep=0pt},
-  aside/.style = {font=\tiny\itshape, text=black!60, anchor=north west, inner sep=0pt,
-                  text width=38mm},
-]
+    scale=\authscale, every node/.append style={transform shape},
+    >={Stealth[length=1.6mm,width=1.3mm]},
+    head/.style  = {draw, line width=0.5pt, rounded corners=1pt,
+      fill=white, font=\scriptsize,
+    minimum width=12mm, minimum height=5.5mm, inner sep=1.5pt},
+    life/.style  = {line width=0.4pt, black!40, dash pattern=on 2pt off 1.5pt},
+    msg/.style   = {->, line width=0.5pt},
+    ret/.style   = {->, line width=0.5pt, dash pattern=on 2pt off 1pt},
+    lbl/.style   = {font=\tiny, inner sep=1.2pt, align=center},
+    act/.style   = {draw, line width=0.5pt, fill=black!7, font=\tiny,
+      align=center,
+    rounded corners=1pt, inner sep=2pt, anchor=north},
+    phase/.style = {font=\scriptsize\bfseries, text=accent,
+    anchor=west, inner sep=0pt},
+    panel/.style = {draw, line width=0.5pt, rounded corners=2pt,
+      align=left, inner sep=3pt,
+    text width=36mm, anchor=north west},
+    ttl/.style   = {font=\scriptsize\bfseries, anchor=north west,
+    inner sep=0pt},
+    aside/.style = {font=\tiny\itshape, text=black!60, anchor=north
+      west, inner sep=0pt,
+    text width=38mm},
+  ]
   \def\xc{0}\def\xg{1.8}\def\xa{3.55}\def\xs{5.2}\def\yend{-6.9}
   \foreach \x/\id/\t in {\xc/c/Client, \xg/g/Gateway, \xa/a/auth, \xs/s/core} {
     \node[head] (\id) at (\x,0) {\t};
@@ -201,60 +271,235 @@ MATCHFIX(S, Pr, P) {
   \node[phase] at (-0.6,-0.55) {1 \; Login (once)};
   \draw[msg] (\xc,-1.05) -- node[lbl, above] {POST /login} (\xg,-1.05);
   \draw[msg] (\xg,-1.5)  -- node[lbl, above] {Login (gRPC)} (\xa,-1.5);
-  \node[act] at (\xa,-1.62) {check credentials\\sign JWT\\\{username, role, phase\}};
+  \node[act] at (\xa,-1.62) {check credentials\\sign JWT\\\{username,
+  role, phase\}};
   \draw[ret] (\xa,-2.75) -- node[lbl, above] {JWT} (\xg,-2.75);
   \draw[ret] (\xg,-3.1)  -- node[lbl, above] {JWT} (\xc,-3.1);
- 
+
   \draw[line width=0.4pt, black!30] (-0.6,-3.35) -- (6.0,-3.35);
   \node[phase] at (-0.6,-3.62) {2 \; Every request};
-  \draw[msg] (\xc,-4.35) -- node[lbl, above] {GET /student/alice\\+ Bearer JWT} (\xg,-4.35);
-  \node[act] at (\xg,-4.47) {verify JWT (signature, expiry)\\claims $\to$ request context};
-  \draw[msg] (\xg,-5.35) -- node[lbl, above] {forward + context (gRPC)} (\xs,-5.35);
+  \draw[msg] (\xc,-4.35) -- node[lbl, above] {GET /student/alice\\+
+  Bearer JWT} (\xg,-4.35);
+  \node[act] at (\xg,-4.47) {verify JWT (signature, expiry)\\claims
+  $\to$ request context};
+  \draw[msg] (\xg,-5.35) -- node[lbl, above] {forward + context
+  (gRPC)} (\xs,-5.35);
   \node[act] at (\xs,-5.47) {guard:\\role + username};
-  \draw[ret] (\xs,-6.3)  -- node[lbl, above] {200 OK / 403 Forbidden} (\xg,-6.3);
+  \draw[ret] (\xs,-6.3)  -- node[lbl, above] {200 OK / 403 Forbidden}
+  (\xg,-6.3);
   \draw[ret] (\xg,-6.7)  -- node[lbl, above] {200 / 403} (\xc,-6.7);
 
   \onslide<2->{
-  \node[ttl] (t1) at (6.3,0.25) {JWT payload};
-  \node[panel, font=\ttfamily\tiny] (jwt) at ($(t1.south west)+(0,-0.12)$)
-       {\{ "username": "alice",\\
+    \node[ttl] (t1) at (6.3,0.25) {JWT payload};
+    \node[panel, font=\ttfamily\tiny] (jwt) at ($(t1.south west)+(0,-0.12)$)
+    {\{ "username": "alice",\\
         \ \ "role":\ \ \ \ \ "student",\\
-        \ \ "phase":\ \ \ \ "\dots" \}};
-  \node[aside] (n1) at ($(jwt.south west)+(0,-0.08)$)
-       {signed by auth, verified at gateway};
+    \ \ "phase":\ \ \ \ "\dots" \}};
+    \node[aside] (n1) at ($(jwt.south west)+(0,-0.08)$)
+    {signed by auth, verified at gateway};
   }
 
   \onslide<3->{
-  \node[ttl] (t2) at ($(n1.south west)+(0,-0.3)$) {Guard on every handler};
-  \node[panel, font=\ttfamily\tiny] (code) at ($(t2.south west)+(0,-0.12)$)
-       {\textcolor{black!55}{// GET /student/\{user\}/\dots}\\
-        need := "student" \textcolor{black!55}{// fixed}\\[1pt]
-        if ctx.role != need $\to$ 403\\
-        if ctx.username != user $\to$ 403\\[1pt]
-        $\to$ run handler};
-  \node[aside] (n2) at ($(code.south west)+(0,-0.08)$)
-       {role: student $\not\to$ professor data\\username: only your own data};
-      }
-    
+    \node[ttl] (t2) at ($(n1.south west)+(0,-0.3)$) {Guard on every handler};
+    \node[panel, font=\ttfamily\tiny] (code) at ($(t2.south west)+(0,-0.12)$)
+    {\textcolor{black!55}{// GET /student/\{user\}/\dots}\\
+      need := "student" \textcolor{black!55}{// fixed}\\[1pt]
+      if ctx.role != need $\to$ 403\\
+      if ctx.username != user $\to$ 403\\[1pt]
+    $\to$ run handler};
+    \node[aside] (n2) at ($(code.south west)+(0,-0.08)$)
+    {role: student $\not\to$ professor data\\username: only your own data};
+  }
+
   \onslide<4->{
-  \node[ttl] (t3) at ($(n2.south west)+(0,-0.3)$) {Example: alice (student)};
-  \node[panel, font=\tiny] (ex) at ($(t3.south west)+(0,-0.12)$)
-       {\begin{tabular}{@{}l@{\hspace{5pt}}l@{}}
-         \texttt{/student/alice/\dots}   & $\checkmark$ allowed\\
-         \texttt{/student/bob/\dots}     & $\times$ username\\
-         \texttt{/professor/carol/\dots} & $\times$ role
-        \end{tabular}};
+    \node[ttl] (t3) at ($(n2.south west)+(0,-0.3)$) {Example: alice (student)};
+    \node[panel, font=\tiny] (ex) at ($(t3.south west)+(0,-0.12)$)
+    {
+      \begin{tabular}{@{}l@{\hspace{5pt}}l@{}}
+        \texttt{/student/alice/\dots}   & $\checkmark$ allowed\\
+        \texttt{/student/bob/\dots}     & $\times$ username\\
+        \texttt{/professor/carol/\dots} & $\times$ role
+    \end{tabular}};
   }
 \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{}
+\begin{frame}{gRPC-Gateway}
+\small
+\begin{columns}[T,onlytextwidth]
+  \begin{column}{0.47\textwidth}
+    \textbf{Without it}\\[-2pt]
+    {\footnotesize\color{black!60} hand-written gateway}
+  \begin{itemize}\setlength{\itemsep}{6pt}
+        \onslide<1->
+      \item A route + handler for \emph{every} RPC
+        \onslide<2->
+      \item Each handler repeats: parse request, call gRPC, build
+        JSON, map errors
+        \onslide<3->
+      \item if proto changes edit gateway by hand
+    \end{itemize}
+  \end{column}
+  \begin{column}{0.47\textwidth}
+    \textbf{With it}\\[-2pt]
+    {\footnotesize\color{black!60} generated from \texttt{.proto}}
+  \begin{itemize}\setlength{\itemsep}{6pt}
+        \onslide<1->
+      \item Route declared in the \texttt{.proto}, next to the RPC
+        \onslide<2->
+      \item \texttt{protoc} generates the handler (\texttt{*.pb.gw.go})
+        \onslide<3->
+      \item Gateway just registers it + adds our middleware
+    \end{itemize}
+  \end{column}
+\end{columns}
+
+\vspace{18pt}
+\begin{center}
+  \color{accent}\textbf{New endpoint = edit \texttt{.proto} + regenerate}
+\end{center}
 \end{frame}
 
-\section*{Disclosure}
+% I'm unsure about the section name as I can't find the layout we had discussed
+% earlier
+\section{Implementation details}
 
-\begin{frame}{AI}
-we used ai :(
+\begin{frame}{\insertsection}
+  Now we'll have an overview of the implementation and the phase system
+  subsequently.
+
+  We divide the process into five phases (0 to 4):
+  \begin{itemize}
+    \item Phase 0: Project registration.
+    \item Phase 1: Student token allocation.
+    \item Phase 2: Professor token allocation.
+    \item Phase 3: Match fixing.
+    \item Phase 4: Publishing of the final allocations.
+  \end{itemize}
+
+  These have already been discussed during the introduction.
+\end{frame}
+
+\begin{frame}{Phase 0: Project Registration}
+  \begin{itemize}
+    \item Professors add and modify their projects.
+    \item Students can view professor and project information.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 0: Professors}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-0-profs-page.png}
+\end{frame}
+
+\begin{frame}{Phase 0: Projects}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-0-projects-page-popup.png}
+\end{frame}
+
+\begin{frame}{Phase 0: Adding a Project}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-0-add-project.png}
+\end{frame}
+
+\begin{frame}{Phase 0: Student Dashboard}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-0-student-dashboard.png}
+\end{frame}
+
+\begin{frame}{Phase 1: Student Allocation}
+  \begin{itemize}
+    \item Students distribute 100 tokens among their preferred projects.
+    \item Each allocation must satisfy the token constraints.
+    \item Students can modify their allocations until submission.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 1: Token Allocation}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-1-student-alloc.png}
+\end{frame}
+
+\begin{frame}{Phase 1: Allocation Complete :D}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-1-student-done.png}
+\end{frame}
+
+\begin{frame}{Phase 2: Professor Allocation}
+  \begin{itemize}
+    \item Professors distribute a maximum of 100 tokens per student for all
+      students who have applied for a project.
+    \item Tokens essentially indicate their preference for students.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 2: Token Allocation}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-2-prof-alloc.png}
+\end{frame}
+
+\begin{frame}{Phase 3: Match fixing}
+  \begin{itemize}
+    \item The Matchfixer algorithm processes the student and
+      professor allocations.
+    \item Students are assigned to projects based on their preferences.
+    \item Students may be reconsidered when a project is full.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 3: Matching and fixing}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-3-fixing.png}
+\end{frame}
+
+\begin{frame}{Phase 4: Final Allocation!}
+  \begin{itemize}
+    \item The final student-project allocations are published.
+    \item Students can view their assigned projects now!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Phase 4: Results!}
+  \centering
+  \includegraphics[width=0.95\textwidth,height=0.75\textheight,keepaspectratio]
+  {phase-4-yay.png}
+\end{frame}
+
+\section{Setbacks and Future Work}
+
+\begin{frame}{\insertsection}
+  \begin{itemize}
+    \item Testing the Matchfixer algorithm against edge cases.
+    \item General unit testing.          
+    \item Addition of more features post-fixing. For example:
+      \begin{itemize}
+        \item Trello-like boards for projects.
+        \item A notification/communication system, perhaps.
+        \item Better input validation and error handling.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\section*{AI Disclosure}
+
+\begin{frame}{\insertsection}
+  AI was used in the client and server for the following
+  utilities:
+  \begin{itemize}
+    \item Tuning the colours in the frontend.
+    \item Bug fixes in the test database, frontend and backend.
+    \item SQL formatting. (yes)
+    \item Bridging the match-fixing algorithm into Go via C interoperability
+    \item Implementing router multiplexer in the gateway
+  \end{itemize}
 \end{frame}
 
 \section*{The End}

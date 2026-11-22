@@ -77,3 +77,25 @@ func (m *AuthStore) SetPhase(ctx context.Context, doc *PhaseDoc) (string, error)
 	}
 	return "updated successfully", nil
 }
+
+func (m *AuthStore) FetchUserByUsername(ctx context.Context, id string) (*UserDoc, error) {
+	user, err := m.users.FindOne(ctx, bson.M{"username": id})
+	if errors.Is(err, mongo.ErrNotFound) {
+		return nil, status.Error(codes.NotFound, "user not found")
+	}
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, "internal error")
+	}
+
+	return user, nil
+}
+
+func (m *AuthStore) FetchAllUsers(ctx context.Context) ([]UserDoc, error) {
+	users, err := m.users.Find(ctx, mongo.Query{Filter: bson.M{}})
+	if (len(users) == 0 || err != nil) {
+		return nil, status.Error(codes.NotFound, "users not found or error")
+	}
+
+	return users, nil
+}

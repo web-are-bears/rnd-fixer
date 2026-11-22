@@ -23,20 +23,22 @@ func AuthInterceptor(pub *ed25519.PublicKey) grpc.UnaryServerInterceptor {
 
 		raw := strings.TrimPrefix(vals[0], "Bearer ")
 		tok, err := jwt.Parse(raw,
-			func(*jwt.Token) (any, error) { return pub, nil },
-			jwt.WithValidMethods([]string{"EdDSA"}),
+			func(*jwt.Token) (any, error) {
+				return *pub, nil
+			},
+			jwt.WithValidMethods([]string{jwt.SigningMethodEdDSA.Alg()}),
 		)
 		if err != nil || !tok.Valid {
 			return nil, status.Error(codes.Unauthenticated, "invalid token")
 		}
 
 		mc, _ := tok.Claims.(jwt.MapClaims)
-		sub, _ := mc["sub"].(string)
+		username, _ := mc["username"].(string)
 		role, _ := mc["role"].(string)
-		if sub == "" {
+		if username == "" {
 			return nil, status.Error(codes.Unauthenticated, "invalid token")
 		}
 
-		return next(authctx.WithContext(ctx, &authctx.User{ID: sub, Role: role}), req)
+		return next(authctx.WithContext(ctx, &authctx.User{ID: username, Role: role}), req)
 	}
 }

@@ -44,7 +44,7 @@ func NewHandler(s *mongo.Store[mdl.UserDoc]) *Handler {
 	signer := jwtauth.NewSigner(priv, jwtauth.Config{
 		Issuer:   "rnd-fixer-auth",
 		Audience: "rnd-fixer",
-		TTL:      15 * time.Minute,
+		TTL:      3 * time.Hour,
 	})
 	return &Handler{
 		store: mdl.NewAuthStore(s),
@@ -128,4 +128,32 @@ func (handle *Handler) GetPhase(ctx context.Context, req *emptypb.Empty) (*pb.Ph
 	return &pb.PhaseData{
 		Phase: doc.Phase,
 	}, nil
+}
+
+func (handle *Handler) FetchUserByUsername(ctx context.Context, req *pb.UsernameRequest) (*pb.UsernameResponse, error) {
+	doc, err := handle.store.FetchUserByUsername(ctx, req.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UsernameResponse{
+		Username: doc.Username,
+		Role: doc.Role,
+	}, nil
+}
+
+func (handle *Handler) FetchAllUsers(ctx context.Context, _ *emptypb.Empty) (*pb.Users, error) {
+	users, err := handle.store.FetchAllUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var ur pb.Users
+	for _, u := range users {
+		ur.Users = append(ur.Users, &pb.UsernameResponse{
+			Username: u.Username,
+			Role: u.Role,
+		})
+	}
+	return &ur, nil
 }

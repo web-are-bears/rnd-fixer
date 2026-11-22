@@ -432,10 +432,11 @@ const file_core_proto_student_proto_rawDesc = "" +
 	"\tstud_name\x18\x02 \x01(\tR\bstudName\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
 	"\x05about\x18\x04 \x01(\tR\x05about\x12\x12\n" +
-	"\x04link\x18\x05 \x03(\tR\x04link2\xde\x06\n" +
+	"\x04link\x18\x05 \x03(\tR\x04link2\x8c\b\n" +
 	"\x12CoreStudentService\x12y\n" +
 	"\x11AddStudentProfile\x12 .com.github.wbb.core.StudentData\x1a$.com.github.wbb.core.StudentUsername\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/core/students\x12\x93\x01\n" +
-	"\x12EditStudentProfile\x12$.com.github.wbb.core.StudentDataEdit\x1a$.com.github.wbb.core.StudentUsername\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/v1/core/students/edit/{stud_username}\x12\x9c\x01\n" +
+	"\x12EditStudentProfile\x12$.com.github.wbb.core.StudentDataEdit\x1a$.com.github.wbb.core.StudentUsername\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/v1/core/students/edit/{stud_username}\x12\xab\x01\n" +
+	"\x19EditStudentProjectMapping\x12%.com.github.wbb.core.ProjectStudentId\x1a$.com.github.wbb.core.StudentUsername\"A\x82\xd3\xe4\x93\x02;:\x01*\"6/v1/core/students/edit/project_mapping/{stud_username}\x12\x9c\x01\n" +
 	"\x18AddProjectTokenToStudent\x12%.com.github.wbb.core.TokenStudentData\x1a$.com.github.wbb.core.StudentUsername\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/v1/core/students/tokens/{stud_username}\x12\x9c\x01\n" +
 	"\x1bDeleteProjectTokenToStudent\x12%.com.github.wbb.core.ProjectStudentId\x1a$.com.github.wbb.core.StudentUsername\"0\x82\xd3\xe4\x93\x02**(/v1/core/students/tokens/{stud_username}\x12g\n" +
 	"\x10FetchAllStudents\x12\x16.google.protobuf.Empty\x1a .com.github.wbb.core.StudentList\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/core/students\x12\x8f\x01\n" +
@@ -470,18 +471,20 @@ var file_core_proto_student_proto_depIdxs = []int32{
 	6, // 1: com.github.wbb.core.StudentData.token_distribution:type_name -> com.github.wbb.core.StudentData.TokenDistributionEntry
 	4, // 2: com.github.wbb.core.CoreStudentService.AddStudentProfile:input_type -> com.github.wbb.core.StudentData
 	5, // 3: com.github.wbb.core.CoreStudentService.EditStudentProfile:input_type -> com.github.wbb.core.StudentDataEdit
-	1, // 4: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:input_type -> com.github.wbb.core.TokenStudentData
-	2, // 5: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:input_type -> com.github.wbb.core.ProjectStudentId
-	7, // 6: com.github.wbb.core.CoreStudentService.FetchAllStudents:input_type -> google.protobuf.Empty
-	3, // 7: com.github.wbb.core.CoreStudentService.FetchStudentByStudUsername:input_type -> com.github.wbb.core.StudentUsername
-	3, // 8: com.github.wbb.core.CoreStudentService.AddStudentProfile:output_type -> com.github.wbb.core.StudentUsername
-	3, // 9: com.github.wbb.core.CoreStudentService.EditStudentProfile:output_type -> com.github.wbb.core.StudentUsername
-	3, // 10: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
-	3, // 11: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
-	0, // 12: com.github.wbb.core.CoreStudentService.FetchAllStudents:output_type -> com.github.wbb.core.StudentList
-	4, // 13: com.github.wbb.core.CoreStudentService.FetchStudentByStudUsername:output_type -> com.github.wbb.core.StudentData
-	8, // [8:14] is the sub-list for method output_type
-	2, // [2:8] is the sub-list for method input_type
+	2, // 4: com.github.wbb.core.CoreStudentService.EditStudentProjectMapping:input_type -> com.github.wbb.core.ProjectStudentId
+	1, // 5: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:input_type -> com.github.wbb.core.TokenStudentData
+	2, // 6: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:input_type -> com.github.wbb.core.ProjectStudentId
+	7, // 7: com.github.wbb.core.CoreStudentService.FetchAllStudents:input_type -> google.protobuf.Empty
+	3, // 8: com.github.wbb.core.CoreStudentService.FetchStudentByStudUsername:input_type -> com.github.wbb.core.StudentUsername
+	3, // 9: com.github.wbb.core.CoreStudentService.AddStudentProfile:output_type -> com.github.wbb.core.StudentUsername
+	3, // 10: com.github.wbb.core.CoreStudentService.EditStudentProfile:output_type -> com.github.wbb.core.StudentUsername
+	3, // 11: com.github.wbb.core.CoreStudentService.EditStudentProjectMapping:output_type -> com.github.wbb.core.StudentUsername
+	3, // 12: com.github.wbb.core.CoreStudentService.AddProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
+	3, // 13: com.github.wbb.core.CoreStudentService.DeleteProjectTokenToStudent:output_type -> com.github.wbb.core.StudentUsername
+	0, // 14: com.github.wbb.core.CoreStudentService.FetchAllStudents:output_type -> com.github.wbb.core.StudentList
+	4, // 15: com.github.wbb.core.CoreStudentService.FetchStudentByStudUsername:output_type -> com.github.wbb.core.StudentData
+	9, // [9:16] is the sub-list for method output_type
+	2, // [2:9] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name

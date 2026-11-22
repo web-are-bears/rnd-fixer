@@ -38,6 +38,7 @@ services:
       context: .
       args:
         SERVICE: core
+        CGO_ENABLED: "1"
     restart: unless-stopped
     environment:
       <<: [*keys-env, *mongo-env]
