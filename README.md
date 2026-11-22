@@ -82,14 +82,12 @@ modularity and ease of modification.
 
 If anything is missed out, it is possibly not that relevant!
 
-### AI use on the client slide
+**For the server** refer to [`server/README.md`](server/README.md).
+
+### AI use
 
 Bug fixing was a major use case but uses of AI have been disclosed in comments
 wherever possible!
-
-### Server side
-
-<!-- TODO: fill this up -->
 
 ## Building and Running
 
@@ -130,8 +128,6 @@ Flask, SQLite.
 The app can be deployed by setting up a MongoDB Atlas instance and using the Go
 backend. Refer to [`server/README.md`](server/README.md) for more details
 (subject to change).
-
-<!-- TODO: fill this up -->
 
 ## Thank you
 
