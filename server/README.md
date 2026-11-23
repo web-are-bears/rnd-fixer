@@ -1,5 +1,84 @@
+## Server Code Organization
 
-(TODO: backend architecture, endpoints for each service and their respective data format wherever applicable)
+The server is a Go monorepo containing three long-running services behind a public API gateway. It uses gRPC internally and exposes REST/JSON HTTP endpoints through the gateway. MongoDB is the shared persistence store.
+
+```text
+server/
+├── cmd/                    # Service entry points (one executable per service)
+│   ├── auth/main.go        # Auth service process
+│   ├── core/main.go        # Core service process
+│   └── gateway/main.go     # HTTP gateway process
+├── config/                 # YAML configuration for development/deployment
+├── services/               # Service implementations and API contracts
+│   ├── auth/               # Authentication and user management
+│   │   ├── handler/        # gRPC request handlers
+│   │   ├── model/          # MongoDB-backed auth/user models
+│   │   └── proto/          # Login and phase gRPC definitions and generated code
+│   ├── core/               # Professors, students, projects, and allocation
+│   │   ├── allocator/      # Allocation algorithm (Go plus C++ bridge)
+│   │   ├── handler/        # gRPC request handlers
+│   │   ├── interceptor/    # Core-service RPC middleware
+│   │   ├── model/          # MongoDB-backed domain models
+│   │   └── proto/          # Core gRPC definitions and generated code
+│   ├── gateway/            # Public REST API gateway
+│   │   ├── handlers/       # HTTP request handlers
+│   │   ├── clients/        # Clients for internal gRPC services
+│   │   ├── middleware/     # Authentication and HTTP middleware
+│   │   ├── apierror/       # HTTP/gRPC error conversion
+│   │   └── routers.go      # Public route registration
+│   └── api/openapi/        # Generated OpenAPI specification
+├── shared/                 # Code reused across services
+│   ├── authctx/            # Authenticated-user context helpers
+│   ├── config/             # Typed configuration loading
+│   ├── httpx/              # Shared HTTP utilities
+│   ├── jwtauth/            # JWT signing and verification
+│   ├── mongo/              # MongoDB connection, querying, and transactions
+│   └── rng/                # Shared random-number helpers
+├── api/openapi/            # Checked-in API/OpenAPI artifacts
+├── docker-compose.yml      # Local MongoDB and service orchestration
+├── Dockerfile              # Server container build
+├── go.mod                  # Go module and dependencies
+└── Makefile                # Build, generation, and development commands
+```
+
+## Runtime Layout
+
+- `gateway` accepts external HTTP requests and routes them to the auth or core service.
+- `auth` owns accounts, credentials, login, and auth-related phase state.
+- `core` owns the application domain: professors, students, projects, and allocation.
+- `shared` contains infrastructure and cross-service utilities; it should not own a service's domain logic.
+- Proto and OpenAPI files are API contracts. Generated files should be updated through the repository's generation targets rather than edited directly.
+
+## Service Structure
+
+Both `auth` and `core` follow the same internal organization:
+
+- `model/` contains the service's MongoDB-backed data access and domain persistence code. Models translate database records and perform the database operations needed by the service.
+- `proto/` contains Protocol Buffer (`.proto`) API contracts and the generated Go/gateway code for the service's gRPC procedures.
+- `handler/` implements callbacks for those gRPC procedures. Each handler validates or adapts the incoming RPC request, invokes the appropriate model or domain logic, and returns the RPC response.
+- `interceptor/` (present in `core`) contains gRPC middleware for cross-cutting RPC concerns such as authentication or authorization.
+
+### Auth service
+
+`services/auth/` owns user accounts and authentication-related state:
+
+- `model/` connects to MongoDB to create and fetch users and manage authentication phase data.
+- `proto/` defines the login and phase RPC contracts.
+- `handler/` registers implementations for the login and phase procedures and translates service operations into gRPC responses.
+
+### Core service
+
+`services/core/` owns the application domain and allocation workflow:
+
+- `model/` connects to MongoDB for professors, students, projects, and allocation-related records.
+- `proto/` defines the RPC contracts for core procedures.
+- `handler/` registers callbacks for the core gRPC procedures and invokes domain/model operations.
+- `allocator/` contains the project-allocation implementation and its C++ bridge.
+- `interceptor/` applies middleware to core RPC calls.
+
+## Architecture
+
+![Architecture diagram](../docs/assets/backend_architecture.png)
 
 ## Services
 
@@ -141,7 +220,7 @@ The Core service manages professors, students and projects. It has three groups 
 Only errors specific to an endpoint are listed in its own table below.
  
 ---
- 
+
 ### Projects
  
 A project belongs to one professor. Its `token_distribution` maps a student's username to the number of tokens that student has placed on the project.
@@ -848,6 +927,46 @@ curl -X DELETE "http://localhost:8000/v1/core/students/tokens/stud_bob?proj_id=3
 | HTTP | `code` | `reason` | When |
 |---|---|---|---|
 | 404 | `NOT_FOUND` | — | The student does not exist, or has no token on that project. |
+
+#### Match Fixing Algorithm
+ 
+`GET /v1/core/matchfix`
+ 
+Returns a mapping of student username to the project id that they have been allocated using
+match fixing algorithm
+ 
+##### Request
+ 
+ Empty
+ 
+##### Example
+ 
+```bash
+curl -X GET "http://localhost:8000/v1/core/matchfix" \
+  -H "Authorization: Bearer $TOKEN"
+```
+ 
+##### Response `200 OK`
+ 
+| Field | Type | Description |
+|---|---|---|
+| `mapping` | map[string]string | student username to project id mapping. |
+ 
+```json
+{
+  "mappings": {
+    "stud1": "proj1",
+    "stud2": "proj1",
+    "stud3": "proj3",
+  }
+}
+```
+ 
+##### Errors
+ 
+| HTTP | `code` | `reason` | When |
+|---|---|---|---|
+| 404 | `NOT_FOUND` | — | The algorithm failed |
 
 
 ## Build Instructions
